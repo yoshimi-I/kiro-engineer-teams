@@ -1,0 +1,19 @@
+---
+name: feature-discovery
+description: Use when the user says "機能調査", "足りない機能", or wants to discover missing features by researching competitors and analyzing gaps
+---
+
+# Feature Discovery - 競合調査→機能ギャップ分析→issue作成
+
+## Process
+
+1. **現状把握**: 既存issueを全て確認（重複防止）、現在の機能マップを整理
+2. **競合・業界リサーチ**: 同カテゴリのアプリ・サービスの機能を調査
+3. **ギャップ分析**: ユーザー価値(40%) + 差別化(30%) + 実装コスト(20%) + 実現可能性(10%) で優先順位付け
+4. **Issue作成**: 優先度の高いものから最大10件。概要、ユーザーストーリー、機能要件、技術的検討事項を含む
+
+## Rules
+
+- ユーザーに質問しない。調査→判断→issue作成まで自律的に行う
+- 既存issueと重複する機能は作成しない
+- 各issueは独立して実装可能なスコープに分割
