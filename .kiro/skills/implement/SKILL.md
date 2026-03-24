@@ -53,6 +53,10 @@ issue番号の指定がない場合:
 |---------|-----------|------|
 | 設計判断が必要な場合 | `brainstorming` | 要件が曖昧、複数のアプローチがある場合 |
 | フロントエンド実装 | `frontend-design` | UI/コンポーネントの変更がある場合は必ず参照 |
+| UI品質チェック | `baseline-ui` | Tailwind CSSプロジェクトでUIコンポーネントを実装する場合 |
+| アクセシビリティ | `fixing-accessibility` | インタラクティブ要素、フォーム、ダイアログの追加・変更時 |
+| メタデータ | `fixing-metadata` | 新規ページ追加、SEO・OGP対応が必要な場合 |
+| アニメーション | `fixing-motion-performance` | アニメーション・トランジションの追加・変更時 |
 | バックエンド設計 | `clean-ddd-hexagonal` | ドメインモデル・API設計の変更がある場合 |
 | PR作成 | `pr` | 実装完了後 |
 
@@ -61,7 +65,11 @@ issue番号の指定がない場合:
 ### フロントエンド変更がある場合
 
 1. `frontend-design` スキルを必ず読み、デザイン品質を担保する
-2. 既存コンポーネントのパターン（命名、ディレクトリ構造、状態管理）を確認
+2. `baseline-ui` スキルでTailwindのアニメーション・タイポグラフィ・レイアウトのアンチパターンをチェック
+3. `fixing-accessibility` スキルでアクセシビリティ（ARIA、キーボード操作、コントラスト）を確認
+4. 新規ページの場合は `fixing-metadata` スキルでメタデータ（OGP、title、description）を設定
+5. アニメーション追加時は `fixing-motion-performance` スキルでパフォーマンスを確認
+6. 既存コンポーネントのパターン（命名、ディレクトリ構造、状態管理）を確認
 3. 検証コマンド例:
    ```bash
    cd frontend && pnpm run check    # lint + typecheck
