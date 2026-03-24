@@ -23,6 +23,10 @@ Kiro CLI 用の `.kiro/` 設定テンプレート。
 | **検証** | `e2e` | ブラウザ操作→スクショ目視→バグissue作成 |
 | **設計** | `clean-ddd-hexagonal` | DDD + Clean Architecture + Hexagonal パターン |
 | **実装** | `frontend-design` | 高品質フロントエンドUI設計 |
+| **UI品質** | `baseline-ui` | Tailwindのアニメーション・タイポグラフィ・レイアウト検証 |
+| **UI品質** | `fixing-accessibility` | ARIA・キーボード操作・コントラスト比のアクセシビリティ監査 |
+| **UI品質** | `fixing-metadata` | OGP・title・description・JSON-LDのメタデータ監査 |
+| **UI品質** | `fixing-motion-performance` | アニメーションパフォーマンス監査・最適化 |
 
 ## 自動化パイプライン
 
@@ -68,6 +72,10 @@ Kiro CLI 用の `.kiro/` 設定テンプレート。
     ├── e2e/SKILL.md
     ├── clean-ddd-hexagonal/SKILL.md  # + references/
     ├── frontend-design/SKILL.md
+    ├── baseline-ui/SKILL.md
+    ├── fixing-accessibility/SKILL.md
+    ├── fixing-metadata/SKILL.md
+    ├── fixing-motion-performance/SKILL.md
     └── find-skills/SKILL.md
 ```
 
