@@ -1,6 +1,6 @@
 ---
 name: rebase-prs
-description: Use when DIRTY PRs need rebasing onto main, or the user says "rebase"
+description: コンフリクトのあるPRをmainにリベースする必要があるとき、「rebase」と言われたときに使用する
 ---
 
 # DIRTY PR自動リベース

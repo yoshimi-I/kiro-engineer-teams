@@ -1,7 +1,32 @@
 ---
 name: development-rules
-description: General development rules and principles for all coding tasks
+description: 全コーディングタスクに適用される汎用開発ルール
 ---
+
+## プロジェクト固有の設定
+
+<IMPORTANT>
+このセクションが空の場合、まず `brainstorming` スキルを起動し、ユーザーと対話してプロジェクトの技術スタック・ディレクトリ構成・規約を明確にすること。明確になったらこのセクションに追記してコミットする。
+
+記載がある場合は、以下の内容を読み込んで全タスクに適用すること。
+</IMPORTANT>
+
+```
+## ここにプロジェクト固有の情報を記載する
+## 例:
+# - 言語: TypeScript + Python
+# - Frontend: React + Vite + Tailwind CSS (frontend/)
+# - Backend: FastAPI + SQLAlchemy (backend/)
+# - Infra: Terraform (infra/)
+# - テスト: `cd frontend && pnpm run check` / `cd backend && uv run pytest`
+# - Git: Conventional Commits
+# - ディレクトリ構成:
+#   project/
+#   ├── frontend/    # React + Vite
+#   ├── backend/     # FastAPI
+#   ├── infra/       # Terraform
+#   └── docs/
+```
 
 ## コード品質
 

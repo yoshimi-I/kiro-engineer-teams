@@ -1,6 +1,6 @@
 ---
 name: watch-issues
-description: Use when the user says "issue監視", "issue自動実装", or wants to continuously monitor GitHub issues and auto-implement them
+description: 「issue監視」「issue自動実装」と言われたとき、GitHub issueを継続監視して自動実装する
 ---
 
 # GitHub Issue監視・自動実装
@@ -19,7 +19,7 @@ GitHub issueをポーリングし、新issueを検出次第サブエージェン
 4. 新issueあり → task.mdを`着手中`で更新 → サブエージェントで実装ディスパッチ（最大3件/サイクル）
 5. 完了後にtask.md確認
 
-## Common Mistakes
+## よくあるミス
 
 - ユーザー承認を求める → 完全自動
 - task.md更新前にディスパッチ → 必ず先に着手中を書く

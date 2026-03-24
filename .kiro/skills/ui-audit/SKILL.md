@@ -1,9 +1,9 @@
 ---
 name: ui-audit
-description: Use when the user says "UI調査", "レイアウト調査", or wants to audit the current UI and identify improvements
+description: 「UI調査」「レイアウト調査」と言われたとき、UI/レイアウトを調査して改善issueを作成する
 ---
 
-# UI Audit - レイアウト・デザイン調査
+# UI監査 — レイアウト・デザイン調査
 
 現在のUI/レイアウトを徹底調査し、改善点をissueとして作成する。
 主観的な判断はサブエージェント多数決で決定する。
@@ -23,7 +23,7 @@ description: Use when the user says "UI調査", "レイアウト調査", or want
 - 2/3以上が同じ方向 → 採用
 - バラバラ → 最も具体的な提案を採用
 
-## Rules
+## ルール
 
 - ユーザーに質問しない。判断に迷ったらサブエージェント多数決
 - 必ず全コンポーネントを読んでから改善提案を行う

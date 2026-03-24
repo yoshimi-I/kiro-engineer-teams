@@ -1,6 +1,6 @@
 ---
 name: e2e
-description: Use when the user says "E2Eテスト", "バグ探し", "UI検証", or wants to run the app and find bugs by actually interacting with it
+description: 「E2Eテスト」「バグ探し」「UI検証」と言われたとき、アプリを実際に操作してバグを発見しissueを作成する
 ---
 
 # E2E検証・バグハント
@@ -26,7 +26,7 @@ description: Use when the user says "E2Eテスト", "バグ探し", "UI検証", 
 5. 発見した問題ごとに `gh issue create` で1問題=1issue作成
 6. 重複チェック: 既存issueと照合してからissue作成
 
-## Common Mistakes
+## よくあるミス
 
 - スクリーンショットを撮らない → 必ず撮影・目視確認する
 - 1つのissueに複数問題をまとめる → 1問題 = 1 issue

@@ -1,21 +1,21 @@
 ---
 name: review
-description: Use when the user asks to review code, check changes, review PR, or mentions review, audit, check for bugs
+description: コードレビュー、変更チェック、PRレビュー、バグ監査を依頼されたときに使用する
 ---
 
-# Multi-Perspective Code Review
+# 多視点コードレビュー
 
 7視点 + 信頼度スコアリングで厳格レビュー。信頼度80以上の指摘のみ報告。
 
-## 7 Perspectives
+## 7つの視点
 
-1. **Security & Safety** (Critical) — injection, auth bypass, secrets exposure, CSRF, XSS, SQLi, path traversal, insecure deserialization
-2. **Business Logic** (Critical) — edge cases, race conditions, state inconsistency, off-by-one, null/undefined handling, intent vs implementation の乖離
-3. **Architecture & Design** (Critical) — SOLID原則、レイヤー分離、依存性の方向、関心の分離、適切な抽象化レベル、循環依存
-4. **Maintainability** (Important) — naming, abstraction, duplication, 認知的複雑度、マジックナンバー、dead code
-5. **Performance** (Important) — N+1クエリ、不要な再レンダリング、メモリリーク、O(n²)ループ、不要なAPI呼び出し、バンドルサイズ影響
-6. **Error Handling** (Important) — uncaught exceptions, resource cleanup, retry/fallback戦略、ユーザーへのエラーメッセージ、ログの十分性
-7. **Testing & Reliability** (Important) — テストカバレッジの妥当性、テストが実装でなく振る舞いを検証しているか、エッジケースのテスト有無、flaky testリスク
+1. **セキュリティ** (Critical) — injection, 認証バイパス, シークレット漏洩, CSRF, XSS, SQLi, パストラバーサル, 安全でないデシリアライゼーション
+2. **ビジネスロジック** (Critical) — エッジケース, 競合状態, 状態の不整合, off-by-one, null/undefined処理, 意図と実装の乖離
+3. **アーキテクチャ・設計** (Critical) — SOLID原則、レイヤー分離、依存性の方向、関心の分離、適切な抽象化レベル、循環依存
+4. **保守性** (Important) — 命名, 抽象化, 重複, 認知的複雑度, マジックナンバー, デッドコード
+5. **パフォーマンス** (Important) — N+1クエリ, 不要な再レンダリング, メモリリーク, O(n²)ループ, 不要なAPI呼び出し, バンドルサイズ影響
+6. **エラー処理** (Important) — 未捕捉例外, リソースクリーンアップ, リトライ/フォールバック戦略, ユーザーへのエラーメッセージ, ログの十分性
+7. **テスト・信頼性** (Important) — テストカバレッジの妥当性, 振る舞いを検証しているか, エッジケースのテスト有無, flaky testリスク
 
 ## 深掘りレビュー（必須）
 
@@ -28,7 +28,7 @@ diffを読むだけでは不十分。以下を必ず実行すること。
 | **データの整合性** | API応答のデータと実際のデータが乖離しないか確認 | プレビューデータと実データが別物 |
 | **未使用コード検出** | PR内で定義されたクラス/関数が実際に使われているか確認 | 定義のみで参照ゼロ |
 | **文字列 vs 型の一貫性** | enum値を文字列で比較している箇所がないか。型安全でない分岐は潜在バグ | 文字列比較とenum比較の混在 |
-| **ランタイムクラッシュの可能性** | 型変換（`int()`, `Enum()`, `[index]`）が失敗しうる入力パターンを洗い出す | ユーザー入力→型変換→500エラー |
+| **ランタイムクラッシュの可能性** | 型変換が失敗しうる入力パターンを洗い出す | ユーザー入力→型変換→500エラー |
 | **フロント↔バック整合性** | API変更がある場合、フロントの型定義・呼び出し箇所が追従しているか | レスポンス型が変わったのにフロント未更新 |
 | **マイグレーション安全性** | DB変更がある場合、既存データとの互換性・ロールバック可能性を確認 | NOT NULL追加で既存行がエラー |
 
@@ -56,15 +56,15 @@ diffを読むだけでは不十分。以下を必ず実行すること。
 - コスト影響の見積もり
 - ロールバック手順の有無
 
-## Confidence Scoring
+## 信頼度スコアリング
 
-| Score | Action |
+| スコア | アクション |
 |-------|--------|
 | 90-100 | Critical — 必ず報告 |
 | 80-89 | Important — 報告 |
 | <80 | 報告しない（false positive回避） |
 
-## Output Format
+## 出力フォーマット
 
 ```markdown
 ## レビュー結果
@@ -72,15 +72,15 @@ diffを読むだけでは不十分。以下を必ず実行すること。
 ### 指摘事項
 
 #### [{指摘タイトル}]
-- **File:** `{path}:{line}`
-- **Category:** {Security/Logic/Architecture/Maintainability/Performance/Error Handling/Testing}
-- **Confidence:** {80-100}
-- **Evidence:** {何を根拠に問題と判断したか}
-- **Suggestion:** {修正案}
+- **ファイル:** `{path}:{line}`
+- **カテゴリ:** {セキュリティ/ロジック/アーキテクチャ/保守性/パフォーマンス/エラー処理/テスト}
+- **信頼度:** {80-100}
+- **根拠:** {何を根拠に問題と判断したか}
+- **修正案:** {修正案}
 
 ### 総評
 [良い点を先に述べてから、改善点を述べる]
 
-### Verdict
+### 判定
 **APPROVE / REQUEST CHANGES / COMMENT** — {理由}
 ```

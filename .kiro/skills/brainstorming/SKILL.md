@@ -1,57 +1,57 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: 機能追加・コンポーネント作成・動作変更など、あらゆるクリエイティブな作業の前に必ず使用する。実装前にユーザーの意図・要件・設計を探る。
 ---
 
-# Brainstorming Ideas Into Designs
+# アイデアを設計に落とし込む
 
-## Overview
+## 概要
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+自然な対話を通じて、アイデアを完成された設計・仕様に仕上げる。
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
+まずプロジェクトの現状を把握し、質問を1つずつ投げてアイデアを精緻化する。何を作るか理解できたら、設計を提示してユーザーの承認を得る。
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+設計を提示してユーザーが承認するまで、実装スキルの呼び出し、コードの記述、プロジェクトの雛形作成、その他一切の実装行為を行ってはならない。どんなに単純なプロジェクトでも例外なし。
 </HARD-GATE>
 
-## Anti-Pattern: "This Is Too Simple To Need A Design"
+## アンチパターン: 「これは設計するほどでもない」
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+すべてのプロジェクトがこのプロセスを通る。TODOリスト、単一関数のユーティリティ、設定変更 — すべて。「単純な」プロジェクトこそ、検討不足の前提が最も多くの手戻りを生む。設計は短くてよい（本当に単純なら数文で十分）が、必ず提示して承認を得ること。
 
-## Checklist
+## チェックリスト
 
-You MUST complete these in order:
+以下を順番に完了すること:
 
-1. **Explore project context** — check files, docs, recent commits
-2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-3. **Propose 2-3 approaches** — with trade-offs and your recommendation
-4. **Present design** — in sections scaled to their complexity, get user approval after each section
-5. **Write design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit
-6. **Transition to implementation** — create implementation plan
+1. **プロジェクトの現状把握** — ファイル、ドキュメント、最近のコミットを確認
+2. **明確化の質問** — 1つずつ、目的・制約・成功基準を理解する
+3. **2〜3つのアプローチを提案** — トレードオフと推奨案を提示
+4. **設計を提示** — 複雑さに応じたセクション分けで、各セクション後に承認を得る
+5. **設計ドキュメント作成** — `docs/plans/YYYY-MM-DD-<topic>-design.md` に保存してコミット
+6. **実装への移行** — 実装計画を作成
 
-## The Process
+## プロセス
 
-**Understanding the idea:**
-- Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible
-- Only one question per message
-- Focus on understanding: purpose, constraints, success criteria
+**アイデアの理解:**
+- まずプロジェクトの現状を確認する（ファイル、ドキュメント、最近のコミット）
+- 質問は1つずつ投げてアイデアを精緻化する
+- 可能な限り選択式の質問を使う
+- 1メッセージにつき質問は1つだけ
+- 目的・制約・成功基準の理解に集中する
 
-**Exploring approaches:**
-- Propose 2-3 different approaches with trade-offs
-- Lead with your recommended option and explain why
+**アプローチの探索:**
+- 2〜3つの異なるアプローチをトレードオフ付きで提案
+- 推奨案を先に出し、その理由を説明する
 
-**Presenting the design:**
-- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
-- Cover: architecture, components, data flow, error handling, testing
+**設計の提示:**
+- 各セクションの複雑さに応じて分量を調整（単純なら数文、複雑なら200〜300語）
+- 各セクション後に「ここまで問題ないか」を確認
+- カバーする内容: アーキテクチャ、コンポーネント、データフロー、エラー処理、テスト
 
-## Key Principles
+## 基本原則
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design, get approval before moving on
+- **質問は1つずつ** — 複数の質問で圧倒しない
+- **選択式を優先** — 自由記述より答えやすい
+- **YAGNIを徹底** — 不要な機能はすべて設計から除外
+- **代替案を探る** — 決定前に必ず2〜3つのアプローチを提案
+- **段階的な検証** — 設計を提示し、承認を得てから次に進む

@@ -1,6 +1,6 @@
 ---
 name: watch-review
-description: Use when the user says "PR監視", "レビュー監視", or wants to continuously monitor open PRs, auto-review, and squash-merge clean PRs
+description: 「PR監視」「レビュー監視」と言われたとき、open PRを継続監視し、自動レビュー→スカッシュマージする
 ---
 
 # PR監視・自動レビュー・マージ
@@ -27,7 +27,7 @@ gh pr view {number} --json mergeStateStatus,mergeable
 | `UNKNOWN` | スキップ（次サイクルで再確認） |
 
 ### Step 3: 厳格レビュー
-`/review` スキルの5視点で分析。信頼度80以上の指摘のみ報告。
+`/review` スキルの7視点で分析。信頼度80以上の指摘のみ報告。
 
 ### Step 4: 結果に基づくアクション
 
@@ -35,7 +35,7 @@ gh pr view {number} --json mergeStateStatus,mergeable
 - 指摘あり → サブエージェントで自動修正（最大3回ループ）→ 再レビュー → merge
 - 3回超過 → request changes → task.md `差し戻し`（人間エスカレーション）
 
-## Common Mistakes
+## よくあるミス
 
 - CI失敗中（UNSTABLE）のPRをマージする → 最も致命的なミス
 - diffだけ読んでLGTM → 呼び出し元追跡、境界値検証を必ず行う

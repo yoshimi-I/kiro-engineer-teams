@@ -1,9 +1,9 @@
 ---
 name: never-idle
-description: Prevents idle waiting - drives autonomous issue pickup after task completion
+description: アイドル待機を防止し、タスク完了後に自動で次のissueを取りに行く
 ---
 
-# Never Idle
+# アイドル禁止
 
 タスクが終わったら次のタスクを自分で取りに行く。ユーザーに「何かありますか？」と聞いて待機しない。
 
