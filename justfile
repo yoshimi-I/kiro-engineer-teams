@@ -8,9 +8,13 @@ init:
 setup:
     ./scripts/setup.sh
 
-# Start full pipeline (INCEPTION → 8-agent)
+# Start full pipeline (INCEPTION → 7-agent)
 start:
     ./scripts/start-pipeline.sh
+
+# Launch 7-agent pipeline only (skip INCEPTION)
+pipeline:
+    zellij --layout scripts/pipeline.kdl
 
 # Test zellij 8-pane layout
 test-layout:
