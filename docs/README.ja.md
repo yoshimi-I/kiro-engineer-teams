@@ -19,21 +19,46 @@ issue → 実装 → レビュー → マージ → E2E検証を全自動化。
 ## クイックスタート
 
 ```bash
-# テンプレートをクローン
+# 1. テンプレートをクローン
 git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
 cd my-app
 
-# 自分のリポジトリに切り替え
+# 2. 前提ツールを一括インストール
+./scripts/setup.sh
+
+# 3. 自分のリポジトリに切り替え
 git remote set-url origin <your-repo-url>
 git push -u origin main
 
-# Kiro CLIを起動（ブレストが自動で始まる）
-kiro-cli chat
+# 4. パイプライン起動（INCEPTION → 8エージェント自動化）
+./scripts/start-pipeline.sh
 ```
 
-> 💡 Kiro起動時に `AGENTS.md` を読み、ブレストが始まります。
-> 作りたいものを伝えてください。設計が固まるとissueが自動作成されます。
-> `/quit` で抜けた後、パイプラインを起動してください。
+---
+
+## 🔄 全体フロー
+
+```
+./scripts/start-pipeline.sh
+│
+├── Phase 1: INCEPTION（あなた + AI）
+│   ├── 1. ワークスペース検出 — 既存コードをスキャン
+│   ├── 2. 要件分析 — 何を作るか明確化
+│   ├── 3. ユーザーストーリー — ユーザー行動を定義（必要時）
+│   ├── 4. アーキテクチャ設計 — 技術スタック + 構成（必要時）
+│   └── 5. Issue生成 — GitHub issueを自動作成
+│
+└── Phase 2: 8エージェントパイプライン（完全自律）
+    ├── Impl-1, Impl-2 → issueを拾って実装 → PR
+    ├── Review → 7視点厳格レビュー → マージ
+    ├── Fix-Review → レビュー指摘修正 → 再push
+    ├── Fix-CI → CI失敗修正 → 再push
+    ├── Watch-Main → マージ後E2E検証
+    ├── E2E-Hunt → Playwright巡回 → バグissue
+    └── Dependabot → 依存更新PR処理
+```
+
+Phase 1はあなたの入力が必要です。Phase 2は完全自動 — エージェントはissue/PRが来るまで待機し、検出次第動き始めます。
 
 ---
 
