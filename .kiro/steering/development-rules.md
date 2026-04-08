@@ -71,7 +71,7 @@ If settings are already filled in, skip this section.
 | `P2-medium` | 早めに対応すべき | リファクタリング、パフォーマンス改善 |
 | `P3-low` | あると嬉しい | ドキュメント、軽微なDX改善 |
 
-`gh issue create` には必ず `--label "<優先度>"` を含めること。Implエージェントは P0→P1→P2→P3 の順で取得する。
+`gh issue create` には必ず `--label "優先度" --label "<P0-critical|P1-high|P2-medium|P3-low>"` を含めること。Implエージェントは P0→P1→P2→P3 の順で取得する。
 
 ### コンフリクト防止
 

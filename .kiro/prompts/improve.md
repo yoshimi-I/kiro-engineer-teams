@@ -47,6 +47,7 @@ gh issue list --state open --json number,title,body
 gh issue create \
   --title "improve: <具体的なタイトル>" \
   --label "enhancement" \
+  --label "優先度" \
   --label "<P0-critical|P1-high|P2-medium|P3-low>" \
   --body "<改善の背景・理由・期待効果を記述>"
 ```
