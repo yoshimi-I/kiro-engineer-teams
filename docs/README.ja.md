@@ -105,12 +105,15 @@ Agent 8: /auto-dependabot（依存更新、別レーン）
 
 ## 📋 前提条件
 
-| ツール | 必須 |
-|--------|------|
-| [Kiro CLI](https://kiro.dev/docs/cli/) | ✅ |
-| [zellij](https://zellij.dev/) | ✅ |
-| [GitHub CLI](https://cli.github.com/) | ✅ 認証済み (`gh auth login`) |
-| git remote | ✅ 設定済み |
+| ツール | インストール | 必須 |
+|--------|------------|------|
+| [Kiro CLI](https://kiro.dev/docs/cli/) | [ダウンロード](https://kiro.dev/downloads/) | ✅ |
+| [zellij](https://zellij.dev/) | `brew install zellij` | ✅ |
+| [GitHub CLI](https://cli.github.com/) | `brew install gh` → `gh auth login` | ✅ |
+| [just](https://just.systems/) | `brew install just` | 任意（GitLab切替用） |
+
+> **Linux**: `brew install` の代わりに各ツールのインストールドキュメントを参照。
+> **Windows**: WSL2を使用するか、各ツールのWindowsインストールドキュメントを参照。
 
 ---
 

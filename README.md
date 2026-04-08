@@ -105,12 +105,15 @@ Agent 8: /auto-dependabot (dependency updates, separate lane)
 
 ## 📋 Prerequisites
 
-| Tool | Required |
-|------|----------|
-| [Kiro CLI](https://kiro.dev/docs/cli/) | ✅ |
-| [zellij](https://zellij.dev/) | ✅ |
-| [GitHub CLI](https://cli.github.com/) | ✅ authenticated (`gh auth login`) |
-| git remote | ✅ configured |
+| Tool | Install | Required |
+|------|---------|----------|
+| [Kiro CLI](https://kiro.dev/docs/cli/) | See [downloads](https://kiro.dev/downloads/) | ✅ |
+| [zellij](https://zellij.dev/) | `brew install zellij` | ✅ |
+| [GitHub CLI](https://cli.github.com/) | `brew install gh` → `gh auth login` | ✅ |
+| [just](https://just.systems/) | `brew install just` | Optional (for GitLab switch) |
+
+> **Linux**: Replace `brew install` with your package manager or see each tool's install docs.
+> **Windows**: Use WSL2 or see each tool's Windows install docs.
 
 ---
 
