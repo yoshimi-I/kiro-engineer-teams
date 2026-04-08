@@ -1,6 +1,6 @@
-# DDD Strategic Patterns
+# DDD戦略パターン
 
-> Sources:
+> 出典:
 > - [Domain-Driven Design: The Blue Book](https://www.domainlanguage.com/ddd/blue-book/) — Eric Evans (2003)
 > - [DDD Resources](https://www.domainlanguage.com/ddd/) — Domain Language (Eric Evans)
 > - [Bounded Context](https://martinfowler.com/bliki/BoundedContext.html) — Martin Fowler
@@ -8,77 +8,77 @@
 > - [Anti-Corruption Layer](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/acl.html) — AWS
 > - [Domain Analysis for Microservices](https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis) — Microsoft
 
-## Overview
+## 概要
 
-Strategic DDD patterns help decompose large systems into manageable parts with clear boundaries. They answer: **"How do we divide a complex domain?"**
+戦略的DDDパターンは、大規模システムを明確な境界を持つ管理可能な部分に分解する。答えるべき問い: **「複雑なドメインをどう分割するか？」**
 
-**DDD is fundamentally collaborative.** The patterns below emerge from conversations, whiteboarding, and modeling sessions with domain experts—not from coding alone.
-
----
-
-## Domain Discovery Techniques
-
-### Event Storming
-
-A workshop technique for discovering domain events, aggregates, and bounded contexts.
-
-```
-Orange sticky: Domain Event (past tense: "OrderPlaced")
-Blue sticky: Command (imperative: "Place Order")
-Yellow sticky: Aggregate (noun: "Order")
-Pink sticky: External System / Policy
-Purple sticky: Problem / Question
-```
-
-**Workshop flow:**
-1. **Chaotic exploration** — Everyone adds events they know about
-2. **Timeline ordering** — Arrange events chronologically
-3. **Identify aggregates** — Group related events
-4. **Find boundaries** — Where language changes = bounded context boundary
-5. **Surface problems** — Mark unclear areas for follow-up
-
-### Context Mapping Workshop
-
-For existing systems, map how bounded contexts currently interact:
-1. List all systems/services
-2. Identify which team owns each
-3. Draw relationships (upstream/downstream)
-4. Label relationship types (ACL, Conformist, etc.)
-5. Identify pain points in current integrations
+**DDDは本質的に協調的。** 以下のパターンは、ドメインエキスパートとの対話、ホワイトボーディング、モデリングセッションから生まれる — コーディングだけからではない。
 
 ---
 
-## Ubiquitous Language
+## ドメイン発見テクニック
 
-The foundation of DDD. A shared vocabulary between developers and domain experts that appears in:
-- Code (class names, method names)
-- Documentation
-- Conversations
-- UI labels
+### イベントストーミング
 
-### Principles
-
-1. **One language per bounded context** - Different contexts may use the same word differently
-2. **Code reflects the language** - `Order.confirm()` not `Order.setStatus("confirmed")`
-3. **Evolve together** - When language changes, code changes
-
-### Example
+ドメインイベント、アグリゲート、境界づけられたコンテキストを発見するワークショップ手法。
 
 ```
-❌ Technical language:
-   "Set the order entity's status field to 2 and insert a record"
+オレンジ付箋: ドメインイベント（過去形: "OrderPlaced"）
+青付箋: コマンド（命令形: "Place Order"）
+黄付箋: アグリゲート（名詞: "Order"）
+ピンク付箋: 外部システム / ポリシー
+紫付箋: 問題 / 質問
+```
 
-✅ Ubiquitous language:
-   "Confirm the order and record that it was confirmed"
+**ワークショップの流れ:**
+1. **カオス的探索** — 全員が知っているイベントを追加
+2. **タイムライン整理** — イベントを時系列に配置
+3. **アグリゲート特定** — 関連イベントをグループ化
+4. **境界発見** — 言語が変わる場所 = 境界づけられたコンテキストの境界
+5. **問題の表面化** — 不明確な領域をフォローアップ用にマーク
+
+### コンテキストマッピングワークショップ
+
+既存システムの場合、境界づけられたコンテキスト間の現在のインタラクションをマッピング:
+1. 全システム/サービスをリスト
+2. 各チームの所有権を特定
+3. 関係を描画（上流/下流）
+4. 関係タイプにラベル付け（ACL、Conformist等）
+5. 現在の統合の問題点を特定
+
+---
+
+## ユビキタス言語
+
+DDDの基盤。開発者とドメインエキスパートの間で共有される語彙で、以下に現れる:
+- コード（クラス名、メソッド名）
+- ドキュメント
+- 会話
+- UIラベル
+
+### 原則
+
+1. **境界づけられたコンテキストごとに1つの言語** - 異なるコンテキストでは同じ単語が異なる意味を持つ場合がある
+2. **コードは言語を反映** - `Order.confirm()` であって `Order.setStatus("confirmed")` ではない
+3. **共に進化** - 言語が変わればコードも変わる
+
+### 例
+
+```
+❌ 技術的な言語:
+   「注文エンティティのステータスフィールドを2に設定してレコードを挿入」
+
+✅ ユビキタス言語:
+   「注文を確認し、確認されたことを記録する」
 ```
 
 ```typescript
-// ❌ Technical, not ubiquitous
+// ❌ 技術的、ユビキタスでない
 class Order {
   setStatus(status: number): void { this.status = status; }
 }
 
-// ✅ Ubiquitous language
+// ✅ ユビキタス言語
 class Order {
   confirm(): void {
     if (this.status !== OrderStatus.Pending) {
@@ -93,38 +93,38 @@ class Order {
 
 ---
 
-## Bounded Contexts
+## 境界づけられたコンテキスト
 
-A **semantic boundary** where a particular domain model applies. Within a bounded context, terms have precise, unambiguous meaning.
+特定のドメインモデルが適用される**意味的境界**。境界づけられたコンテキスト内では、用語は正確で曖昧さのない意味を持つ。
 
-> **Key insight:** Polysemy (same word, different meanings) across departments is natural, not a problem. The same term meaning different things in different contexts is expected—"the dominant boundary factor is human culture and language variation." — Martin Fowler
+> **重要な洞察:** 部門間での多義性（同じ単語、異なる意味）は自然であり、問題ではない。異なるコンテキストで同じ用語が異なる意味を持つことは想定内 — 「支配的な境界要因は人間の文化と言語の変異である」— Martin Fowler
 
-### Key Concepts
+### 主要概念
 
-- Each bounded context has its **own ubiquitous language**
-- Each bounded context has its **own model**
-- The same real-world concept may have **different representations** in different contexts
+- 各境界づけられたコンテキストは**独自のユビキタス言語**を持つ
+- 各境界づけられたコンテキストは**独自のモデル**を持つ
+- 同じ現実世界の概念が異なるコンテキストで**異なる表現**を持つ場合がある
 
-### Example: E-Commerce System
+### 例: ECシステム
 
 ```mermaid
 flowchart TB
-    subgraph ECommerce["E-Commerce System"]
-        subgraph Sales["Sales Context"]
+    subgraph ECommerce["ECシステム"]
+        subgraph Sales["販売コンテキスト"]
             SC1["Customer: id, email, preferences"]
             SC2["Order: items, total, status"]
         end
-        subgraph Shipping["Shipping Context"]
+        subgraph Shipping["配送コンテキスト"]
             SH1["Recipient: name, address, phone"]
             SH2["Shipment: packages, carrier, trackingNo"]
         end
-        subgraph Billing["Billing Context"]
+        subgraph Billing["請求コンテキスト"]
             BC1["Payer: name, billingAddress, paymentMethod"]
             BC2["Invoice: lineItems, total, dueDate"]
         end
-        subgraph Catalog["Catalog Context"]
+        subgraph Catalog["カタログコンテキスト"]
             CC1["Product: name, description, price"]
-            CC2["(no customer concept)"]
+            CC2["(顧客の概念なし)"]
         end
     end
 
@@ -134,33 +134,33 @@ flowchart TB
     style Catalog fill:#8b5cf6,stroke:#7c3aed,color:white
 ```
 
-**"Customer" means different things:**
-- **Sales**: Email, preferences, order history
-- **Shipping**: Delivery address, phone number
-- **Billing**: Payment methods, billing address
+**「Customer」の意味はコンテキストで異なる:**
+- **販売**: メール、好み、注文履歴
+- **配送**: 配送先住所、電話番号
+- **請求**: 支払い方法、請求先住所
 
-### Bounded Context = Microservice Boundary
+### 境界づけられたコンテキスト = マイクロサービス境界
 
-In microservices, each bounded context typically becomes a separate service:
+マイクロサービスでは、各境界づけられたコンテキストは通常別のサービスになる:
 
 ```mermaid
 flowchart LR
-    subgraph Sales["Sales Service"]
+    subgraph Sales["販売サービス"]
         S1["Orders DB"]
         S2["Order API"]
     end
-    subgraph Shipping["Shipping Service"]
+    subgraph Shipping["配送サービス"]
         SH1["Shipments DB"]
         SH2["Shipping API"]
     end
-    subgraph Billing["Billing Service"]
+    subgraph Billing["請求サービス"]
         B1["Invoices DB"]
         B2["Billing API"]
     end
 
-    Sales -->|events| Shipping
-    Shipping -->|events| Billing
-    Sales -.->|Integration Events| Events[("Event Bus")]
+    Sales -->|イベント| Shipping
+    Shipping -->|イベント| Billing
+    Sales -.->|統合イベント| Events[("イベントバス")]
     Shipping -.-> Events
     Billing -.-> Events
 
@@ -171,51 +171,51 @@ flowchart LR
 
 ---
 
-## Subdomains
+## サブドメイン
 
-Areas of business expertise. Subdomains are **discovered**, not designed.
+ビジネス専門知識の領域。サブドメインは**発見する**ものであり、設計するものではない。
 
-### Types
+### 種類
 
-| Type | Description | Investment | Example |
-|------|-------------|------------|---------|
-| **Core** | Competitive advantage | High | Product recommendation engine |
-| **Supporting** | Necessary but not unique | Medium | Order management |
-| **Generic** | Commodity, buy/outsource | Low | Email sending, payments |
+| 種類 | 説明 | 投資 | 例 |
+|------|------|------|-----|
+| **コア** | 競争優位性 | 高 | 商品レコメンドエンジン |
+| **サポーティング** | 必要だがユニークではない | 中 | 注文管理 |
+| **ジェネリック** | コモディティ、購入/外注 | 低 | メール送信、決済 |
 
-### Identification Questions
+### 特定のための質問
 
-1. What makes us different from competitors? → **Core**
-2. What do we need but isn't our specialty? → **Supporting**
-3. What does everyone need the same way? → **Generic**
+1. 競合他社と何が違うか？ → **コア**
+2. 必要だが専門ではないものは？ → **サポーティング**
+3. 誰もが同じ方法で必要とするものは？ → **ジェネリック**
 
-### Example: E-Commerce
+### 例: EC
 
 ```mermaid
 flowchart TB
-    subgraph Subdomains["Subdomains"]
-        subgraph Core["CORE"]
-            C1["Product search & recommendations"]
-            C2["Pricing engine"]
-            C3["Personalization"]
+    subgraph Subdomains["サブドメイン"]
+        subgraph Core["コア"]
+            C1["商品検索＆レコメンド"]
+            C2["価格エンジン"]
+            C3["パーソナライゼーション"]
         end
-        subgraph Supporting["SUPPORTING"]
-            S1["Order management"]
-            S2["Inventory"]
-            S3["Customer support"]
-            S4["Reporting"]
+        subgraph Supporting["サポーティング"]
+            S1["注文管理"]
+            S2["在庫"]
+            S3["カスタマーサポート"]
+            S4["レポーティング"]
         end
-        subgraph Generic["GENERIC"]
-            G1["Authentication (Auth0)"]
-            G2["Payments (Stripe)"]
-            G3["Email (SendGrid)"]
-            G4["File storage (S3)"]
+        subgraph Generic["ジェネリック"]
+            G1["認証 (Auth0)"]
+            G2["決済 (Stripe)"]
+            G3["メール (SendGrid)"]
+            G4["ファイルストレージ (S3)"]
         end
     end
 
-    Core --> CoreStrat["Build in-house\nBest developers"]
-    Supporting --> SuppStrat["Build or buy\nSolid but simple"]
-    Generic --> GenStrat["Use third-party\nDon't reinvent"]
+    Core --> CoreStrat["自社開発\n最高の開発者"]
+    Supporting --> SuppStrat["開発 or 購入\n堅実だがシンプル"]
+    Generic --> GenStrat["サードパーティ利用\n再発明しない"]
 
     style Core fill:#ef4444,stroke:#dc2626,color:white
     style Supporting fill:#f59e0b,stroke:#d97706,color:white
@@ -224,91 +224,38 @@ flowchart TB
 
 ---
 
-## Context Mapping
+## コンテキストマッピング
 
-Describes relationships between bounded contexts.
+境界づけられたコンテキスト間の関係を記述する。
 
-### Relationship Patterns
+### 関係パターン
 
-#### Partnership
-Two contexts succeed or fail together. Teams coordinate closely.
+#### パートナーシップ
+2つのコンテキストが共に成功または失敗する。チームは密に連携。
 
-```mermaid
-flowchart LR
-    A["Context A"] <-->|"Partnership\nJoint planning\nShared success"| B["Context B"]
+#### 共有カーネル
+2つのコンテキストがドメインモデルのサブセットを共有。
 
-    style A fill:#3b82f6,stroke:#2563eb,color:white
-    style B fill:#3b82f6,stroke:#2563eb,color:white
-```
+**警告:** 共有カーネルは結合を生む。控えめに使用。
 
-#### Shared Kernel
-Two contexts share a subset of the domain model.
+#### カスタマー-サプライヤー
+上流コンテキストが下流の必要なものを提供。
 
-```mermaid
-flowchart LR
-    subgraph A["Context A"]
-        SK["Shared Kernel"]
-    end
-    subgraph B["Context B"]
-        B1[" "]
-    end
+#### コンフォーミスト
+下流が交渉力なしに上流のモデルに従う。
 
-    SK <-->|shared| B
+**例:** サードパーティAPI（Stripe、AWS）との統合。
 
-    style A fill:#3b82f6,stroke:#2563eb,color:white
-    style B fill:#10b981,stroke:#059669,color:white
-    style SK fill:#f59e0b,stroke:#d97706,color:white
-```
+#### 腐敗防止層（ACL）
+外部モデルから自分のモデルを保護する翻訳レイヤー。
 
-**Warning:** Shared kernels create coupling. Use sparingly.
-
-#### Customer-Supplier
-Upstream context provides what downstream needs.
-
-```mermaid
-flowchart LR
-    U["Upstream\n(Supplier)"] -->|"Provides API"| D["Downstream\n(Customer)"]
-
-    style U fill:#3b82f6,stroke:#2563eb,color:white
-    style D fill:#10b981,stroke:#059669,color:white
-```
-
-#### Conformist
-Downstream conforms to upstream's model with no negotiation power.
-
-```mermaid
-flowchart LR
-    U["Upstream\n(Dictator)"] -->|"Take it or leave it"| D["Downstream\n(Conformist)\nUses their model"]
-
-    style U fill:#ef4444,stroke:#dc2626,color:white
-    style D fill:#6b7280,stroke:#4b5563,color:white
-```
-
-**Example:** Integrating with a third-party API (Stripe, AWS).
-
-#### Anti-Corruption Layer (ACL)
-Translation layer protecting your model from external models.
-
-```mermaid
-flowchart LR
-    Ext["External\nContext"] --> ACL["ACL\nTranslator + Adapter"]
-    ACL --> Your["Your\nContext"]
-
-    ACL -.->|"Translates external\nmodel to your model"| Note[" "]
-
-    style Ext fill:#ef4444,stroke:#dc2626,color:white
-    style ACL fill:#f59e0b,stroke:#d97706,color:white
-    style Your fill:#10b981,stroke:#059669,color:white
-    style Note fill:none,stroke:none
-```
-
-**Use when:**
-- Integrating with legacy systems
-- Integrating with third-party APIs
-- External model is messy or poorly designed
+**使用場面:**
+- レガシーシステムとの統合
+- サードパーティAPIとの統合
+- 外部モデルが乱雑または設計が悪い場合
 
 ```typescript
-// Anti-Corruption Layer Example
+// 腐敗防止層の例
 // infrastructure/external/stripe/stripe_payment_acl.ts
 
 import Stripe from 'stripe';
@@ -362,47 +309,29 @@ export class StripePaymentACL {
 }
 ```
 
-#### Open Host Service / Published Language
-Expose a well-defined protocol for integration.
-
-```mermaid
-flowchart TB
-    subgraph OHS["Open Host Service"]
-        PL["Published Language\n(REST API, gRPC, Events Schema)"]
-        BC["Your Bounded Context"]
-    end
-
-    PL --> A["Consumer A"]
-    PL --> B["Consumer B"]
-    PL --> C["Consumer C"]
-
-    style OHS fill:#3b82f6,stroke:#2563eb,color:white
-    style PL fill:#10b981,stroke:#059669,color:white
-    style A fill:#6b7280,stroke:#4b5563,color:white
-    style B fill:#6b7280,stroke:#4b5563,color:white
-    style C fill:#6b7280,stroke:#4b5563,color:white
-```
+#### オープンホストサービス / 公開言語
+統合のための明確に定義されたプロトコルを公開。
 
 ---
 
-## Context Map Diagram
+## コンテキストマップ図
 
-Visual representation of all bounded contexts and their relationships:
+全ての境界づけられたコンテキストとその関係の視覚的表現:
 
 ```mermaid
 flowchart TB
-    Identity["Identity Context\n(Generic - Auth0)"]
-    Legacy["Legacy Catalog\n(Legacy)"]
-    Sales["Sales Context\n(Core)"]
-    Shipping["Shipping Context\n(Supporting)"]
-    Billing["Billing Context\n(Supporting)"]
-    Stripe["Stripe Gateway\n(Generic)"]
+    Identity["認証コンテキスト\n(ジェネリック - Auth0)"]
+    Legacy["レガシーカタログ\n(レガシー)"]
+    Sales["販売コンテキスト\n(コア)"]
+    Shipping["配送コンテキスト\n(サポーティング)"]
+    Billing["請求コンテキスト\n(サポーティング)"]
+    Stripe["Stripeゲートウェイ\n(ジェネリック)"]
 
-    Identity -->|Conformist| Sales
+    Identity -->|コンフォーミスト| Sales
     Legacy -->|ACL| Sales
-    Sales <-->|Customer-Supplier| Shipping
-    Sales -->|Open Host Service| Billing
-    Billing -->|Conformist| Stripe
+    Sales <-->|カスタマー-サプライヤー| Shipping
+    Sales -->|オープンホストサービス| Billing
+    Billing -->|コンフォーミスト| Stripe
 
     style Identity fill:#6b7280,stroke:#4b5563,color:white
     style Legacy fill:#9ca3af,stroke:#6b7280,color:white
@@ -414,9 +343,9 @@ flowchart TB
 
 ---
 
-## Integration Patterns
+## 統合パターン
 
-### Domain Events for Context Integration
+### コンテキスト統合のためのドメインイベント
 
 ```typescript
 interface OrderPlaced {
@@ -459,16 +388,16 @@ class BillingOrderPlacedHandler {
 }
 ```
 
-### Event Schema Registry
+### イベントスキーマレジストリ
 
-Define and version integration event schemas:
+統合イベントスキーマの定義とバージョニング:
 
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://api.company.com/events/sales/order-placed/v1.json",
   "title": "OrderPlaced",
-  "description": "Published when an order is successfully placed",
+  "description": "注文が正常に確定された時に発行",
   "type": "object",
   "required": ["eventType", "eventId", "orderId", "occurredAt"],
   "properties": {
@@ -484,12 +413,12 @@ Define and version integration event schemas:
 
 ---
 
-## Strategic Design Checklist
+## 戦略設計チェックリスト
 
-- [ ] Identify ubiquitous language terms with domain experts
-- [ ] Map subdomains (core, supporting, generic)
-- [ ] Define bounded context boundaries
-- [ ] Document context map with relationships
-- [ ] Design anti-corruption layers for external systems
-- [ ] Define integration event schemas
-- [ ] Ensure each context has its own data store
+- [ ] ドメインエキスパートとユビキタス言語の用語を特定
+- [ ] サブドメインをマッピング（コア、サポーティング、ジェネリック）
+- [ ] 境界づけられたコンテキストの境界を定義
+- [ ] 関係を含むコンテキストマップを文書化
+- [ ] 外部システム用の腐敗防止層を設計
+- [ ] 統合イベントスキーマを定義
+- [ ] 各コンテキストが独自のデータストアを持つことを確認

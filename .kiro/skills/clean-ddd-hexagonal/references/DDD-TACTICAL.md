@@ -1,26 +1,26 @@
-# DDD Tactical Patterns
+# DDD戦術パターン
 
-> Sources:
+> 出典:
 > - [Domain-Driven Design: The Blue Book](https://www.domainlanguage.com/ddd/blue-book/) — Eric Evans (2003)
 > - [Implementing Domain-Driven Design](https://openlibrary.org/works/OL17392277W) — Vaughn Vernon (2013)
 > - [Effective Aggregate Design](https://www.dddcommunity.org/library/vernon_2011/) — Vaughn Vernon
 > - [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html) — Martin Fowler (PoEAA)
 
-## Building Blocks Overview
+## ビルディングブロック概要
 
 ```mermaid
 flowchart TB
-    subgraph Aggregate["Aggregate"]
-        subgraph AggRoot["Aggregate Root (Entity)"]
-            E1["Entity"]
-            E2["Entity"]
-            VO1["Value Object"]
-            VO2["Value Object"]
-            DE["Domain Event"]
+    subgraph Aggregate["アグリゲート"]
+        subgraph AggRoot["アグリゲートルート（エンティティ）"]
+            E1["エンティティ"]
+            E2["エンティティ"]
+            VO1["値オブジェクト"]
+            VO2["値オブジェクト"]
+            DE["ドメインイベント"]
         end
     end
 
-    Aggregate -->|Repository| Persistence[("Persistence")]
+    Aggregate -->|リポジトリ| Persistence[("永続化")]
 
     style Aggregate fill:#3b82f6,stroke:#2563eb,color:white
     style AggRoot fill:#10b981,stroke:#059669,color:white
@@ -29,18 +29,18 @@ flowchart TB
 
 ---
 
-## Entity
+## エンティティ
 
-An object with **identity** that persists through time. Two entities are equal if they have the same identity, regardless of attribute values.
+時間を通じて持続する**アイデンティティ**を持つオブジェクト。属性値に関係なく、同じアイデンティティを持つ2つのエンティティは等しい。
 
-### Characteristics
+### 特徴
 
-- Has a unique identifier
-- Identity persists through lifecycle
-- Can change attributes but remains the same entity
-- Contains behavior (not just data)
+- 一意の識別子を持つ
+- ライフサイクルを通じてアイデンティティが持続
+- 属性は変更可能だが、同じエンティティのまま
+- 振る舞いを含む（データだけではない）
 
-### Pattern
+### パターン
 
 ```
 abstract class Entity<ID>:
@@ -71,29 +71,29 @@ class OrderItem extends Entity<OrderItemId>:
 
 ---
 
-## Value Object
+## 値オブジェクト
 
-An object defined by its **attributes**, not identity. Two value objects are equal if all their attributes are equal.
+アイデンティティではなく**属性**で定義されるオブジェクト。全属性が等しい2つの値オブジェクトは等しい。
 
-### Characteristics
+### 特徴
 
-- Immutable (no setters)
-- No identity
-- Equality by value (all attributes)
-- Self-validating
-- Side-effect-free methods
+- 不変（セッターなし）
+- アイデンティティなし
+- 値による等価性（全属性）
+- 自己検証
+- 副作用のないメソッド
 
-### Common Value Objects
+### 一般的な値オブジェクト
 
-| Value Object | Attributes | Validation |
-|--------------|-----------|------------|
+| 値オブジェクト | 属性 | バリデーション |
+|--------------|------|---------------|
 | Money | amount, currency | amount >= 0 |
-| Email | address | valid email format |
-| Address | street, city, zip, country | required fields |
+| Email | address | 有効なメール形式 |
+| Address | street, city, zip, country | 必須フィールド |
 | DateRange | start, end | start <= end |
 | Quantity | value | value > 0 |
 
-### Pattern
+### パターン
 
 ```
 abstract class ValueObject<Props>:
@@ -145,47 +145,47 @@ class OrderId extends ValueObject<{value}>:
 
 ---
 
-## Aggregate
+## アグリゲート
 
-A cluster of entities and value objects treated as a single unit for data changes. Has a **consistency boundary**.
+データ変更の単一ユニットとして扱われるエンティティと値オブジェクトのクラスタ。**整合性境界**を持つ。
 
-### Rules
+### ルール
 
-1. **One aggregate root** - Single entry point for all modifications
-2. **Reference by ID only** - Aggregates reference others by identity, never by direct object reference
-3. **Transaction boundary** - One aggregate per transaction (eventual consistency between aggregates)
-4. **Invariants within boundary** - Aggregate ensures its own consistency
-5. **Small aggregates** - Prefer smaller over larger
+1. **1つのアグリゲートルート** - 全変更の単一エントリポイント
+2. **IDのみで参照** - アグリゲートは他をアイデンティティで参照、直接オブジェクト参照は禁止
+3. **トランザクション境界** - トランザクションごとに1アグリゲート（アグリゲート間は結果整合性）
+4. **境界内の不変条件** - アグリゲートは自身の整合性を保証
+5. **小さなアグリゲート** - 大きいより小さいを優先
 
-### Aggregate Sizing Heuristics
+### アグリゲートサイジングのヒューリスティクス
 
-| Metric | Healthy | Warning | Action |
-|--------|---------|---------|--------|
-| Entities per aggregate | 1-5 | 6-10 | >10: Split |
-| Lines of code (root) | <500 | 500-1000 | >1000: Split |
-| Transaction lock time | <100ms | 100-500ms | >500ms: Split |
-| Concurrent modification conflicts | Rare | Occasional | Frequent: Split |
+| 指標 | 健全 | 警告 | アクション |
+|------|------|------|-----------|
+| アグリゲートあたりのエンティティ数 | 1-5 | 6-10 | >10: 分割 |
+| コード行数（ルート） | <500 | 500-1000 | >1000: 分割 |
+| トランザクションロック時間 | <100ms | 100-500ms | >500ms: 分割 |
+| 同時変更の競合 | まれ | 時々 | 頻繁: 分割 |
 
-**Questions to ask:**
-- Can parts be eventually consistent? → Separate aggregates
-- Do all parts change together? → Same aggregate
-- Are there independent lifecycles? → Separate aggregates
+**問うべき質問:**
+- 部分的に結果整合性で良いか？ → 別アグリゲート
+- 全部分が一緒に変更されるか？ → 同じアグリゲート
+- 独立したライフサイクルがあるか？ → 別アグリゲート
 
-### Design Guidelines
+### 設計ガイドライン
 
-**Good: Small Aggregates**
+**良い例: 小さなアグリゲート**
 
 ```mermaid
 flowchart LR
-    subgraph Order["Order Aggregate"]
+    subgraph Order["Orderアグリゲート"]
         O["Order"]
-        OI["OrderItems (embedded)"]
+        OI["OrderItems（埋め込み）"]
     end
-    subgraph Customer["Customer Aggregate"]
-        C["Customer (standalone)"]
+    subgraph Customer["Customerアグリゲート"]
+        C["Customer（単独）"]
     end
-    subgraph Product["Product Aggregate"]
-        P["Product (standalone)"]
+    subgraph Product["Productアグリゲート"]
+        P["Product（単独）"]
     end
 
     Order -.->|customerId| Customer
@@ -196,25 +196,25 @@ flowchart LR
     style Product fill:#3b82f6,stroke:#2563eb,color:white
 ```
 
-*Reference by ID only*
+*IDのみで参照*
 
-**Bad: God Aggregate**
+**悪い例: 巨大アグリゲート**
 
 ```mermaid
 flowchart TB
-    subgraph GodOrder["Order (God Aggregate)"]
+    subgraph GodOrder["Order（巨大アグリゲート）"]
         O2["Order"]
-        C2["Customer (embedded)"]
-        P2["Products (embedded)"]
-        SA["ShippingAddress (embedded)"]
+        C2["Customer（埋め込み）"]
+        P2["Products（埋め込み）"]
+        SA["ShippingAddress（埋め込み）"]
     end
 
     style GodOrder fill:#ef4444,stroke:#dc2626,color:white
 ```
 
-*Too large, too many reasons to change, contention issues*
+*大きすぎ、変更理由が多すぎ、競合問題*
 
-### Pattern
+### パターン
 
 ```
 abstract class AggregateRoot<ID> extends Entity<ID>:
@@ -298,18 +298,18 @@ class Order extends AggregateRoot<OrderId>:
 
 ---
 
-## Repository
+## リポジトリ
 
-Provides collection-like access to aggregates. Abstracts persistence.
+アグリゲートへのコレクション風アクセスを提供。永続化を抽象化。
 
-### Rules
+### ルール
 
-1. **One repository per aggregate** - Not per entity or table
-2. **Domain interface** - Interface in domain, implementation in infrastructure
-3. **Aggregate-focused** - Save/load entire aggregates
-4. **No query logic** - Complex queries belong in separate read models
+1. **アグリゲートごとに1リポジトリ** - エンティティやテーブルごとではない
+2. **ドメインインターフェース** - インターフェースはドメインに、実装はインフラに
+3. **アグリゲート中心** - アグリゲート全体を保存/読み込み
+4. **クエリロジックなし** - 複雑なクエリは別のリードモデルに
 
-### Pattern
+### パターン
 
 ```
 interface OrderRepository:
@@ -325,9 +325,9 @@ interface Repository<T extends AggregateRoot<ID>, ID>:
     delete(aggregate: T)
 ```
 
-### Common Mistakes
+### よくある間違い
 
-**Wrong: Repository per entity**
+**間違い: エンティティごとのリポジトリ**
 
 ```
 interface OrderItemRepository:
@@ -335,7 +335,7 @@ interface OrderItemRepository:
     save(item: OrderItem)
 ```
 
-**Wrong: Query methods in repository**
+**間違い: リポジトリ内のクエリメソッド**
 
 ```
 interface OrderRepository:
@@ -344,7 +344,7 @@ interface OrderRepository:
     countByCustomer(customerId)
 ```
 
-**Correct: Aggregate-focused + separate read model**
+**正解: アグリゲート中心 + 別リードモデル**
 
 ```
 interface OrderRepository:
@@ -359,18 +359,18 @@ interface OrderReadModel:
 
 ---
 
-## Domain Event
+## ドメインイベント
 
-Records something significant that happened in the domain.
+ドメインで起きた重要なことを記録する。
 
-### Characteristics
+### 特徴
 
-- Immutable
-- Past tense naming (`OrderPlaced`, not `PlaceOrder`)
-- Contains data needed by consumers
-- Timestamp when it occurred
+- 不変
+- 過去形の命名（`OrderPlaced`、`PlaceOrder` ではない）
+- コンシューマーが必要とするデータを含む
+- 発生時のタイムスタンプ
 
-### Pattern
+### パターン
 
 ```
 abstract class DomainEvent:
@@ -404,17 +404,17 @@ class OrderShipped extends DomainEvent:
 
 ---
 
-## Domain Service
+## ドメインサービス
 
-Stateless operations that don't naturally fit within an entity or value object.
+エンティティや値オブジェクトに自然に収まらないステートレスな操作。
 
-### When to Use
+### 使用場面
 
-- Operation involves multiple aggregates
-- Operation requires external information
-- Significant business logic that doesn't belong to one entity
+- 操作が複数のアグリゲートに関わる
+- 操作が外部情報を必要とする
+- 1つのエンティティに属さない重要なビジネスロジック
 
-### Pattern
+### パターン
 
 ```
 interface PricingService:
@@ -453,17 +453,17 @@ class ShippingCostCalculatorImpl implements ShippingCostCalculator:
 
 ---
 
-## Factory
+## ファクトリ
 
-Encapsulates complex aggregate/entity creation.
+複雑なアグリゲート/エンティティの生成をカプセル化。
 
-### When to Use
+### 使用場面
 
-- Creation logic is complex
-- Need to enforce invariants during creation
-- Need to create object graphs
+- 生成ロジックが複雑
+- 生成時に不変条件を強制する必要がある
+- オブジェクトグラフを生成する必要がある
 
-### Pattern
+### パターン
 
 ```
 interface OrderFactory:
@@ -492,9 +492,9 @@ class OrderFactoryImpl implements OrderFactory:
 
 ---
 
-## Specification Pattern
+## 仕様パターン
 
-Encapsulates business rules for querying or validation.
+クエリやバリデーションのビジネスルールをカプセル化。
 
 ```
 interface Specification<T>:

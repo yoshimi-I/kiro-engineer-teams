@@ -1,35 +1,35 @@
-# Layer Structure - Complete Reference
+# レイヤー構造 - 完全リファレンス
 
-> Sources:
+> 出典:
 > - [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin
 > - [Designing a DDD-oriented Microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice) — Microsoft
 > - [Clean Architecture: Standing on the Shoulders of Giants](https://herbertograca.com/2017/09/28/clean-architecture-standing-on-the-shoulders-of-giants/) — Herberto Graça
 
-## The Four Layers
+## 4つのレイヤー
 
-| Layer | Responsibility | Dependencies |
-|-------|---------------|--------------|
-| **Domain** | Business logic, entities, rules | None (pure) |
-| **Application** | Use cases, orchestration | Domain |
-| **Infrastructure** | External systems, frameworks | Application, Domain |
-| **Presentation** | API/UI entry points | Application |
+| レイヤー | 責務 | 依存先 |
+|---------|------|--------|
+| **Domain** | ビジネスロジック、エンティティ、ルール | なし（純粋） |
+| **Application** | ユースケース、オーケストレーション | Domain |
+| **Infrastructure** | 外部システム、フレームワーク | Application, Domain |
+| **Presentation** | API/UIエントリポイント | Application |
 
 ---
 
-## Domain Layer (Innermost)
+## Domainレイヤー（最内層）
 
-The **heart of the system**. Contains business logic and rules with **zero external dependencies**.
+システムの**心臓部**。ビジネスロジックとルールを含み、**外部依存ゼロ**。
 
-### Contents
+### 構成
 
 ```
 domain/
-├── order/                      # Aggregate folder
-│   ├── order.ts                # Aggregate root entity
-│   ├── order_item.ts           # Child entity
+├── order/                      # アグリゲートフォルダ
+│   ├── order.ts                # アグリゲートルートエンティティ
+│   ├── order_item.ts           # 子エンティティ
 │   ├── value_objects.ts        # Money, Address, OrderStatus
 │   ├── events.ts               # OrderPlaced, OrderShipped
-│   ├── repository.ts           # IOrderRepository interface
+│   ├── repository.ts           # IOrderRepository インターフェース
 │   ├── services.ts             # PricingService, DiscountService
 │   └── errors.ts               # InsufficientStockError
 ├── customer/
@@ -37,21 +37,21 @@ domain/
 ├── product/
 │   └── ...
 └── shared/
-    ├── entity.ts               # Base Entity class
-    ├── aggregate_root.ts       # Base AggregateRoot class
-    ├── value_object.ts         # Base ValueObject class
-    ├── domain_event.ts         # Base DomainEvent class
-    └── errors.ts               # DomainError base
+    ├── entity.ts               # 基底Entityクラス
+    ├── aggregate_root.ts       # 基底AggregateRootクラス
+    ├── value_object.ts         # 基底ValueObjectクラス
+    ├── domain_event.ts         # 基底DomainEventクラス
+    └── errors.ts               # DomainError基底
 ```
 
-### Rules
+### ルール
 
-1. **No framework imports** - No ORM decorators, no HTTP libraries
-2. **No infrastructure concerns** - No database, no message queues
-3. **Pure business logic** - Only language primitives and domain types
-4. **Rich behavior** - Methods that enforce business rules
+1. **フレームワークインポート禁止** - ORMデコレータ、HTTPライブラリなし
+2. **インフラ関心事禁止** - データベース、メッセージキューなし
+3. **純粋なビジネスロジック** - 言語プリミティブとドメイン型のみ
+4. **豊かな振る舞い** - ビジネスルールを強制するメソッド
 
-### Example: Domain Entity
+### 例: ドメインエンティティ
 
 ```typescript
 // domain/order/order.ts
@@ -112,11 +112,11 @@ export class Order extends AggregateRoot<OrderId> {
 
 ---
 
-## Application Layer
+## Applicationレイヤー
 
-Orchestrates use cases by coordinating domain objects. Contains **application-specific business rules**.
+ドメインオブジェクトを調整してユースケースをオーケストレーション。**アプリケーション固有のビジネスルール**を含む。
 
-### Contents
+### 構成
 
 ```
 application/
@@ -124,28 +124,28 @@ application/
 │   ├── place_order/
 │   │   ├── command.ts          # PlaceOrderCommand DTO
 │   │   ├── handler.ts          # PlaceOrderHandler
-│   │   └── port.ts             # IPlaceOrderUseCase interface
+│   │   └── port.ts             # IPlaceOrderUseCase インターフェース
 │   ├── ship_order/
 │   │   └── ...
 │   └── get_order/
 │       ├── query.ts            # GetOrderQuery DTO
 │       ├── handler.ts          # GetOrderHandler
-│       └── result.ts           # OrderDTO response
+│       └── result.ts           # OrderDTO レスポンス
 ├── shared/
-│   ├── unit_of_work.ts         # IUnitOfWork interface
-│   ├── event_publisher.ts      # IEventPublisher interface
-│   └── errors.ts               # ApplicationError base
-└── index.ts                    # Public API exports
+│   ├── unit_of_work.ts         # IUnitOfWork インターフェース
+│   ├── event_publisher.ts      # IEventPublisher インターフェース
+│   └── errors.ts               # ApplicationError基底
+└── index.ts                    # パブリックAPIエクスポート
 ```
 
-### Rules
+### ルール
 
-1. **Depends only on Domain** - No infrastructure imports
-2. **Defines ports** - Interfaces for repositories, external services
-3. **Orchestrates, doesn't implement** - Calls domain methods
-4. **Transaction boundary** - Manages unit of work
+1. **Domainにのみ依存** - インフラのインポート禁止
+2. **ポートを定義** - リポジトリ、外部サービスのインターフェース
+3. **オーケストレーションのみ、実装しない** - ドメインメソッドを呼び出す
+4. **トランザクション境界** - Unit of Workを管理
 
-### Example: Use Case Handler
+### 例: ユースケースハンドラー
 
 ```typescript
 // application/orders/place_order/handler.ts
@@ -197,7 +197,7 @@ export class PlaceOrderHandler implements IPlaceOrderUseCase {
 }
 ```
 
-### Command/Query DTOs
+### コマンド/クエリDTO
 
 ```typescript
 // application/orders/place_order/command.ts
@@ -233,11 +233,11 @@ export interface OrderDTO {
 
 ---
 
-## Infrastructure Layer
+## Infrastructureレイヤー
 
-Implements interfaces defined in Domain and Application layers. Contains **all external concerns**.
+DomainとApplicationレイヤーで定義されたインターフェースを実装。**全ての外部関心事**を含む。
 
-### Contents
+### 構成
 
 ```
 infrastructure/
@@ -248,15 +248,15 @@ infrastructure/
 │   │   ├── unit_of_work.ts          # PostgresUnitOfWork
 │   │   ├── migrations/
 │   │   └── mappers/
-│   │       └── order_mapper.ts      # Domain <-> DB mapping
+│   │       └── order_mapper.ts      # Domain <-> DBマッピング
 │   └── in_memory/
-│       ├── order_repository.ts      # InMemoryOrderRepository (tests)
+│       ├── order_repository.ts      # InMemoryOrderRepository（テスト用）
 │       └── unit_of_work.ts
 ├── messaging/
 │   ├── rabbitmq/
 │   │   └── event_publisher.ts       # RabbitMQEventPublisher
 │   └── in_memory/
-│       └── event_publisher.ts       # InMemoryEventPublisher (tests)
+│       └── event_publisher.ts       # InMemoryEventPublisher（テスト用）
 ├── external/
 │   ├── payment/
 │   │   └── stripe_gateway.ts        # StripePaymentGateway
@@ -265,26 +265,26 @@ infrastructure/
 ├── http/
 │   ├── rest/
 │   │   ├── controllers/
-│   │   │   └── order_controller.ts  # REST API adapter
+│   │   │   └── order_controller.ts  # REST APIアダプター
 │   │   ├── middleware/
 │   │   └── routes.ts
 │   └── graphql/
 │       └── resolvers/
 ├── grpc/
-│   └── order_service.ts             # gRPC adapter
+│   └── order_service.ts             # gRPCアダプター
 └── config/
-    ├── container.ts                 # DI container setup
-    └── env.ts                       # Environment config
+    ├── container.ts                 # DIコンテナセットアップ
+    └── env.ts                       # 環境設定
 ```
 
-### Rules
+### ルール
 
-1. **Implements ports** - Concrete classes for interfaces
-2. **Contains framework code** - ORM, HTTP frameworks, etc.
-3. **Maps between layers** - Domain ↔ Database/DTO mapping
-4. **Easily replaceable** - Can swap Postgres for MongoDB
+1. **ポートを実装** - インターフェースの具象クラス
+2. **フレームワークコードを含む** - ORM、HTTPフレームワーク等
+3. **レイヤー間のマッピング** - Domain ↔ Database/DTOマッピング
+4. **容易に交換可能** - PostgresをMongoDBに交換可能
 
-### Example: Repository Implementation
+### 例: リポジトリ実装
 
 ```
 class PostgresOrderRepository implements IOrderRepository:
@@ -311,11 +311,11 @@ class PostgresOrderRepository implements IOrderRepository:
 
 ---
 
-## Presentation Layer
+## Presentationレイヤー
 
-Entry points to the application. Adapts external requests to application commands/queries.
+アプリケーションへのエントリポイント。外部リクエストをアプリケーションのコマンド/クエリに変換。
 
-### Contents
+### 構成
 
 ```
 presentation/
@@ -339,7 +339,7 @@ presentation/
     └── ...
 ```
 
-### Example: REST Controller
+### 例: RESTコントローラー
 
 ```typescript
 // presentation/rest/controllers/order_controller.ts
@@ -391,37 +391,37 @@ export class OrderController {
 
 ---
 
-## Dependency Flow
+## 依存フロー
 
 ```mermaid
 flowchart TB
     subgraph Presentation["Presentation"]
-        REST["REST Controller"]
+        REST["RESTコントローラー"]
     end
 
     subgraph Application["Application"]
         Handler["PlaceOrderHandler"]
-        Port1["IPlaceOrderUseCase (port)"]
+        Port1["IPlaceOrderUseCase (ポート)"]
         Port2["IOrderRepository"]
-        Handler -.->|implements| Port1
-        Handler -->|uses| Port2
+        Handler -.->|実装| Port1
+        Handler -->|使用| Port2
     end
 
     subgraph Domain["Domain"]
-        Aggregate["Order (Aggregate Root)"]
-        RepoInterface["IOrderRepository (interface)"]
+        Aggregate["Order (アグリゲートルート)"]
+        RepoInterface["IOrderRepository (インターフェース)"]
     end
 
     subgraph Infrastructure["Infrastructure"]
         PgRepo["PostgresOrderRepository"]
         RabbitMQ["RabbitMQEventPublisher"]
-        PgRepo -.->|implements| RepoInterface
-        RabbitMQ -.->|implements| EventPub["IEventPublisher"]
+        PgRepo -.->|実装| RepoInterface
+        RabbitMQ -.->|実装| EventPub["IEventPublisher"]
     end
 
-    REST -->|calls| Handler
-    Application -->|defines interfaces| Domain
-    Infrastructure -->|implements| Domain
+    REST -->|呼び出し| Handler
+    Application -->|インターフェース定義| Domain
+    Infrastructure -->|実装| Domain
 
     style Presentation fill:#f59e0b,stroke:#d97706,color:white
     style Application fill:#3b82f6,stroke:#2563eb,color:white
@@ -431,9 +431,9 @@ flowchart TB
 
 ---
 
-## Composition Root
+## コンポジションルート
 
-All dependencies are wired together at the application entry point.
+全ての依存関係はアプリケーションのエントリポイントで結合される。
 
 ```typescript
 import { Pool } from 'pg';
@@ -468,9 +468,9 @@ export function configureContainer(): Container {
 
 ---
 
-## Language-Agnostic Structure
+## 言語非依存の構造
 
-The same layered structure applies to any language:
+同じレイヤー構造はどの言語にも適用可能:
 
 ### Go
 ```
@@ -499,4 +499,4 @@ src/
 └── presentation/
 ```
 
-The key is **dependency direction**: outer layers import inner layers, never the reverse.
+鍵は**依存の方向**: 外側のレイヤーが内側をインポートし、逆は絶対にない。
