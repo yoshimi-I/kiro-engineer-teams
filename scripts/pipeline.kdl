@@ -25,8 +25,8 @@ layout {
                 pane command="bash" name="E2E-Hunt" {
                     args "-c" "./scripts/agent.sh e2e-bug-hunt"
                 }
-                pane command="bash" name="Dependabot" {
-                    args "-c" "./scripts/agent.sh auto-dependabot"
+                pane command="bash" name="Improve" {
+                    args "-c" "AGENT_INTERVAL=600 ./scripts/agent.sh improve"
                 }
             }
         }

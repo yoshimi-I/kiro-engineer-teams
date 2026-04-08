@@ -59,4 +59,4 @@ gh run watch --exit-status
 - 機能変更・リファクタリングは行わない
 - 3回修正しても通らない場合は人間にエスカレーション
 - 他のエージェントが着手中のPRは触らない（task.md確認）
-- Dependabot PRのCI失敗は `/auto-dependabot` に任せる
+- Dependabot PRのCI失敗は `/review` のDependabot処理に任せる

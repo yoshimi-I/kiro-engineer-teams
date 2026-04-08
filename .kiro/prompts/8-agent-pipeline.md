@@ -13,7 +13,7 @@
 [Agent 5] /fix-ci ─────────── CI失敗→ログ解析→修正→再push
 [Agent 6] /watch-main ─────── mainマージ検出→E2E検証→バグissue
 [Agent 7] /e2e-bug-hunt ───── Playwright巡回→バグissue
-[Agent 8] /auto-dependabot ── 依存更新PR→テスト→マージ/close
+[Agent 8] /improve ─────────── コード分析→改善issue自動生成
 
 共有状態: issue/task.md
 ```
@@ -51,7 +51,7 @@ Agent 1,2: /implement ──→ PR作成
                                         │
                    Agent 7: /e2e-bug-hunt（Playwright巡回）
 
-Agent 8: /auto-dependabot（依存更新は別レーン）
+Agent 8: /improve（10分間隔で改善issue自動生成）
 ```
 
 ## 起動方法
@@ -77,8 +77,8 @@ kiro-cli chat → /watch-main
 # Terminal 7: E2Eバグハントエージェント
 kiro-cli chat → /e2e-bug-hunt
 
-# Terminal 8: Dependabot自動処理エージェント
-kiro-cli chat → /auto-dependabot
+# Terminal 8: 改善issue自動生成エージェント
+kiro-cli chat → /improve
 ```
 
 ## 各エージェントの役割
@@ -92,7 +92,7 @@ kiro-cli chat → /auto-dependabot
 | 5 | `/fix-ci` | CI失敗PRを検出→修正→再push | 2分 |
 | 6 | `/watch-main` | mainマージ検出→テスト+E2E検証→バグissue | 2分 |
 | 7 | `/e2e-bug-hunt` | Playwright全ページ巡回→バグissue | サイクル完了後 |
-| 8 | `/auto-dependabot` | Dependabot PR→CI確認→マージ/close | 5分 |
+| 8 | `/improve` | コード分析→改善issue自動生成 | 10分 |
 
 ## 競合回避
 
@@ -109,5 +109,5 @@ kiro-cli chat → /auto-dependabot
 |------------|-------------------|------|
 | `/fix-review-issues` | 3回修正しても🔴 | PRにコメント |
 | `/fix-ci` | 3回修正してもCI失敗 | PRにコメント |
-| `/auto-dependabot` | major更新 | PRにコメント |
+| `/improve` | 改善ポイントが見つからない | スキップして次サイクルへ |
 | `/e2e-bug-hunt` | アプリ起動不能 | 報告して停止 |

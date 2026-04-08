@@ -166,3 +166,22 @@ steering ファイル（`.kiro/steering/`）を読み、プロジェクト固有
 - 呼び出し元を追跡せずに「影響なし」と判断 → **禁止**
 - 検証実施記録なしで APPROVE → **禁止**
 - 「良い点」から始めて甘い空気を作る → **禁止**（指摘事項から始める）
+
+## Dependabot PR処理
+
+通常PRのレビュー後、Dependabot PRも処理する。
+
+### 検出
+```bash
+gh pr list --author "app/dependabot" --json number,title,headRefName,statusCheckRollup
+```
+対象がなければスキップ。
+
+### 判定
+
+| CI状態 | semver | アクション |
+|--------|--------|-----------|
+| 全通過 | patch/minor | `gh pr merge <number> --squash --delete-branch` |
+| 全通過 | major | PRにコメントして人間にエスカレーション |
+| 失敗 | any | `gh pr close <number> --comment "CI失敗: <理由>"` |
+| 未完了 | any | スキップ（次サイクルで再確認） |

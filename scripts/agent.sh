@@ -61,10 +61,10 @@ wait_for_work() {
         sleep 30
       done
       ;;
-    auto-dependabot)
-      echo "⏳ Waiting for Dependabot PRs..."
+    improve)
+      echo "⏳ Waiting for first merge to main..."
       while true; do
-        count=$(gh pr list --author "app/dependabot" --json number --jq 'length' 2>/dev/null || echo "0")
+        count=$(gh pr list --state merged --json number --jq 'length' --limit 1 2>/dev/null || echo "0")
         [[ "$count" -gt 0 ]] && return 0
         sleep 60
       done

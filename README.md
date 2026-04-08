@@ -63,7 +63,7 @@ just start
     ├── Fix-CI → fix CI failures → re-push
     ├── Watch-Main → E2E verification after merge
     ├── E2E-Hunt → Playwright patrol → bug issues
-    └── Dependabot → dependency update PRs
+    └── Improve → auto-generate improvement issues
 ```
 
 Phase 1 requires your input. Phase 2 is fully automated — agents wait for work and start when issues/PRs appear.
@@ -91,7 +91,7 @@ Phase 1 requires your input. Phase 2 is fully automated — agents wait for work
 </tr>
 <tr>
 <td align="center">🔧<br><b>Fix-Review</b><br><sub>fix comments → push</sub></td>
-<td align="center">📦<br><b>Dependabot</b><br><sub>dep updates</sub></td>
+<td align="center">💡<br><b>Improve</b><br><sub>improvement issues</sub></td>
 </tr>
 </table>
 
@@ -129,7 +129,7 @@ Agent 1,2: /implement ──→ PR
                                 ▲
                  Agent 7: /e2e-bug-hunt (Playwright patrol)
 
-Agent 8: /auto-dependabot (dependency updates, separate lane)
+Agent 8: /improve (auto-generate improvement issues, every 10 min)
 ```
 
 > All agents share `issue/task.md` for coordination to avoid conflicts.
@@ -187,7 +187,7 @@ The steering file (`.kiro/steering/development-rules.md`) enforces these rules o
 │   ├── fix-ci.md                  #   Fix CI failures
 │   ├── watch-main.md              #   Monitor main → E2E
 │   ├── e2e-bug-hunt.md            #   Playwright patrol
-│   ├── auto-dependabot.md         #   Dependency PR handling
+│   ├── improve.md                 #   Auto-generate improvement issues
 │   ├── 8-agent-pipeline.md        #   Pipeline guide
 │   └── ...                        #   brainstorming, pr, etc.
 └── agents/default.json            # Agent config
@@ -216,7 +216,7 @@ scripts/
 rm -rf .kiro/skills/clean-ddd-hexagonal
 
 # Remove unused prompts
-rm .kiro/prompts/auto-dependabot.md
+rm .kiro/prompts/improve.md
 
 # Add your own
 mkdir .kiro/skills/my-guide       # + SKILL.md with frontmatter
