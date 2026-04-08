@@ -1,6 +1,6 @@
 # Issue生成（常に実行 — パイプラインへの引き渡し）
 
-INCEPTIONと7エージェントパイプラインの橋渡し。
+INCEPTIONと8エージェントパイプラインの橋渡し。
 設計ドキュメントをエージェントが拾えるGitHub issueに変換する。
 
 ## ステップ
@@ -60,4 +60,4 @@ gh issue create \
 ```
 
 ### 7. ユーザーに指示
-`./scripts/start-pipeline.sh` を実行して7エージェントパイプラインを起動するよう伝える。
+`./scripts/start-pipeline.sh` を実行して8エージェントパイプラインを起動するよう伝える。

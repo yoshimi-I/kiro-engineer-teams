@@ -1,7 +1,7 @@
 
-# 7-Agent 並列自動化パイプライン
+# 8-Agent 並列自動化パイプライン
 
-7つのKiro CLIセッションを並列で起動し、issue→実装→レビュー→マージ→検証の全サイクルを自動化する。
+8つのKiro CLIセッションを並列で起動し、issue→実装→レビュー→マージ→検証の全サイクルを自動化する。
 
 ## アーキテクチャ
 
@@ -12,9 +12,9 @@
 [Agent 4] /review ─────────── 同上（並列で別PR）
 [Agent 5] /fix-review-issues── 🔴指摘→修正→再push
 [Agent 6] /watch-main ─────── mainマージ検出→E2E検証→バグissue
-[Agent 7] /improve ─────────── コード分析→改善issue自動生成
+[Agent 7] /e2e-bug-hunt ───── Playwright巡回→バグissue
+[Agent 8] /improve ─────────── コード分析→改善issue自動生成
 
-※ E2E-Hunt は watch-main に統合
 ※ CI失敗はpre-commitで防止、発生時はImpl自身が修正
 共有状態: issue/task.md
 ```
@@ -45,13 +45,16 @@ Agent 1,2: /implement ──→ PR作成（pre-commitでlint/test通過済み）
                    Agent 6: /watch-main（E2E検証）
                         │
                    バグ発見? → Yes → issue作成 → Agent 1,2 が拾う
+                                        ▲
+                                        │
+                   Agent 7: /e2e-bug-hunt（Playwright巡回）
 
-Agent 7: /improve（10分間隔で改善issue自動生成）
+Agent 8: /improve（10分間隔で改善issue自動生成）
 ```
 
 ## 起動方法
 
-7つのターミナルでそれぞれ起動:
+8つのターミナルでそれぞれ起動:
 
 ```bash
 # Terminal 1-2: 実装エージェント
@@ -66,7 +69,10 @@ kiro-cli chat → /fix-review-issues
 # Terminal 6: mainブランチ監視エージェント
 kiro-cli chat → /watch-main
 
-# Terminal 7: 改善issue自動生成エージェント
+# Terminal 7: E2Eバグハントエージェント
+kiro-cli chat → /e2e-bug-hunt
+
+# Terminal 8: 改善issue自動生成エージェント
 kiro-cli chat → /improve
 ```
 
@@ -80,7 +86,8 @@ kiro-cli chat → /improve
 | 4 | `/review` | 同上（並列で別PR） | 即座に次へ |
 | 5 | `/fix-review-issues` | 🔴指摘のあるPRを修正→再push | 2分 |
 | 6 | `/watch-main` | mainマージ検出→テスト+E2E検証→バグissue | 2分 |
-| 7 | `/improve` | コード分析→改善issue自動生成 | 10分 |
+| 7 | `/e2e-bug-hunt` | Playwright全ページ巡回→バグissue | サイクル完了後 |
+| 8 | `/improve` | コード分析→改善issue自動生成 | 10分 |
 
 ## CI失敗の対応方針
 
@@ -98,6 +105,7 @@ Fix-CIエージェントは廃止。代わりに:
 - `/review` はレビューのみ行い、コードを変更しない（競合しない）
 - `/fix-review-issues` は task.md で他エージェントが触っていないPRのみ修正
 - `/watch-main` はissue作成のみ（競合しない）
+- `/e2e-bug-hunt` はissue作成のみ（競合しない）
 - `/improve` はissue作成のみ（競合しない）
 
 ## エスカレーション
@@ -105,5 +113,6 @@ Fix-CIエージェントは廃止。代わりに:
 | エージェント | エスカレーション条件 | 方法 |
 |------------|-------------------|------|
 | `/fix-review-issues` | 3回修正しても🔴 | PRにコメント |
+| `/e2e-bug-hunt` | アプリ起動不能 | 報告して停止 |
 | `/improve` | 改善ポイントが見つからない | スキップして次サイクルへ |
 | `/watch-main` | アプリ起動不能 | 報告して停止 |

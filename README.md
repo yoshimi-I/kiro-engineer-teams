@@ -2,7 +2,7 @@
 
 # 🏭 kiro-engineer-teams
 
-**7-agent parallel development pipeline**
+**8-agent parallel development pipeline**
 **powered by [Kiro CLI](https://kiro.dev/docs/cli/) × [zellij](https://zellij.dev/)**
 
 issue → implementation → review → merge → E2E verification — fully automated.
@@ -35,7 +35,7 @@ git clone https://github.com/yoshimi-I/kiro-engineer-teams.git .
 just init
 ```
 
-**4. Start (INCEPTION → 7-agent pipeline)**
+**4. Start (INCEPTION → 8-agent pipeline)**
 ```bash
 just start
 ```
@@ -56,11 +56,12 @@ just start
 │   ├── 4. Architecture Design — tech stack + structure (if needed)
 │   └── 5. Issue Generation — auto-create GitHub issues
 │
-└── Phase 2: 7-Agent Pipeline (fully autonomous)
+└── Phase 2: 8-Agent Pipeline (fully autonomous)
     ├── Impl-1, Impl-2 → pick issues → implement → PR
     ├── Review-1, Review-2 → strict 7-point review → merge
     ├── Fix-Review → fix review comments → re-push
     ├── Watch-Main → E2E verification after merge
+    ├── E2E-Hunt → Playwright patrol → bug issues
     └── Improve → auto-generate improvement issues
 ```
 
@@ -88,7 +89,8 @@ Phase 1 requires your input. Phase 2 is fully automated — agents wait for work
 <td align="center">👀<br><b>Watch-Main</b><br><sub>main → E2E test</sub></td>
 </tr>
 <tr>
-<td align="center" colspan="2">💡<br><b>Improve</b><br><sub>auto-generate improvement issues</sub></td>
+<td align="center">🧪<br><b>E2E-Hunt</b><br><sub>Playwright patrol</sub></td>
+<td align="center" colspan="1">💡<br><b>Improve</b><br><sub>auto-generate improvement issues</sub></td>
 </tr>
 </table>
 
@@ -120,8 +122,10 @@ Agent 1,2: /implement ──→ PR (pre-commit: lint/test passed)
                  Agent 6: /watch-main (E2E verification)
                       │
                  Bug found? → issue → Agent 1,2 picks it up
+                                ▲
+                 Agent 7: /e2e-bug-hunt (Playwright patrol)
 
-Agent 7: /improve (auto-generate improvement issues, every 10 min)
+Agent 8: /improve (auto-generate improvement issues, every 10 min)
 ```
 
 > All agents share `issue/task.md` for coordination to avoid conflicts.
