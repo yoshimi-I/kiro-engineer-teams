@@ -17,6 +17,8 @@ DEFAULT_NAME="$(basename "$PWD")"
 if [[ -n "${1:-}" ]]; then
   REPO="$1"
 else
+  echo -e "  ${DIM}Enterでディレクトリ名を使用、または別名を入力${RESET}"
+  echo ""
   read -p "  リポジトリ名 ($DEFAULT_NAME): " REPO
   REPO="${REPO:-$DEFAULT_NAME}"
   echo ""
