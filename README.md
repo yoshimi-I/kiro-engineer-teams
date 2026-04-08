@@ -19,21 +19,46 @@ issue → implementation → review → merge → E2E verification — fully aut
 ## Quick Start
 
 ```bash
-# Clone the template
+# 1. Clone the template
 git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
 cd my-app
 
-# Point to your own repo
+# 2. Install prerequisites (one command)
+./scripts/setup.sh
+
+# 3. Point to your own repo
 git remote set-url origin <your-repo-url>
 git push -u origin main
 
-# Start Kiro CLI — brainstorming begins automatically
-kiro-cli chat
+# 4. Start the full pipeline (INCEPTION → 8-agent automation)
+./scripts/start-pipeline.sh
 ```
 
-> 💡 Kiro reads `AGENTS.md` on startup and begins brainstorming.
-> Tell it what you want to build. After design is finalized, issues are created automatically.
-> Exit Kiro, then run the pipeline.
+---
+
+## 🔄 Full Flow
+
+```
+./scripts/start-pipeline.sh
+│
+├── Phase 1: INCEPTION (you + AI)
+│   ├── 1. Workspace Detection — scan existing code
+│   ├── 2. Requirements Analysis — clarify what to build
+│   ├── 3. User Stories — define user behavior (if needed)
+│   ├── 4. Architecture Design — tech stack + structure (if needed)
+│   └── 5. Issue Generation — auto-create GitHub issues
+│
+└── Phase 2: 8-Agent Pipeline (fully autonomous)
+    ├── Impl-1, Impl-2 → pick issues → implement → PR
+    ├── Review → strict 7-point review → merge
+    ├── Fix-Review → fix review comments → re-push
+    ├── Fix-CI → fix CI failures → re-push
+    ├── Watch-Main → E2E verification after merge
+    ├── E2E-Hunt → Playwright patrol → bug issues
+    └── Dependabot → dependency update PRs
+```
+
+Phase 1 requires your input. Phase 2 is fully automated — agents wait for work and start when issues/PRs appear.
 
 ---
 
