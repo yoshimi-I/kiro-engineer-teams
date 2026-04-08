@@ -1,77 +1,87 @@
-# kiro-engineer-teams
+<div align="center">
 
-> 8-agent parallel development pipeline powered by Kiro CLI × zellij
->
-> Kiro CLI × zellij で8エージェント並列開発パイプライン
+# 🏭 kiro-engineer-teams
 
-Automate the full cycle: issue → implementation → review → merge → E2E verification.
+**8-agent parallel development pipeline**
+**powered by [Kiro CLI](https://kiro.dev/docs/cli/) × [zellij](https://zellij.dev/)**
 
-issue → 実装 → レビュー → マージ → E2E検証を全自動化。
+issue → implementation → review → merge → E2E verification — fully automated.
 
-## Quick Start / クイックスタート
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Kiro CLI](https://img.shields.io/badge/Kiro_CLI-compatible-purple.svg)](https://kiro.dev/docs/cli/)
+
+[English](#quick-start) · [日本語](#クイックスタート)
+
+</div>
+
+---
+
+## Quick Start
 
 ```bash
-# Clone the template / テンプレートをクローン
+# Clone the template
 git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
 cd my-app
 
-# Point to your own repo / 自分のリポジトリに切り替え
+# Point to your own repo
 git remote set-url origin <your-repo-url>
 git push -u origin main
 
-# Start Kiro CLI (brainstorming begins automatically)
-# Kiro CLIを起動（ブレストが自動で始まる）
+# Start Kiro CLI — brainstorming begins automatically
 kiro-cli chat
 ```
 
-Kiro reads `AGENTS.md` on startup and begins brainstorming. Tell it what you want to build.
+> 💡 Kiro reads `AGENTS.md` on startup and begins brainstorming.
+> Tell it what you want to build. After design is finalized, issues are created automatically.
+> Exit Kiro, then run the pipeline.
 
-Kiro起動時に `AGENTS.md` を読み、ブレストが始まります。作りたいものを伝えてください。
+## クイックスタート
 
-After design is finalized:
-設計が固まると：
+```bash
+git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
+cd my-app
+git remote set-url origin <your-repo-url>
+git push -u origin main
+kiro-cli chat   # ブレストが自動で始まる
+```
 
-- Tech stack and conventions are written to `.kiro/steering/development-rules.md`
-  技術スタック・規約が steering に書き込まれる
-- GitHub issues are created automatically
-  GitHub issueが自動作成される
-- Run the pipeline after exiting Kiro
-  Kiroを抜けた後パイプラインを起動
+> 💡 Kiro起動時にブレストが始まります。作りたいものを伝え、設計→issue作成まで完了したら
+> `/quit` で抜けてパイプラインを起動してください。
 
-## Launch Pipeline / パイプライン起動
+---
+
+## 🚀 Launch Pipeline / パイプライン起動
 
 ```bash
 ./scripts/start-pipeline.sh
 ```
 
-zellij opens with 8 panes. Each agent waits for work and starts automatically when issues/PRs appear.
+<table>
+<tr>
+<td align="center">🔨<br><b>Impl-1</b><br><sub>issue → impl → PR</sub></td>
+<td align="center">🚦<br><b>Fix-CI</b><br><sub>CI failure → fix</sub></td>
+</tr>
+<tr>
+<td align="center">🔨<br><b>Impl-2</b><br><sub>issue → impl → PR</sub></td>
+<td align="center">👀<br><b>Watch-Main</b><br><sub>main → E2E test</sub></td>
+</tr>
+<tr>
+<td align="center">🔍<br><b>Review</b><br><sub>PR → review → merge</sub></td>
+<td align="center">🧪<br><b>E2E-Hunt</b><br><sub>Playwright patrol</sub></td>
+</tr>
+<tr>
+<td align="center">🔧<br><b>Fix-Review</b><br><sub>fix comments → push</sub></td>
+<td align="center">📦<br><b>Dependabot</b><br><sub>dep updates</sub></td>
+</tr>
+</table>
 
-zellijが8分割で起動。各エージェントはissue/PRの発生を待機し、検出次第動き始めます。
+Each agent waits for work and starts automatically when issues/PRs appear.
 
-```
-┌──────────────┬──────────────┐
-│ 🔨 Impl-1    │ 🚦 Fix-CI    │
-│ issue→impl→PR│ CI failure fix│
-├──────────────┼──────────────┤
-│ 🔨 Impl-2    │ 👀 Watch-Main│
-│ issue→impl→PR│ main→E2E test │
-├──────────────┼──────────────┤
-│ 🔍 Review    │ 🧪 E2E-Hunt  │
-│ PR→review    │ Playwright    │
-├──────────────┼──────────────┤
-│ 🔧 Fix-Review│ 📦 Dependabot│
-│ fix comments │ dep updates   │
-└──────────────┴──────────────┘
-```
+各エージェントはissue/PRの発生を待機し、検出次第動き始めます。
 
-## Prerequisites / 前提条件
+---
 
-- [Kiro CLI](https://kiro.dev/docs/cli/)
-- [zellij](https://zellij.dev/)
-- [GitHub CLI](https://cli.github.com/) — authenticated (`gh auth login`)
-- git remote configured / git remoteが設定済み
-
-## Architecture / アーキテクチャ
+## 🏗️ Architecture / アーキテクチャ
 
 ```
 GitHub Issue
@@ -99,54 +109,69 @@ Agent 1,2: /implement ──→ PR
                       │
                  Bug found? → issue → Agent 1,2 picks it up
                                 ▲
-                                │
                  Agent 7: /e2e-bug-hunt (Playwright patrol)
 
 Agent 8: /auto-dependabot (dependency updates, separate lane)
 ```
 
-All agents share `issue/task.md` for coordination to avoid conflicts.
+> All agents share `issue/task.md` for coordination.
+> 全エージェントは `issue/task.md` を共有して競合を回避します。
 
-全エージェントは `issue/task.md` を共有して競合を回避します。
+---
 
-## Directory Structure / ディレクトリ構成
+## 📋 Prerequisites / 前提条件
+
+| Tool | Required |
+|------|----------|
+| [Kiro CLI](https://kiro.dev/docs/cli/) | ✅ |
+| [zellij](https://zellij.dev/) | ✅ |
+| [GitHub CLI](https://cli.github.com/) | ✅ authenticated (`gh auth login`) |
+| git remote | ✅ configured |
+
+---
+
+## 📁 Directory Structure / ディレクトリ構成
 
 ```
 .kiro/
-├── steering/development-rules.md  # Rules (loaded every turn / 毎ターン自動適用)
-├── skills/                        # Reference (on-demand / 必要時に参照)
-│   ├── clean-ddd-hexagonal/       # DDD + Clean Architecture
-│   ├── frontend-design/           # UI design guide
-│   ├── baseline-ui/               # Tailwind constraints
-│   ├── fixing-accessibility/      # Accessibility checklist
-│   ├── fixing-metadata/           # SEO/OGP checklist
-│   └── fixing-motion-performance/ # Animation performance
-├── prompts/                       # Workflows (invoke with /name)
-│   ├── implement.md               # issue→impl→PR loop
-│   ├── review.md                  # 7-point strict review
-│   ├── fix-review-issues.md       # Fix review comments
-│   ├── fix-ci.md                  # Fix CI failures
-│   ├── watch-main.md              # Monitor main→E2E
-│   ├── e2e-bug-hunt.md            # Playwright patrol
-│   ├── auto-dependabot.md         # Dependency PR handling
-│   ├── 8-agent-pipeline.md        # Pipeline guide
-│   └── ...                        # brainstorming, pr, create-issue, etc.
-└── agents/default.json            # Agent config
+├── 📜 steering/development-rules.md  # Rules (every turn / 毎ターン適用)
+├── 📚 skills/                        # Reference (on-demand / 必要時参照)
+│   ├── clean-ddd-hexagonal/          #   DDD + Clean Architecture
+│   ├── frontend-design/              #   UI design guide
+│   ├── baseline-ui/                  #   Tailwind constraints
+│   ├── fixing-accessibility/         #   Accessibility
+│   ├── fixing-metadata/              #   SEO/OGP
+│   └── fixing-motion-performance/    #   Animation performance
+├── ⚡ prompts/                       # Workflows (invoke with /name)
+│   ├── implement.md                  #   issue → impl → PR loop
+│   ├── review.md                     #   7-point strict review
+│   ├── fix-review-issues.md          #   Fix review comments
+│   ├── fix-ci.md                     #   Fix CI failures
+│   ├── watch-main.md                 #   Monitor main → E2E
+│   ├── e2e-bug-hunt.md               #   Playwright patrol
+│   ├── auto-dependabot.md            #   Dependency PR handling
+│   ├── 8-agent-pipeline.md           #   Pipeline guide
+│   └── ...                           #   brainstorming, pr, etc.
+└── 🤖 agents/default.json            # Agent config
 scripts/
-├── start-pipeline.sh              # Launcher (brainstorm→zellij)
-├── agent.sh                       # Agent wrapper (loop runner)
-└── pipeline.kdl                   # zellij layout
+├── start-pipeline.sh                 # Launcher
+├── agent.sh                          # Agent loop wrapper
+└── pipeline.kdl                      # zellij layout
 ```
 
-## Steering / Skills / Prompts
+---
 
-| | Steering | Skills | Prompts |
-|---|---------|--------|---------|
-| Loading | Full text every turn | Metadata only (full on demand) | Full text on `/name` invoke |
-| Certainty | 100% | Agent decides | 100% (when invoked) |
-| Use for | Rules, conventions | Reference knowledge | Task workflows |
+## 🔄 Steering / Skills / Prompts
 
-## Customization / カスタマイズ
+| | 📜 Steering | 📚 Skills | ⚡ Prompts |
+|---|:---:|:---:|:---:|
+| **Loading** | Full text every turn | Metadata only → full on demand | Full text on `/name` |
+| **Certainty** | 100% | Agent decides | 100% |
+| **Use for** | Rules, conventions | Reference docs | Task workflows |
+
+---
+
+## 🔧 Customization / カスタマイズ
 
 ```bash
 # Remove unused skills / 不要なスキルを削除
@@ -155,21 +180,23 @@ rm -rf .kiro/skills/clean-ddd-hexagonal
 # Remove unused prompts / 不要なプロンプトを削除
 rm .kiro/prompts/auto-dependabot.md
 
-# Add a skill / スキルを追加
-mkdir .kiro/skills/my-guide
-# Create SKILL.md with name + description frontmatter
-
-# Add a prompt / プロンプトを追加
-# Create .kiro/prompts/my-workflow.md
+# Add your own / 追加
+mkdir .kiro/skills/my-guide       # + SKILL.md with frontmatter
+touch .kiro/prompts/my-workflow.md
 ```
 
-## For GitLab / GitLabの場合
-
+**For GitLab / GitLabの場合:**
 ```bash
-just to-gitlab   # gh CLI → glab CLI
+just to-gitlab   # gh → glab
 just to-github   # revert
 ```
 
+---
+
+<div align="center">
+
 ## License / ライセンス
 
-[MIT](LICENSE)
+[MIT](LICENSE) © [yoshimi-I](https://github.com/yoshimi-I)
+
+</div>
