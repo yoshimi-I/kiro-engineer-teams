@@ -17,7 +17,8 @@ DEFAULT_NAME="$(basename "$PWD")"
 if [[ -n "${1:-}" ]]; then
   REPO="$1"
 else
-  read -p "  リポジトリ名: " -e -i "$DEFAULT_NAME" REPO
+  read -p "  リポジトリ名 ($DEFAULT_NAME): " REPO
+  REPO="${REPO:-$DEFAULT_NAME}"
   echo ""
 fi
 
