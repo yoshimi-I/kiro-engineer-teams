@@ -11,6 +11,10 @@ Tell me what you want to build. The INCEPTION workflow starts automatically:
 4. Architecture design → choose tech stack and structure (if needed)
 5. Issue generation → create GitHub issues for the pipeline
 
+## Language
+
+Always respond in Japanese.
+
 ## Rules
 
 All rules are in `.kiro/steering/development-rules.md`. Key points:

@@ -3,6 +3,10 @@ name: development-rules
 description: Core rules applied to all tasks
 ---
 
+## Language
+
+Always respond to the user in Japanese. Code, commit messages, PR titles/body, and issue comments remain in English.
+
 ## Initial Setup
 
 If the "Project-specific settings" section below is empty (comments only):
