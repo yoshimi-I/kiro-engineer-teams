@@ -1,7 +1,7 @@
 layout {
     tab name="Pipeline" {
-        pane split_direction="vertical" {
-            pane split_direction="horizontal" {
+        pane split_direction="horizontal" {
+            pane split_direction="vertical" {
                 pane command="bash" name="Impl-1" {
                     args "-c" "./scripts/agent.sh implement"
                 }
@@ -15,7 +15,7 @@ layout {
                     args "-c" "./scripts/agent.sh fix-review-issues"
                 }
             }
-            pane split_direction="horizontal" {
+            pane split_direction="vertical" {
                 pane command="bash" name="Fix-CI" {
                     args "-c" "./scripts/agent.sh fix-ci"
                 }

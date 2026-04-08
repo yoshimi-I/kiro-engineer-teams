@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Test that zellij 8-pane layout works correctly
-# Each pane just prints its name — no kiro-cli or gh needed
-# Exit with Ctrl+q
-
 set -euo pipefail
 
 if ! command -v zellij &>/dev/null; then
@@ -13,8 +9,8 @@ fi
 LAYOUT=$(mktemp /tmp/test-layout-XXXX.kdl)
 cat > "$LAYOUT" << 'EOF'
 layout {
-    pane split_direction="vertical" {
-        pane split_direction="horizontal" {
+    pane split_direction="horizontal" {
+        pane split_direction="vertical" {
             pane command="bash" name="Impl-1" {
                 args "-c" "echo '🔨 Impl-1 ready' && sleep 999"
             }
@@ -28,7 +24,7 @@ layout {
                 args "-c" "echo '🔧 Fix-Review ready' && sleep 999"
             }
         }
-        pane split_direction="horizontal" {
+        pane split_direction="vertical" {
             pane command="bash" name="Fix-CI" {
                 args "-c" "echo '🚦 Fix-CI ready' && sleep 999"
             }
@@ -46,10 +42,7 @@ layout {
 }
 EOF
 
-echo "🧪 Testing 8-pane layout..."
-echo "   All panes should show 'ready'"
+echo "🧪 Testing 4x2 grid layout..."
 echo "   Press Ctrl+q to exit"
-echo ""
-
 zellij --layout "$LAYOUT"
 rm -f "$LAYOUT"
