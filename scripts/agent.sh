@@ -15,7 +15,6 @@ if [[ ! -f "$PROMPT_FILE" ]]; then
   exit 1
 fi
 
-PROMPT_CONTENT=$(cat "$PROMPT_FILE")
 error_count=0
 cycle=0
 
@@ -23,7 +22,6 @@ cycle=0
 wait_for_work() {
   case "$PROMPT_NAME" in
     implement|watch-issues)
-      # Wait until there are open issues
       echo "⏳ Waiting for open issues..."
       while true; do
         count=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
@@ -32,7 +30,6 @@ wait_for_work() {
       done
       ;;
     review|watch-review)
-      # Wait until there are open PRs
       echo "⏳ Waiting for open PRs..."
       while true; do
         count=$(gh pr list --json number --jq 'length' 2>/dev/null || echo "0")
@@ -41,7 +38,6 @@ wait_for_work() {
       done
       ;;
     fix-review-issues)
-      # Wait until there are PRs with review comments
       echo "⏳ Waiting for PRs with review comments..."
       while true; do
         count=$(gh pr list --json number --jq 'length' 2>/dev/null || echo "0")
@@ -50,7 +46,6 @@ wait_for_work() {
       done
       ;;
     fix-ci)
-      # Wait until there are PRs (CI failures come from PRs)
       echo "⏳ Waiting for PRs with CI failures..."
       while true; do
         count=$(gh pr list --json number --jq 'length' 2>/dev/null || echo "0")
@@ -58,8 +53,7 @@ wait_for_work() {
         sleep 30
       done
       ;;
-    watch-main)
-      # Wait until main has commits (always true, but wait for first PR merge)
+    watch-main|e2e-bug-hunt)
       echo "⏳ Waiting for first merge to main..."
       while true; do
         count=$(gh pr list --state merged --json number --jq 'length' --limit 1 2>/dev/null || echo "0")
@@ -68,7 +62,6 @@ wait_for_work() {
       done
       ;;
     auto-dependabot)
-      # Always ready, but low priority
       echo "⏳ Waiting for Dependabot PRs..."
       while true; do
         count=$(gh pr list --author "app/dependabot" --json number --jq 'length' 2>/dev/null || echo "0")
@@ -76,17 +69,7 @@ wait_for_work() {
         sleep 60
       done
       ;;
-    e2e-bug-hunt)
-      # Wait until app is likely running (after first merge)
-      echo "⏳ Waiting for first merge to main before E2E..."
-      while true; do
-        count=$(gh pr list --state merged --json number --jq 'length' --limit 1 2>/dev/null || echo "0")
-        [[ "$count" -gt 0 ]] && return 0
-        sleep 30
-      done
-      ;;
     *)
-      # Unknown agent, start immediately
       return 0
       ;;
   esac
@@ -107,10 +90,10 @@ while true; do
   cycle=$((cycle + 1))
   echo "━━━ Cycle #${cycle} [$(date '+%H:%M:%S')] ━━━"
 
-  if kiro-cli chat \
+  # Pass prompt via stdin to avoid ARG_MAX limits
+  if cat "$PROMPT_FILE" | kiro-cli chat \
     --no-interactive \
-    --trust-all-tools \
-    "${PROMPT_CONTENT}" 2>&1; then
+    --trust-all-tools 2>&1; then
     error_count=0
     echo "✅ Cycle #${cycle} complete"
   else
