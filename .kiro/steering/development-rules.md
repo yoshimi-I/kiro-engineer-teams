@@ -3,15 +3,16 @@ name: development-rules
 description: 全コーディングタスクに適用される汎用開発ルール
 ---
 
-## 初回セットアップ
+## Initial Setup
 
-「プロジェクト固有の設定」セクションが空（コメントアウトのみ）の場合：
-1. `.kiro/prompts/brainstorming.md` を読んでブレインストーミングを開始する
-2. 設計が固まったら「プロジェクト固有の設定」セクションに技術スタック等を書き込む
-3. `.kiro/prompts/create-issue.md` を読んでissueを作成する
-4. 完了後 `./scripts/start-pipeline.sh` の実行を案内する
+If the "Project-specific settings" section below is empty (comments only):
+1. Read `.kiro/skills/inception/SKILL.md` and run the INCEPTION workflow
+2. Guide the user through: workspace detection → requirements → stories → architecture
+3. After design is finalized, write tech stack to the "Project-specific settings" section
+4. Generate GitHub issues via `gh issue create`
+5. Instruct user to run `./scripts/start-pipeline.sh`
 
-記載済みの場合はこのセクションを無視してよい。
+If settings are already filled in, skip this section.
 
 ## プロジェクト固有の設定
 
@@ -228,3 +229,43 @@ PRは以下を全て満たさないとマージしない:
 - issue/PRのコメントは全て英語で書く
 - レビュー結果（🔴/🟢）はPRコメントに投稿する
 - エスカレーション（3回失敗等）もPRコメントで人間に通知する
+
+## Audit Trail
+
+All design decisions and approvals are recorded in `aidlc-docs/audit.md`.
+
+- Append-only — never overwrite existing entries
+- Each entry includes ISO 8601 timestamp, stage name, user input, and AI response
+- Record all user approvals and rejections
+- Record all issue creation events
+
+Format:
+```markdown
+## [Stage Name]
+**Timestamp**: YYYY-MM-DDTHH:MM:SSZ
+**User Input**: "[exact user input]"
+**AI Response**: "[action taken]"
+**Context**: [stage, decision, or artifact created]
+---
+```
+
+## Document Structure
+
+INCEPTION phase generates documents in `aidlc-docs/`:
+
+```
+aidlc-docs/
+├── aidlc-state.md                    # Project state tracking
+├── audit.md                          # Decision audit trail
+└── inception/
+    ├── requirements/
+    │   ├── requirements.md           # Functional + non-functional
+    │   └── requirements-questions.md # Clarification Q&A
+    ├── user-stories/
+    │   ├── stories.md                # User stories with acceptance criteria
+    │   └── personas.md               # User personas
+    └── architecture/
+        ├── architecture.md           # Component diagram + responsibilities
+        ├── technology-stack.md       # Tech choices with rationale
+        └── directory-structure.md    # Project layout
+```

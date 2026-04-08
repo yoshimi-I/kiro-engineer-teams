@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 8-Agent Pipeline Launcher
 #
-# Phase 1: Brainstorm — design with user → create issues
+# Phase 1: INCEPTION — structured planning with AI-DLC workflow
 # Phase 2: Pipeline — launch 8 agents in zellij
 #
 # Usage: ./scripts/start-pipeline.sh
@@ -33,8 +33,9 @@ if ! gh auth status &>/dev/null; then
   exit 1
 fi
 
-# ── Ensure task.md ──
-mkdir -p issue
+# ── Ensure directories ──
+mkdir -p issue aidlc-docs/inception
+
 if [[ ! -f "issue/task.md" ]]; then
   cat > issue/task.md << 'TMPL'
 # Issue Tracker
@@ -45,24 +46,25 @@ if [[ ! -f "issue/task.md" ]]; then
 TMPL
 fi
 
-# ── Phase 1: Brainstorm ──
+# ── Phase 1: INCEPTION ──
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Phase 1: Brainstorming"
+echo "  Phase 1: INCEPTION (AI-DLC)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "  Kiro CLI will start."
-echo "  Tell it what you want to build."
-echo "  After design is finalized, issues will be created."
-echo "  Type /quit to exit and launch the pipeline."
+echo "  Kiro CLI will start with the INCEPTION workflow."
+echo "  This guides you through:"
 echo ""
-echo "  Tips:"
-echo "    - /brainstorming starts the design flow"
-echo "    - /create-issue creates issues from the design"
-echo "    - /quit exits to launch the pipeline"
+echo "    1. Workspace Detection"
+echo "    2. Requirements Analysis"
+echo "    3. User Stories (if needed)"
+echo "    4. Architecture Design (if needed)"
+echo "    5. Issue Generation (automatic)"
+echo ""
+echo "  After issues are created, type /quit to launch the pipeline."
 echo ""
 read -p "  Press Enter to start → " _
 
-kiro-cli chat
+kiro-cli chat --trust-all-tools "/inception"
 
 # ── Check issues exist ──
 ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
