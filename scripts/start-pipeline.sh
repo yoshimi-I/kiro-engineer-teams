@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # 8-Agent Pipeline Launcher
 #
-# Phase 1: ブレスト — ユーザーと対話して設計→issue作成
-# Phase 2: パイプライン — zellijで8エージェント並列起動
+# Phase 1: Brainstorm — design with user → create issues
+# Phase 2: Pipeline — launch 8 agents in zellij
 #
 # Usage: ./scripts/start-pipeline.sh
 
@@ -22,14 +22,14 @@ if [[ ! -d ".kiro/prompts" ]]; then
 fi
 
 if ! git remote get-url origin &>/dev/null; then
-  echo "❌ git remote 'origin' が未設定です"
-  echo "   git remote add origin <repo-url> を実行してください"
+  echo "❌ git remote 'origin' is not configured"
+  echo "   Run: git remote add origin <repo-url>"
   exit 1
 fi
 
 if ! gh auth status &>/dev/null; then
-  echo "❌ GitHub CLI が未認証です"
-  echo "   gh auth login を実行してください"
+  echo "❌ GitHub CLI is not authenticated"
+  echo "   Run: gh auth login"
   exit 1
 fi
 
@@ -38,30 +38,29 @@ mkdir -p issue
 if [[ ! -f "issue/task.md" ]]; then
   cat > issue/task.md << 'TMPL'
 # Issue Tracker
-<!-- ⚠️ このヘッダーと記入例の行は削除禁止 -->
 
-| Issue | タイトル | ステータス | ブランチ |
-|-------|---------|-----------|---------| 
-| #999 | （記入例）feat: 〇〇機能追加 | 着手中 / レビュー中 / merge済み / 解決済み（変更不要） | feat/issue-999-xxx |
+| Issue | Title | Status | Branch |
+|-------|-------|--------|--------|
+| #999 | (example) feat: add feature | in-progress / in-review / merged / resolved | feat/issue-999-xxx |
 TMPL
 fi
 
 # ── Phase 1: Brainstorm ──
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Phase 1: ブレインストーミング"
+echo "  Phase 1: Brainstorming"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "  Kiro CLIが起動します。"
-echo "  作りたいものの概要を伝えてください。"
-echo "  設計が固まったらissueを作成してもらい、"
-echo "  /quit で抜けるとパイプラインが起動します。"
+echo "  Kiro CLI will start."
+echo "  Tell it what you want to build."
+echo "  After design is finalized, issues will be created."
+echo "  Type /quit to exit and launch the pipeline."
 echo ""
-echo "  💡 Tips:"
-echo "    - /brainstorming で設計フローが始まります"
-echo "    - 設計完了後 /create-issue でissue作成"
-echo "    - issueができたら /quit で次のフェーズへ"
+echo "  Tips:"
+echo "    - /brainstorming starts the design flow"
+echo "    - /create-issue creates issues from the design"
+echo "    - /quit exits to launch the pipeline"
 echo ""
-read -p "  Enter で開始 → " _
+read -p "  Press Enter to start → " _
 
 kiro-cli chat
 
@@ -69,29 +68,28 @@ kiro-cli chat
 ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
 if [[ "$ISSUE_COUNT" -eq 0 ]]; then
   echo ""
-  echo "⚠️  Open issueが0件です。"
-  read -p "  パイプラインを起動しますか？ (y/N) → " yn
-  [[ "$yn" != "y" && "$yn" != "Y" ]] && echo "中止しました。" && exit 0
+  echo "⚠️  No open issues found."
+  read -p "  Launch pipeline anyway? (y/N) → " yn
+  [[ "$yn" != "y" && "$yn" != "Y" ]] && echo "Aborted." && exit 0
 fi
 
 # ── Phase 2: Pipeline ──
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Phase 2: 8-Agent パイプライン起動"
+echo "  Phase 2: 8-Agent Pipeline"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "  📋 Open issues: ${ISSUE_COUNT}件"
+echo "  📋 Open issues: ${ISSUE_COUNT}"
 echo ""
-echo "  🔨 Impl-1, Impl-2  → issueを取って実装"
-echo "  🔍 Review           → PRをレビュー→マージ"
-echo "  🔧 Fix-Review       → レビュー指摘を修正"
-echo "  🚦 Fix-CI           → CI失敗を修正"
-echo "  👀 Watch-Main       → mainマージ後E2E検証"
-echo "  🧪 E2E-Hunt         → Playwright巡回"
-echo "  📦 Dependabot       → 依存更新PR処理"
+echo "  🔨 Impl-1, Impl-2  → pick issues and implement"
+echo "  🔍 Review           → review PRs → merge"
+echo "  🔧 Fix-Review       → fix review comments"
+echo "  🚦 Fix-CI           → fix CI failures"
+echo "  👀 Watch-Main       → E2E verification after merge"
+echo "  🧪 E2E-Hunt         → Playwright patrol"
+echo "  📦 Dependabot       → dependency update PRs"
 echo ""
-echo "  各エージェントはissue/PRが来るまで待機し、"
-echo "  仕事が発生次第、自動で動き始めます。"
+echo "  Each agent waits for work and starts automatically."
 echo ""
 
 zellij --layout scripts/pipeline.kdl
