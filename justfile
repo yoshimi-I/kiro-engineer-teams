@@ -1,8 +1,8 @@
 # kiro-engineer-teams
 
 # Initialize as your own private repo (run after git clone)
-init repo:
-    ./scripts/init.sh {{repo}}
+init:
+    ./scripts/init.sh
 
 # Install prerequisites
 setup:

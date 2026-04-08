@@ -3,11 +3,7 @@
 # Usage: ./scripts/init.sh <repo-name>
 set -euo pipefail
 
-REPO="${1:-}"
-if [[ -z "$REPO" ]]; then
-  echo "Usage: just init <repo-name>" >&2
-  exit 1
-fi
+REPO="${1:-$(basename "$PWD")}"
 
 # Remove template git history
 rm -rf .git

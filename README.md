@@ -34,7 +34,7 @@ git clone https://github.com/yoshimi-I/kiro-engineer-teams.git .
 
 **3. Initialize as your own private repo**
 ```bash
-just init <your-project>
+just init
 ```
 
 **4. Start (INCEPTION → 8-agent pipeline)**

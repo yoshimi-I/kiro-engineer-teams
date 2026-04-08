@@ -34,7 +34,7 @@ git clone https://github.com/yoshimi-I/kiro-engineer-teams.git .
 
 **3. 自分のプライベートリポジトリとして初期化**
 ```bash
-just init <your-project>
+just init
 ```
 
 **4. 起動（INCEPTION → 8エージェントパイプライン）**
