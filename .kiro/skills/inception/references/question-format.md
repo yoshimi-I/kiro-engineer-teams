@@ -1,13 +1,13 @@
-# Question Format (Chat-based)
+# 質問フォーマット（チャットベース）
 
-## Rules
-- Ask questions directly in chat conversation
-- Use multiple-choice format for clarity
-- Group related questions (max 3-5 per message)
-- Wait for user response before proceeding
-- Ask follow-up questions if answers are ambiguous
+## ルール
+- チャット会話で直接質問する
+- 明確さのために選択式フォーマットを使用
+- 関連する質問をグループ化（1メッセージにつき最大3-5問）
+- ユーザーの回答を待ってから次に進む
+- 回答が曖昧な場合はフォローアップ質問
 
-## Format
+## フォーマット
 ```
 [質問の背景を1文で説明]
 
@@ -21,9 +21,9 @@
    ...
 ```
 
-## Guidelines
-- Respond in Japanese
-- Keep questions concise and specific
-- Provide recommended option when possible: "おすすめ: B"
-- Don't ask more than 5 questions at once
-- Summarize answers before moving to next stage
+## ガイドライン
+- 日本語で応答
+- 質問は簡潔かつ具体的に
+- 可能な場合は推奨オプションを提示: 「おすすめ: B」
+- 一度に5問以上聞かない
+- 次のステージに進む前に回答をサマリー

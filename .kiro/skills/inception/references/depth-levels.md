@@ -1,24 +1,24 @@
-# Adaptive Depth Levels
+# 適応的深度レベル
 
-## Principle
-Depth refers to the level of detail within artifacts, adapting to problem complexity.
+## 原則
+深度はアーティファクト内の詳細レベルを指し、問題の複雑さに応じて適応する。
 
-## Levels
+## レベル
 
-### Minimal
-- Simple, well-understood changes
-- Clear requirements with no ambiguity
-- Single component affected
-- Output: brief intent analysis + direct issue generation
+### 最小
+- シンプルで理解しやすい変更
+- 曖昧さのない明確な要件
+- 影響を受けるコンポーネントが1つ
+- 出力: 簡潔な意図分析 + 直接issue生成
 
-### Standard
-- Normal complexity features
-- Some clarification needed
-- Multiple components affected
-- Output: requirements doc + user stories + architecture overview + issues
+### 標準
+- 通常の複雑さの機能
+- いくらかの明確化が必要
+- 影響を受けるコンポーネントが複数
+- 出力: 要件ドキュメント + ユーザーストーリー + アーキテクチャ概要 + issue
 
-### Comprehensive
-- Complex, high-risk changes
-- Multiple user types and workflows
-- New system or major redesign
-- Output: full requirements + detailed stories + architecture design + detailed issues
+### 包括的
+- 複雑で高リスクな変更
+- 複数のユーザータイプとワークフロー
+- 新システムまたは大規模リデザイン
+- 出力: 完全な要件 + 詳細ストーリー + アーキテクチャ設計 + 詳細issue

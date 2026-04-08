@@ -1,33 +1,33 @@
-# User Stories (Conditional)
+# ユーザーストーリー（条件付き）
 
-## When to run
-- New user-facing features
-- Changes affecting user workflows
-- Multiple user types involved
-- Complex business requirements
+## 実行条件
+- 新しいユーザー向け機能
+- ユーザーワークフローに影響する変更
+- 複数のユーザータイプが関与
+- 複雑なビジネス要件
 
-## When to skip
-- Pure internal refactoring
-- Simple bug fixes with clear scope
-- Infrastructure-only changes
-- Documentation-only updates
+## スキップ条件
+- 純粋な内部リファクタリング
+- スコープが明確なシンプルなバグ修正
+- インフラのみの変更
+- ドキュメントのみの更新
 
-## Steps
+## ステップ
 
-### 1. Identify personas
-Based on requirements, identify distinct user types.
-Present them in chat and confirm with user.
+### 1. ペルソナを特定
+要件に基づき、異なるユーザータイプを特定。
+チャットで提示し、ユーザーに確認。
 
-### 2. Write stories
-Format: "As a [persona], I want to [action] so that [benefit]"
+### 2. ストーリーを書く
+フォーマット: 「[ペルソナ]として、[アクション]したい。なぜなら[メリット]だから」
 
-Each story includes:
-- Acceptance criteria (testable conditions)
-- Priority (must-have / should-have / nice-to-have)
-- Estimated complexity (S/M/L/XL)
+各ストーリーに含める:
+- 受け入れ基準（テスト可能な条件）
+- 優先度（必須 / あるべき / あると嬉しい）
+- 推定複雑度（S/M/L/XL）
 
-### 3. Present in chat for approval
-Show stories grouped by persona. Ask user to confirm, modify, or add.
+### 3. チャットで承認を求める
+ペルソナごとにグループ化してストーリーを表示。ユーザーに確認・修正・追加を求める。
 
-### 4. Generate document
-After approval, create `aidlc-docs/inception/user-stories/stories.md` and `personas.md`.
+### 4. ドキュメントを生成
+承認後、`aidlc-docs/inception/user-stories/stories.md` と `personas.md` を作成。

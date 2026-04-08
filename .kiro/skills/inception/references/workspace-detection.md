@@ -1,34 +1,34 @@
-# Workspace Detection
+# ワークスペース検出
 
-## Purpose
-Determine workspace state and project type before planning.
+## 目的
+計画前にワークスペースの状態とプロジェクトタイプを判定する。
 
-## Steps
+## ステップ
 
-### 1. Check for existing project state
-- Look for `aidlc-docs/aidlc-state.md` — if found, resume from last phase
-- Look for existing `issue/task.md` — if found, check current status
+### 1. 既存のプロジェクト状態を確認
+- `aidlc-docs/aidlc-state.md` を探す — 見つかれば最後のフェーズから再開
+- 既存の `issue/task.md` を探す — 見つかれば現在のステータスを確認
 
-### 2. Scan workspace for existing code
-- Scan for source files (.ts, .tsx, .py, .java, .go, .rs, etc.)
-- Check for build files (package.json, pyproject.toml, Cargo.toml, etc.)
-- Check for infrastructure (Dockerfile, terraform/, CDK, etc.)
+### 2. ワークスペースの既存コードをスキャン
+- ソースファイルをスキャン（.ts, .tsx, .py, .java, .go, .rs 等）
+- ビルドファイルを確認（package.json, pyproject.toml, Cargo.toml 等）
+- インフラを確認（Dockerfile, terraform/, CDK 等）
 
-### 3. Classify project
-- **Greenfield**: No existing code → full planning needed
-- **Brownfield**: Existing code → analyze before planning
+### 3. プロジェクトを分類
+- **グリーンフィールド**: 既存コードなし → フル計画が必要
+- **ブラウンフィールド**: 既存コードあり → 計画前に分析
 
-### 4. Record findings
-Create `aidlc-docs/aidlc-state.md`:
+### 4. 結果を記録
+`aidlc-docs/aidlc-state.md` を作成:
 ```markdown
-# Project State
-- Type: greenfield / brownfield
-- Detected stack: [languages, frameworks]
-- Workspace root: [path]
-- Current phase: INCEPTION
-- Current stage: workspace-detection ✅
+# プロジェクト状態
+- タイプ: greenfield / brownfield
+- 検出スタック: [言語, フレームワーク]
+- ワークスペースルート: [パス]
+- 現在のフェーズ: INCEPTION
+- 現在のステージ: workspace-detection ✅
 ```
 
-### 5. Proceed
-- Brownfield → read existing code structure before requirements
-- Greenfield → proceed to requirements analysis
+### 5. 次へ進む
+- ブラウンフィールド → 要件分析前に既存コード構造を読む
+- グリーンフィールド → 要件分析に進む

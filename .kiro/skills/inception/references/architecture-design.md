@@ -1,39 +1,39 @@
-# Architecture Design (Conditional)
+# アーキテクチャ設計（条件付き）
 
-## When to run
-- New components or services needed
-- System architecture decisions required
-- Multiple services or modules
-- Infrastructure design needed
+## 実行条件
+- 新しいコンポーネントやサービスが必要
+- システムアーキテクチャの決定が必要
+- 複数のサービスやモジュール
+- インフラ設計が必要
 
-## When to skip
-- Changes within existing component boundaries
-- Simple feature additions to existing architecture
+## スキップ条件
+- 既存コンポーネント境界内の変更
+- 既存アーキテクチャへのシンプルな機能追加
 
-## Steps
+## ステップ
 
-### 1. Analyze context
-Read requirements and user stories (if generated).
+### 1. コンテキストを分析
+要件とユーザーストーリー（生成済みの場合）を読む。
 
-### 2. Propose architecture in chat
-Present to user:
-- Major components and responsibilities
-- Communication patterns (REST, WebSocket, events)
-- Technology stack recommendation with rationale
-- Directory structure
+### 2. チャットでアーキテクチャを提案
+ユーザーに提示:
+- 主要コンポーネントと責務
+- 通信パターン（REST、WebSocket、イベント）
+- 技術スタックの推奨と根拠
+- ディレクトリ構成
 
-Use simple ASCII diagrams in chat:
+チャットでシンプルなASCII図を使用:
 ```
-[Frontend] → [API Server] → [Database]
-                ↓
-           [WebSocket]
+[フロントエンド] → [APIサーバー] → [データベース]
+                      ↓
+                 [WebSocket]
 ```
 
-### 3. Discuss and refine
-Ask user for feedback. Iterate until approved.
+### 3. 議論と改善
+ユーザーにフィードバックを求める。承認されるまで反復。
 
-### 4. Generate documents
-After approval, create in `aidlc-docs/inception/architecture/`:
+### 4. ドキュメントを生成
+承認後、`aidlc-docs/inception/architecture/` に作成:
 - `architecture.md`
 - `technology-stack.md`
 - `directory-structure.md`

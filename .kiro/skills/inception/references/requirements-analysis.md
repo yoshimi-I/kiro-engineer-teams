@@ -1,28 +1,28 @@
-# Requirements Analysis (Adaptive)
+# 要件分析（適応型）
 
-Always runs. Depth adapts to complexity.
+常に実行。深度は複雑さに応じて適応。
 
-## Adaptive Depth
+## 適応的深度
 
-| Level | When | What |
+| レベル | 条件 | 内容 |
 |-------|------|------|
-| Minimal | Simple, clear request | Intent analysis only |
-| Standard | Normal complexity | Functional + non-functional requirements |
-| Comprehensive | Complex, high-risk | Full requirements with traceability |
+| 最小 | シンプルで明確なリクエスト | 意図分析のみ |
+| 標準 | 通常の複雑さ | 機能要件 + 非機能要件 |
+| 包括的 | 複雑、高リスク | トレーサビリティ付きの完全な要件 |
 
-## Steps
+## ステップ
 
-### 1. Analyze user request (Intent Analysis)
-- What is the user trying to build?
-- What problem does it solve?
-- Who are the target users?
-- What are the success criteria?
+### 1. ユーザーリクエストを分析（意図分析）
+- ユーザーは何を作ろうとしているか？
+- どんな問題を解決するか？
+- ターゲットユーザーは誰か？
+- 成功基準は何か？
 
-### 2. Determine depth
-Based on: number of features, integrations, user types, risk level.
+### 2. 深度を決定
+基準: 機能数、統合、ユーザータイプ、リスクレベル。
 
-### 3. Ask clarification questions in chat
-Ask the user directly in conversation. Use multiple-choice format:
+### 3. チャットで明確化の質問をする
+会話で直接ユーザーに質問。選択式フォーマットを使用:
 
 ```
 以下について教えてください：
@@ -36,19 +36,19 @@ Ask the user directly in conversation. Use multiple-choice format:
 2. ...
 ```
 
-- Group related questions together (max 3-5 per message)
-- Wait for user response before proceeding
-- Ask follow-up questions if answers are ambiguous
+- 関連する質問をグループ化（1メッセージにつき最大3-5問）
+- ユーザーの回答を待ってから次に進む
+- 回答が曖昧な場合はフォローアップ質問
 
-### 4. Generate requirements document
-Create `aidlc-docs/inception/requirements/requirements.md`:
-- Functional requirements (grouped by feature area)
-- Non-functional requirements (performance, security, scalability)
-- Constraints and assumptions
-- Out of scope
+### 4. 要件ドキュメントを生成
+`aidlc-docs/inception/requirements/requirements.md` を作成:
+- 機能要件（機能領域ごとにグループ化）
+- 非機能要件（パフォーマンス、セキュリティ、スケーラビリティ）
+- 制約と前提
+- スコープ外
 
-### 5. Present summary and get approval
-Show a concise summary in chat. Ask user to confirm before proceeding.
+### 5. サマリーを提示して承認を得る
+チャットで簡潔なサマリーを表示。次に進む前にユーザーの確認を求める。
 
-### 6. Record in audit
-Append to `aidlc-docs/audit.md` with timestamp.
+### 6. 監査に記録
+`aidlc-docs/audit.md` にタイムスタンプ付きで追記。

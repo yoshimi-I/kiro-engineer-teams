@@ -1,62 +1,63 @@
-# Issue Generation (Always — Pipeline Handoff)
+# Issue生成（常に実行 — パイプラインへの引き渡し）
 
-This is the bridge between INCEPTION and the 8-agent pipeline.
-Converts design documents into GitHub issues that agents can pick up.
+INCEPTIONと7エージェントパイプラインの橋渡し。
+設計ドキュメントをエージェントが拾えるGitHub issueに変換する。
 
-## Steps
+## ステップ
 
-### 1. Read all INCEPTION outputs
+### 1. 全INCEPTIONアウトプットを読む
 - `aidlc-docs/inception/requirements/requirements.md`
-- `aidlc-docs/inception/user-stories/stories.md` (if exists)
-- `aidlc-docs/inception/architecture/` (if exists)
+- `aidlc-docs/inception/user-stories/stories.md`（存在する場合）
+- `aidlc-docs/inception/architecture/`（存在する場合）
 
-### 2. Decompose into issues
-Each issue should be:
-- Implementable in a single PR
-- Independent (minimal dependencies between issues)
-- Testable (clear acceptance criteria)
+### 2. issueに分解
+各issueは:
+- 単一のPRで実装可能
+- 独立（issue間の依存を最小化）
+- テスト可能（明確な受け入れ基準）
 
-### 3. Prioritize
-1. Project setup / scaffolding (must be first)
-2. Core domain models / database schema
-3. Backend API endpoints
-4. Frontend pages / components
-5. Integration (frontend ↔ backend wiring)
-6. Testing (E2E, additional integration tests)
-7. Polish (UI, error handling, edge cases)
-8. Documentation
+### 3. 優先順位付け
+1. プロジェクトセットアップ / スキャフォールディング（最初に必須）
+2. コアドメインモデル / データベーススキーマ
+3. バックエンドAPIエンドポイント
+4. フロントエンドページ / コンポーネント
+5. 統合（フロントエンド↔バックエンド接続）
+6. テスト（E2E、追加の統合テスト）
+7. ポリッシュ（UI、エラー処理、エッジケース）
+8. ドキュメント
 
-### 4. Create issues
-For each issue:
+### 4. issueを作成
+各issueについて:
 ```bash
 gh issue create \
-  --title "feat: <concise description>" \
-  --body "## Description
-<what to implement>
+  --title "feat: <簡潔な説明>" \
+  --label "優先度" \
+  --label "<P0-critical|P1-high|P2-medium|P3-low>" \
+  --body "## 説明
+<実装内容>
 
-## Acceptance Criteria
-- [ ] <testable condition 1>
-- [ ] <testable condition 2>
+## 受け入れ基準
+- [ ] <テスト可能な条件1>
+- [ ] <テスト可能な条件2>
 
-## Technical Notes
-<relevant architecture decisions, file paths, dependencies>
+## 技術メモ
+<関連するアーキテクチャ決定、ファイルパス、依存関係>
 
-## References
-- Requirements: aidlc-docs/inception/requirements/requirements.md
-- Architecture: aidlc-docs/inception/architecture/architecture.md" \
-  --label "<appropriate label>"
+## 参照
+- 要件: aidlc-docs/inception/requirements/requirements.md
+- アーキテクチャ: aidlc-docs/inception/architecture/architecture.md"
 ```
 
-### 5. Update steering
-Write the finalized tech stack and project conventions to
-`.kiro/steering/development-rules.md` (project-specific section).
+### 5. steeringを更新
+確定した技術スタックとプロジェクト規約を
+`.kiro/steering/development-rules.md`（プロジェクト固有設定セクション）に記入。
 
-### 6. Update state
-Update `aidlc-docs/aidlc-state.md`:
+### 6. 状態を更新
+`aidlc-docs/aidlc-state.md` を更新:
 ```
-- Current phase: INCEPTION ✅ → CONSTRUCTION (via pipeline)
-- Issues created: <count>
+- 現在のフェーズ: INCEPTION ✅ → CONSTRUCTION（パイプライン経由）
+- 作成issue数: <件数>
 ```
 
-### 7. Instruct user
-Tell the user to run `./scripts/start-pipeline.sh` to launch the 8-agent pipeline.
+### 7. ユーザーに指示
+`./scripts/start-pipeline.sh` を実行して7エージェントパイプラインを起動するよう伝える。
