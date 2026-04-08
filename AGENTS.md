@@ -1,6 +1,6 @@
 # Kiro Engineer Teams
 
-8-agent parallel development pipeline with AI-DLC INCEPTION planning.
+7-agent parallel development pipeline with AI-DLC INCEPTION planning.
 
 ## First interaction
 
@@ -27,4 +27,4 @@ All rules are in `.kiro/steering/development-rules.md`. Key points:
 
 ## After INCEPTION
 
-Run `./scripts/start-pipeline.sh` to launch 8-agent pipeline in zellij.
+Run `./scripts/start-pipeline.sh` to launch 7-agent pipeline in zellij.

@@ -16,8 +16,8 @@ layout {
                 }
             }
             pane split_direction="vertical" {
-                pane command="bash" name="Fix-CI" {
-                    args "-c" "./scripts/agent.sh fix-ci"
+                pane command="bash" name="Review-2" {
+                    args "-c" "./scripts/agent.sh review"
                 }
                 pane command="bash" name="Watch-Main" {
                     args "-c" "./scripts/agent.sh watch-main"

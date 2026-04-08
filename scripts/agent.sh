@@ -45,14 +45,6 @@ wait_for_work() {
         sleep 30
       done
       ;;
-    fix-ci)
-      echo "⏳ Waiting for PRs with CI failures..."
-      while true; do
-        count=$(gh pr list --json number --jq 'length' 2>/dev/null || echo "0")
-        [[ "$count" -gt 0 ]] && return 0
-        sleep 30
-      done
-      ;;
     watch-main|e2e-bug-hunt)
       echo "⏳ Waiting for first merge to main..."
       while true; do

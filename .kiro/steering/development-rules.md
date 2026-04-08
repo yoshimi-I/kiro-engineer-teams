@@ -60,6 +60,21 @@ If settings are already filled in, skip this section.
 - PR: English title + body, `Closes #N`, squash merge only
 - CI must pass before merge. No force merge.
 
+### pre-commit（必須）
+
+コミット前に必ず lint と test を実行すること。CI失敗を未然に防ぐ。
+
+```bash
+# コミット前に必ず実行（Project-specific settings のコマンドを使う）
+# 例: npm run lint && npm run test
+# 例: cargo clippy && cargo test
+# 例: ruff check . && pytest
+```
+
+- lint/test が通らないコードはコミットしない
+- 「push してから CI で確認」は禁止 — ローカルで通してからpush
+- CI失敗した場合は、そのPRの作成者（Implエージェント）が自分で修正する
+
 ## Issue作成ルール
 
 ### 優先度ラベル（全issue必須）
