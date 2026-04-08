@@ -22,6 +22,15 @@ if gh repo view "$REPO" &>/dev/null; then
   exit 1
 fi
 
+# Remove template files
+rm -f LICENSE
+rm -rf docs
+for f in README.md AGENTS.md; do
+  if grep -q "kiro-engineer-teams" "$f" 2>/dev/null; then
+    rm -f "$f"
+  fi
+done
+
 # Remove template git history
 rm -rf .git
 git init
