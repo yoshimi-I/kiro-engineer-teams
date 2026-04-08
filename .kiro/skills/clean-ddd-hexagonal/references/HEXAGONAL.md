@@ -1,42 +1,42 @@
-# Hexagonal Architecture (Ports & Adapters)
+# ヘキサゴナルアーキテクチャ（ポート＆アダプター）
 
-> Sources:
+> 出典:
 > - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) — Alistair Cockburn (2005)
 > - [Hexagonal Architecture Explained](https://openlibrary.org/works/OL38388131W) — Alistair Cockburn & Juan Manuel Garrido de Paz (2024)
 > - [Interview with Alistair Cockburn](https://jmgarridopaz.github.io/content/interviewalistair.html) — Juan Manuel Garrido de Paz
 > - [Hexagonal Architecture Pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html) — AWS
 
-## Core Concept
+## コアコンセプト
 
-> "Allow an application to equally be driven by users, programs, automated tests, or batch scripts, and to be developed and tested in isolation from its eventual run-time devices and databases."
+> 「アプリケーションが、ユーザー、プログラム、自動テスト、バッチスクリプトのいずれからも等しく駆動でき、最終的な実行時デバイスやデータベースから分離して開発・テストできるようにする。」
 > — Alistair Cockburn
 
-**Design validation technique:** The pattern was designed with FIT testing in mind—business experts can write test cases before any GUI exists. If you can run your entire application from test fixtures, your hexagonal boundaries are correct.
+**設計検証テクニック:** このパターンはFITテストを念頭に設計された — ビジネスエキスパートがGUIなしでテストケースを書ける。テストフィクスチャからアプリケーション全体を実行できれば、ヘキサゴナル境界は正しい。
 
-**The hexagon is conceptual.** Most applications have 2-4 ports, not six. The shape emphasizes that all external interactions go through ports, regardless of direction.
+**ヘキサゴンは概念的。** ほとんどのアプリケーションは2-4個のポートを持ち、6個ではない。この形は、方向に関係なく全ての外部インタラクションがポートを通ることを強調する。
 
 ```mermaid
 flowchart TB
-    subgraph DriverSide["DRIVER SIDE (Primary / Inbound / Left)"]
-        REST["REST API Adapter"]
-        CLI["CLI Adapter"]
-        DriverPorts["DRIVER PORTS\n(Use Case Interfaces)"]
+    subgraph DriverSide["ドライバー側（プライマリ / インバウンド / 左）"]
+        REST["REST APIアダプター"]
+        CLI["CLIアダプター"]
+        DriverPorts["ドライバーポート\n（ユースケースインターフェース）"]
         REST --> DriverPorts
         CLI --> DriverPorts
     end
 
-    subgraph Hexagon["THE HEXAGON"]
-        subgraph AppCore["APPLICATION CORE"]
-            subgraph Domain["DOMAIN\n(Business Logic)"]
+    subgraph Hexagon["ヘキサゴン"]
+        subgraph AppCore["アプリケーションコア"]
+            subgraph Domain["ドメイン\n（ビジネスロジック）"]
                 BL[" "]
             end
         end
     end
 
-    subgraph DrivenSide["DRIVEN SIDE (Secondary / Outbound / Right)"]
-        DrivenPorts["DRIVEN PORTS\n(Repository Interfaces)"]
-        Postgres["Postgres Adapter"]
-        RabbitMQ["RabbitMQ Adapter"]
+    subgraph DrivenSide["ドリブン側（セカンダリ / アウトバウンド / 右）"]
+        DrivenPorts["ドリブンポート\n（リポジトリインターフェース）"]
+        Postgres["Postgresアダプター"]
+        RabbitMQ["RabbitMQアダプター"]
         DrivenPorts --> Postgres
         DrivenPorts --> RabbitMQ
     end
@@ -52,17 +52,17 @@ flowchart TB
 
 ---
 
-## Ports
+## ポート
 
-Interfaces defining how the application communicates with the outside world.
+アプリケーションが外部世界とどう通信するかを定義するインターフェース。
 
-### Driver Ports (Primary / Inbound)
+### ドライバーポート（プライマリ / インバウンド）
 
-Define **how the world uses your application**.
+**世界があなたのアプリケーションをどう使うか**を定義。
 
-- Entry points to the application
-- Called by adapters
-- Represent use cases
+- アプリケーションへのエントリポイント
+- アダプターから呼び出される
+- ユースケースを表現
 
 ```typescript
 // application/ports/driver/place_order_port.ts
@@ -81,13 +81,13 @@ export interface ICancelOrderPort {
 }
 ```
 
-### Driven Ports (Secondary / Outbound)
+### ドリブンポート（セカンダリ / アウトバウンド）
 
-Define **how your application uses external systems**.
+**あなたのアプリケーションが外部システムをどう使うか**を定義。
 
-- Dependencies the application needs
-- Implemented by adapters
-- Application calls these interfaces
+- アプリケーションが必要とする依存
+- アダプターが実装
+- アプリケーションがこれらのインターフェースを呼び出す
 
 ```typescript
 // application/ports/driven/order_repository_port.ts
@@ -118,13 +118,13 @@ export interface INotificationPort {
 
 ---
 
-## Adapters
+## アダプター
 
-Concrete implementations that connect ports to external technologies.
+ポートを外部技術に接続する具象実装。
 
-### Driver Adapters (Primary / Inbound)
+### ドライバーアダプター（プライマリ / インバウンド）
 
-Convert external inputs to port calls.
+外部入力をポート呼び出しに変換。
 
 ```typescript
 // infrastructure/adapters/driver/rest/order_controller.ts
@@ -162,71 +162,11 @@ export class OrderController {
     res.json(order);
   }
 }
-
-// infrastructure/adapters/driver/grpc/order_service.ts
-import { IPlaceOrderPort } from '@/application/ports/driver/place_order_port';
-import { OrderServiceServer, PlaceOrderRequest, PlaceOrderResponse } from './generated/order_pb';
-
-export class GrpcOrderService implements OrderServiceServer {
-  constructor(private readonly placeOrder: IPlaceOrderPort) {}
-
-  async placeOrder(
-    request: PlaceOrderRequest,
-  ): Promise<PlaceOrderResponse> {
-    const command: PlaceOrderCommand = {
-      customerId: request.getCustomerId(),
-      items: request.getItemsList().map(item => ({
-        productId: item.getProductId(),
-        quantity: item.getQuantity(),
-      })),
-    };
-
-    const orderId = await this.placeOrder.execute(command);
-
-    const response = new PlaceOrderResponse();
-    response.setOrderId(orderId.value);
-    return response;
-  }
-}
-
-// infrastructure/adapters/driver/cli/place_order_command.ts
-import { Command } from 'commander';
-import { IPlaceOrderPort } from '@/application/ports/driver/place_order_port';
-
-export function createPlaceOrderCommand(placeOrder: IPlaceOrderPort): Command {
-  return new Command('place-order')
-    .description('Place a new order')
-    .requiredOption('-c, --customer <id>', 'Customer ID')
-    .requiredOption('-p, --product <id>', 'Product ID')
-    .requiredOption('-q, --quantity <number>', 'Quantity', parseInt)
-    .action(async (options) => {
-      const orderId = await placeOrder.execute({
-        customerId: options.customer,
-        items: [{ productId: options.product, quantity: options.quantity }],
-      });
-
-      console.log(`Order created: ${orderId.value}`);
-    });
-}
-
-// infrastructure/adapters/driver/message/order_message_handler.ts
-import { IPlaceOrderPort } from '@/application/ports/driver/place_order_port';
-
-export class OrderMessageHandler {
-  constructor(private readonly placeOrder: IPlaceOrderPort) {}
-
-  async handlePlaceOrderMessage(message: PlaceOrderMessage): Promise<void> {
-    await this.placeOrder.execute({
-      customerId: message.customerId,
-      items: message.items,
-    });
-  }
-}
 ```
 
-### Driven Adapters (Secondary / Outbound)
+### ドリブンアダプター（セカンダリ / アウトバウンド）
 
-Implement port interfaces using specific technologies.
+特定の技術を使ってポートインターフェースを実装。
 
 ```
 class PostgresOrderRepository implements IOrderRepositoryPort:
@@ -246,7 +186,7 @@ class PostgresOrderRepository implements IOrderRepositoryPort:
         db.orders.where(id: order.id.value).delete()
 ```
 
-**In-Memory (for tests):**
+**インメモリ（テスト用）:**
 
 ```
 class InMemoryOrderRepository implements IOrderRepositoryPort:
@@ -265,107 +205,65 @@ class InMemoryOrderRepository implements IOrderRepositoryPort:
         orders.clear()
 ```
 
-**Payment Gateway:**
-
-```
-class StripePaymentGateway implements IPaymentGatewayPort:
-    stripe: StripeClient
-
-    charge(amount: Money, paymentMethod: PaymentMethod) -> PaymentResult:
-        try:
-            intent = stripe.paymentIntents.create({
-                amount: amount.cents,
-                currency: amount.currency,
-                paymentMethod: paymentMethod.stripeId,
-                confirm: true
-            })
-            return PaymentResult.success(PaymentId.from(intent.id))
-        catch CardError as error:
-            return PaymentResult.failed(error.message)
-
-    refund(paymentId: PaymentId, amount: Money) -> RefundResult:
-        refund = stripe.refunds.create({paymentIntent: paymentId.value, amount: amount.cents})
-        return RefundResult.success(RefundId.from(refund.id))
-```
-
-**Event Publisher:**
-
-```
-class RabbitMQEventPublisher implements IEventPublisherPort:
-    channel: Channel
-
-    publish(event: DomainEvent):
-        channel.publish("domain_events", event.eventType, serialize({
-            eventId: event.eventId,
-            eventType: event.eventType,
-            occurredAt: event.occurredAt,
-            payload: event.toPayload()
-        }))
-
-    publishAll(events: List<DomainEvent>):
-        for event in events:
-            publish(event)
-```
-
 ---
 
-## Naming Conventions
+## 命名規則
 
-### Alistair Cockburn's Recommended Pattern
+### Alistair Cockburn推奨パターン
 
-**Ports:** `For[Doing][Something]`
-- Driver: `ForPlacingOrders`, `ForConfiguringSettings`
-- Driven: `ForStoringUsers`, `ForNotifyingAlerts`
+**ポート:** `For[Doing][Something]`
+- ドライバー: `ForPlacingOrders`, `ForConfiguringSettings`
+- ドリブン: `ForStoringUsers`, `ForNotifyingAlerts`
 
-**Adapters:** Reference the technology
+**アダプター:** 技術を参照
 - `CliCommandForPlacingOrders`
 - `MysqlDatabaseForStoringUsers`
 - `SlackNotifierForAlerts`
 
-### Alternative Patterns
+### 代替パターン
 
-| Pattern | Port | Adapter |
-|---------|------|---------|
+| パターン | ポート | アダプター |
+|---------|------|-----------|
 | Interface/Impl | `IOrderRepository` | `PostgresOrderRepository` |
-| Port suffix | `OrderRepositoryPort` | `PostgresOrderAdapter` |
-| Using prefix | `IOrderStorage` | `OrderStorageUsingPostgres` |
+| Portサフィックス | `OrderRepositoryPort` | `PostgresOrderAdapter` |
+| Usingプレフィックス | `IOrderStorage` | `OrderStorageUsingPostgres` |
 
-### Project Structure
+### プロジェクト構成
 
 ```
 src/
 ├── application/
 │   ├── ports/
-│   │   ├── driver/                    # Inbound ports
+│   │   ├── driver/                    # インバウンドポート
 │   │   │   ├── place_order_port.ts
 │   │   │   ├── get_order_port.ts
 │   │   │   └── cancel_order_port.ts
-│   │   └── driven/                    # Outbound ports
+│   │   └── driven/                    # アウトバウンドポート
 │   │       ├── order_repository_port.ts
 │   │       ├── event_publisher_port.ts
 │   │       └── payment_gateway_port.ts
 │   └── use_cases/
 │       ├── place_order/
-│       │   └── handler.ts             # Implements driver port
+│       │   └── handler.ts             # ドライバーポートを実装
 │       └── get_order/
 │           └── handler.ts
 ├── infrastructure/
 │   └── adapters/
-│       ├── driver/                    # Inbound adapters
+│       ├── driver/                    # インバウンドアダプター
 │       │   ├── rest/
 │       │   │   └── order_controller.ts
 │       │   ├── grpc/
 │       │   │   └── order_service.ts
 │       │   └── cli/
 │       │       └── commands.ts
-│       └── driven/                    # Outbound adapters
+│       └── driven/                    # アウトバウンドアダプター
 │           ├── postgres/
 │           │   └── order_repository.ts
 │           ├── rabbitmq/
 │           │   └── event_publisher.ts
 │           ├── stripe/
 │           │   └── payment_gateway.ts
-│           └── in_memory/             # Test adapters
+│           └── in_memory/             # テストアダプター
 │               ├── order_repository.ts
 │               └── event_publisher.ts
 └── domain/
@@ -374,26 +272,26 @@ src/
 
 ---
 
-## Key Asymmetry
+## 主要な非対称性
 
 ```mermaid
 flowchart TB
-    subgraph Driver["DRIVER (Left)"]
+    subgraph Driver["ドライバー（左）"]
         direction TB
-        DA["Adapter\n(Controller)"]
-        DP["Port\n(Interface)"]
-        DA -->|calls| DP
+        DA["アダプター\n（コントローラー）"]
+        DP["ポート\n（インターフェース）"]
+        DA -->|呼び出す| DP
     end
 
-    subgraph Driven["DRIVEN (Right)"]
+    subgraph Driven["ドリブン（右）"]
         direction TB
-        DRP["Port\n(Interface)"]
-        DRA["Adapter\n(Postgres)"]
-        DRA -->|implements| DRP
+        DRP["ポート\n（インターフェース）"]
+        DRA["アダプター\n（Postgres）"]
+        DRA -->|実装する| DRP
     end
 
-    Driver -.->|"Application defines\nwhat it OFFERS"| Note1[" "]
-    Driven -.->|"Application defines\nwhat it NEEDS"| Note2[" "]
+    Driver -.->|"アプリケーションが定義する\n提供するもの"| Note1[" "]
+    Driven -.->|"アプリケーションが定義する\n必要とするもの"| Note2[" "]
 
     style Driver fill:#3b82f6,stroke:#2563eb,color:white
     style Driven fill:#f59e0b,stroke:#d97706,color:white
@@ -403,9 +301,9 @@ flowchart TB
 
 ---
 
-## Configurability via Adapters
+## アダプターによる構成可能性
 
-The power of hexagonal architecture: swap adapters without changing the core.
+ヘキサゴナルアーキテクチャの力: コアを変更せずにアダプターを交換。
 
 ```typescript
 // infrastructure/config/container.ts
@@ -436,34 +334,29 @@ function configureProduction(container: Container): void {
   container.bind<IPaymentGatewayPort>('IPaymentGatewayPort')
     .to(StripePaymentGateway);
 }
-
-function configureWithMongoDB(container: Container): void {
-  container.bind<IOrderRepositoryPort>('IOrderRepositoryPort')
-    .to(MongoDBOrderRepository);
-}
 ```
 
 ---
 
-## Strong vs Weak Hexagonal
+## 強い実装 vs 弱い実装
 
-### Weak Implementation
+### 弱い実装
 
-Port is technology-aware (not truly abstract):
+ポートが技術を意識している（真に抽象的でない）:
 
 ```typescript
-// ❌ Weak: Leaks SQL concepts
+// ❌ 弱い: SQLの概念が漏洩
 interface IOrderRepository {
   findByQuery(sql: string, params: any[]): Promise<Order[]>;
 }
 ```
 
-### Strong Implementation
+### 強い実装
 
-Port is fully technology-agnostic:
+ポートが完全に技術非依存:
 
 ```typescript
-// ✅ Strong: Pure domain concepts
+// ✅ 強い: 純粋なドメイン概念
 interface IOrderRepository {
   findById(id: OrderId): Promise<Order | null>;
   findByCustomer(customerId: CustomerId): Promise<Order[]>;
@@ -473,10 +366,10 @@ interface IOrderRepository {
 
 ---
 
-## Benefits
+## メリット
 
-1. **Testability** - Swap real adapters for test doubles
-2. **Flexibility** - Change technologies without changing core
-3. **Independence** - Develop core without external systems
-4. **Clear boundaries** - Explicit interfaces between layers
-5. **Parallel development** - Teams work on different adapters
+1. **テスト容易性** - 実アダプターをテストダブルに交換
+2. **柔軟性** - コアを変更せずに技術を変更
+3. **独立性** - 外部システムなしでコアを開発
+4. **明確な境界** - レイヤー間の明示的なインターフェース
+5. **並列開発** - チームが異なるアダプターで作業可能

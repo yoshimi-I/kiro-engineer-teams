@@ -1,6 +1,6 @@
-# CQRS & Domain Events
+# CQRS＆ドメインイベント
 
-> Sources:
+> 出典:
 > - [CQRS](https://martinfowler.com/bliki/CQRS.html) — Martin Fowler
 > - [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) — Martin Fowler
 > - [CQRS Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs) — Microsoft Azure
@@ -9,39 +9,39 @@
 > - [Strengthening Your Domain: Domain Events](https://lostechies.com/jimmybogard/2010/04/08/strengthening-your-domain-domain-events/) — Jimmy Bogard
 > - [Domain Events: Design and Implementation](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation) — Microsoft
 
-## CQRS Overview
+## CQRS概要
 
-**Command Query Responsibility Segregation** separates read and write operations into different models.
+**コマンドクエリ責務分離**は、読み取りと書き込み操作を異なるモデルに分離する。
 
 ```mermaid
 flowchart TB
-    API["API Layer"]
+    API["APIレイヤー"]
 
     API --> Commands
     API --> Queries
 
-    subgraph WriteSide["Write Side"]
-        Commands["Commands"]
-        CmdHandler["Command Handler\n(Use Case)"]
-        DomainModel["Domain Model\n(Aggregates)"]
-        WriteDB[("Write Database")]
+    subgraph WriteSide["書き込み側"]
+        Commands["コマンド"]
+        CmdHandler["コマンドハンドラー\n（ユースケース）"]
+        DomainModel["ドメインモデル\n（アグリゲート）"]
+        WriteDB[("書き込みDB")]
 
         Commands --> CmdHandler
         CmdHandler --> DomainModel
         DomainModel --> WriteDB
     end
 
-    subgraph ReadSide["Read Side"]
-        Queries["Queries"]
-        QryHandler["Query Handler\n(Read Model)"]
-        ReadDB[("Read Database\n(Optimized)")]
+    subgraph ReadSide["読み取り側"]
+        Queries["クエリ"]
+        QryHandler["クエリハンドラー\n（リードモデル）"]
+        ReadDB[("読み取りDB\n（最適化済み）")]
 
         Queries --> QryHandler
         QryHandler --> ReadDB
     end
 
-    WriteDB -->|Domain Events| EventHandler["Event Handler"]
-    EventHandler -->|Updates| ReadDB
+    WriteDB -->|ドメインイベント| EventHandler["イベントハンドラー"]
+    EventHandler -->|更新| ReadDB
 
     style WriteSide fill:#3b82f6,stroke:#2563eb,color:white
     style ReadSide fill:#10b981,stroke:#059669,color:white
@@ -50,83 +50,40 @@ flowchart TB
 
 ---
 
-## Commands vs Queries
+## コマンド vs クエリ
 
-### Commands (Write Side)
+### コマンド（書き込み側）
 
-Commands represent intent to change state. They **mutate** data.
+コマンドは状態変更の意図を表す。データを**変更する**。
 
 ```typescript
-// application/commands/place_order_command.ts
 export interface PlaceOrderCommand {
   type: 'PlaceOrder';
   customerId: string;
-  items: Array<{
-    productId: string;
-    quantity: number;
-  }>;
-}
-
-export interface ConfirmOrderCommand {
-  type: 'ConfirmOrder';
-  orderId: string;
-}
-
-export interface CancelOrderCommand {
-  type: 'CancelOrder';
-  orderId: string;
-  reason: string;
+  items: Array<{ productId: string; quantity: number }>;
 }
 
 export class PlaceOrderHandler {
   async handle(command: PlaceOrderCommand): Promise<OrderId> {
     const order = Order.create(CustomerId.from(command.customerId));
-
     for (const item of command.items) {
       const product = await this.productRepo.findById(item.productId);
       order.addItem(product.id, item.quantity, product.price);
     }
-
     await this.orderRepo.save(order);
     await this.eventPublisher.publishAll(order.domainEvents);
-
     return order.id;
   }
 }
 ```
 
-### Queries (Read Side)
+### クエリ（読み取り側）
 
-Queries retrieve data without side effects. They **never mutate** state.
+クエリは副作用なしにデータを取得する。状態を**絶対に変更しない**。
 
 ```typescript
-// application/queries/get_order_query.ts
 export interface GetOrderQuery {
   orderId: string;
-}
-
-export interface GetOrdersByCustomerQuery {
-  customerId: string;
-  status?: OrderStatus;
-  page?: number;
-  pageSize?: number;
-}
-
-export interface OrderDTO {
-  id: string;
-  customerId: string;
-  customerName: string;
-  status: string;
-  items: Array<{
-    productId: string;
-    productName: string;
-    quantity: number;
-    unitPrice: number;
-    subtotal: number;
-  }>;
-  total: number;
-  createdAt: string;
-  confirmedAt?: string;
 }
 
 export class GetOrderHandler {
@@ -136,61 +93,35 @@ export class GetOrderHandler {
     return this.readDb.findById(query.orderId);
   }
 }
-
-export class GetOrdersByCustomerHandler {
-  constructor(private readonly readDb: IOrderReadModel) {}
-
-  async handle(query: GetOrdersByCustomerQuery): Promise<PaginatedResult<OrderDTO>> {
-    return this.readDb.findByCustomer(
-      query.customerId,
-      query.status,
-      query.page ?? 1,
-      query.pageSize ?? 20
-    );
-  }
-}
 ```
 
 ---
 
-## Read Model (Projection)
+## リードモデル（プロジェクション）
 
-Optimized database structure for queries. Can denormalize data for performance.
+クエリに最適化されたデータベース構造。パフォーマンスのためにデータを非正規化可能。
 
 ```
 interface IOrderReadModel:
     findById(orderId: string) -> OrderDTO | null
     findByCustomer(customerId, status?, page?, pageSize?) -> PaginatedResult<OrderDTO>
     search(criteria: OrderSearchCriteria) -> List<OrderDTO>
-
-class PostgresOrderReadModel implements IOrderReadModel:
-    db: Database
-
-    findById(orderId: string) -> OrderDTO | null:
-        row = db.ordersRead
-            .where(id: orderId)
-            .join("customer")
-            .withRelated("items.product")
-            .first()
-
-        return row ? this.mapToDTO(row) : null
 ```
 
-Separate write and read databases (optional): write is normalized for transactions, read is denormalized for queries.
+書き込みと読み取りのデータベースを分離（オプション）: 書き込みはトランザクション用に正規化、読み取りはクエリ用に非正規化。
 
 ---
 
-## Domain Events
+## ドメインイベント
 
-Notifications that something happened in the domain. Used for:
-- Updating read models
-- Cross-aggregate communication
-- Integration with other bounded contexts
+ドメインで何かが起きたことの通知。用途:
+- リードモデルの更新
+- アグリゲート間通信
+- 他の境界づけられたコンテキストとの統合
 
-### Event Structure
+### イベント構造
 
 ```typescript
-// domain/shared/domain_event.ts
 export abstract class DomainEvent {
   readonly eventId: string;
   readonly occurredAt: Date;
@@ -206,67 +137,18 @@ export abstract class DomainEvent {
   abstract toPayload(): Record<string, unknown>;
 }
 
-// domain/order/events.ts
 export class OrderCreated extends DomainEvent {
   readonly eventType = 'order.created';
-
-  constructor(
-    readonly orderId: OrderId,
-    readonly customerId: CustomerId,
-  ) {
+  constructor(readonly orderId: OrderId, readonly customerId: CustomerId) {
     super(orderId.value);
   }
-
   toPayload() {
-    return {
-      orderId: this.orderId.value,
-      customerId: this.customerId.value,
-    };
-  }
-}
-
-export class OrderConfirmed extends DomainEvent {
-  readonly eventType = 'order.confirmed';
-
-  constructor(
-    readonly orderId: OrderId,
-    readonly total: Money,
-    readonly items: ReadonlyArray<{ productId: string; quantity: number }>,
-  ) {
-    super(orderId.value);
-  }
-
-  toPayload() {
-    return {
-      orderId: this.orderId.value,
-      total: { amount: this.total.amount, currency: this.total.currency },
-      items: this.items,
-    };
-  }
-}
-
-export class OrderShipped extends DomainEvent {
-  readonly eventType = 'order.shipped';
-
-  constructor(
-    readonly orderId: OrderId,
-    readonly trackingNumber: string,
-    readonly carrier: string,
-  ) {
-    super(orderId.value);
-  }
-
-  toPayload() {
-    return {
-      orderId: this.orderId.value,
-      trackingNumber: this.trackingNumber,
-      carrier: this.carrier,
-    };
+    return { orderId: this.orderId.value, customerId: this.customerId.value };
   }
 }
 ```
 
-### Event Handlers
+### イベントハンドラー
 
 ```
 class OrderCreatedHandler:
@@ -279,69 +161,25 @@ class OrderCreatedHandler:
             status: "draft",
             createdAt: event.occurredAt
         })
-
-class OrderConfirmedHandler:
-    db: Database
-
-    handle(event: OrderConfirmed):
-        db.ordersRead
-            .where(id: event.orderId.value)
-            .update({
-                status: "confirmed",
-                total: event.total.amount,
-                confirmedAt: event.occurredAt
-            })
-
-export class SendShippingNotificationHandler {
-  constructor(
-    private readonly orderRepo: IOrderRepository,
-    private readonly notifier: INotificationService,
-  ) {}
-
-  async handle(event: OrderShipped): Promise<void> {
-    const order = await this.orderRepo.findById(OrderId.from(event.orderId.value));
-    if (!order) return;
-
-    await this.notifier.sendEmail(order.customerEmail, {
-      template: 'order-shipped',
-      data: {
-        orderId: event.orderId.value,
-        trackingNumber: event.trackingNumber,
-        carrier: event.carrier,
-      },
-    });
-  }
-}
 ```
 
 ---
 
-## Domain Events vs Integration Events
+## ドメインイベント vs 統合イベント
 
-### Domain Events
+### ドメインイベント
 
-- Stay within bounded context
-- Fine-grained, low-level
-- Trigger internal processes
-- Named in domain language
+- 境界づけられたコンテキスト内に留まる
+- 細粒度、低レベル
+- 内部プロセスをトリガー
+- ドメイン言語で命名
 
-```typescript
-class OrderItemQuantityIncreased extends DomainEvent {
-  constructor(
-    readonly orderId: OrderId,
-    readonly productId: ProductId,
-    readonly oldQuantity: number,
-    readonly newQuantity: number,
-  ) { super(orderId.value); }
-}
-```
+### 統合イベント
 
-### Integration Events
-
-- Cross bounded context boundaries
-- Coarser-grained
-- Published to message broker
-- Versioned schema
+- 境界づけられたコンテキストを横断
+- 粗粒度
+- メッセージブローカーに発行
+- バージョン管理されたスキーマ
 
 ```typescript
 interface OrderConfirmedIntegrationEvent {
@@ -353,85 +191,20 @@ interface OrderConfirmedIntegrationEvent {
     orderId: string;
     customerId: string;
     total: { amount: number; currency: string };
-    items: Array<{
-      productId: string;
-      quantity: number;
-      unitPrice: number;
-    }>;
-    shippingAddress: {
-      street: string;
-      city: string;
-      postalCode: string;
-      country: string;
-    };
+    items: Array<{ productId: string; quantity: number; unitPrice: number }>;
   };
-}
-```
-
-### Publishing Integration Events
-
-```typescript
-// application/event_handlers/publish_integration_events.ts
-export class PublishOrderConfirmedIntegrationEvent {
-  constructor(
-    private readonly messageBroker: IMessageBroker,
-    private readonly orderRepo: IOrderRepository,
-  ) {}
-
-  async handle(domainEvent: OrderConfirmed): Promise<void> {
-    const order = await this.orderRepo.findById(domainEvent.orderId);
-    if (!order) return;
-
-    const integrationEvent: OrderConfirmedIntegrationEvent = {
-      eventType: 'sales.order.confirmed',
-      eventId: crypto.randomUUID(),
-      version: '1.0',
-      occurredAt: new Date().toISOString(),
-      payload: {
-        orderId: order.id.value,
-        customerId: order.customerId.value,
-        total: {
-          amount: order.total.amount,
-          currency: order.total.currency,
-        },
-        items: order.items.map(item => ({
-          productId: item.productId.value,
-          quantity: item.quantity.value,
-          unitPrice: item.unitPrice.amount,
-        })),
-        shippingAddress: order.shippingAddress
-          ? {
-              street: order.shippingAddress.street,
-              city: order.shippingAddress.city,
-              postalCode: order.shippingAddress.postalCode,
-              country: order.shippingAddress.country,
-            }
-          : null,
-      },
-    };
-
-    await this.messageBroker.publish('order-events', integrationEvent);
-  }
 }
 ```
 
 ---
 
-## Event Dispatcher Pattern
+## イベントディスパッチャーパターン
 
 ```typescript
-// infrastructure/events/event_dispatcher.ts
-export interface IEventHandler<T extends DomainEvent> {
-  handle(event: T): Promise<void>;
-}
-
 export class EventDispatcher {
   private handlers: Map<string, IEventHandler<any>[]> = new Map();
 
-  register<T extends DomainEvent>(
-    eventType: string,
-    handler: IEventHandler<T>,
-  ): void {
+  register<T extends DomainEvent>(eventType: string, handler: IEventHandler<T>): void {
     const existing = this.handlers.get(eventType) ?? [];
     existing.push(handler);
     this.handlers.set(eventType, existing);
@@ -441,116 +214,68 @@ export class EventDispatcher {
     const handlers = this.handlers.get(event.eventType) ?? [];
     await Promise.all(handlers.map(h => h.handle(event)));
   }
-
-  async dispatchAll(events: DomainEvent[]): Promise<void> {
-    for (const event of events) {
-      await this.dispatch(event);
-    }
-  }
 }
-
-const dispatcher = new EventDispatcher();
-dispatcher.register('order.created', new OrderCreatedHandler(readDb));
-dispatcher.register('order.confirmed', new OrderConfirmedHandler(readDb));
-dispatcher.register('order.confirmed', new PublishOrderConfirmedIntegrationEvent(broker, orderRepo));
-dispatcher.register('order.shipped', new SendShippingNotificationHandler(orderRepo, notifier));
 ```
 
 ---
 
-## Outbox Pattern
+## Outboxパターン
 
-Ensures events are published reliably (exactly-once semantics).
+イベントの確実な発行を保証（exactly-onceセマンティクス）。
 
 ```
-interface OutboxMessage:
-    id: string
-    eventType: string
-    payload: string
-    createdAt: DateTime
-    processedAt: DateTime | null
-
-class OutboxRepository:
-    db: Database
-
-    save(event: DomainEvent, tx: Transaction):
-        tx.outbox.insert({
-            id: event.eventId,
-            eventType: event.eventType,
-            payload: serialize(event.toPayload()),
-            createdAt: event.occurredAt
-        })
-
-    getUnprocessed(limit: int = 100) -> List<OutboxMessage>:
-        return db.outbox
-            .where(processedAt: null)
-            .orderBy("createdAt")
-            .limit(limit)
-            .lockForUpdate()
-
-    markProcessed(id: string):
-        db.outbox.where(id: id).update({processedAt: now()})
-
 class PlaceOrderHandler:
-    orderRepo: IOrderRepository
-    outbox: OutboxRepository
-    db: Database
-
     handle(command: PlaceOrderCommand) -> OrderId:
         order = Order.create(CustomerId.from(command.customerId))
 
         db.transaction((tx) => {
             orderRepo.save(order, tx)
             for event in order.domainEvents:
-                outbox.save(event, tx)
+                outbox.save(event, tx)  // 同一トランザクションで保存
         })
 
         return order.id
 
 class OutboxProcessor:
-    outbox: OutboxRepository
-    messageBroker: IMessageBroker
-
     process():
         messages = outbox.getUnprocessed()
-
         for message in messages:
             try:
                 messageBroker.publish(message.eventType, message.payload)
                 outbox.markProcessed(message.id)
             catch error:
-                log.error("Failed to process outbox message", message.id)
+                log.error("Outboxメッセージ処理失敗", message.id)
 ```
 
 ---
 
-## When to Use CQRS
+## CQRSを使うべき時
 
-> **Warning:** "You should be very cautious about using CQRS... the majority of cases I've run into have not been so good." — Martin Fowler
+> **警告:** 「CQRSの使用には非常に慎重であるべき...私が遭遇したケースの大半はそれほど良くなかった。」— Martin Fowler
 
-CQRS adds significant complexity. Most applications don't need it.
+CQRSは大きな複雑さを追加する。ほとんどのアプリケーションには不要。
 
-### Use CQRS When:
+### CQRSを使うべき時:
 
-- Read and write workloads have **dramatically** different scaling requirements
-- Complex queries that genuinely don't map well to domain model
-- Different teams work on read vs write sides
-- Event sourcing is used (CQRS pairs naturally with ES)
-- You've proven simpler approaches are insufficient
+- 読み取りと書き込みのワークロードが**劇的に**異なるスケーリング要件を持つ
+- ドメインモデルにうまくマッピングできない複雑なクエリ
+- 読み取り側と書き込み側で異なるチームが作業
+- イベントソーシングを使用（CQRSはESと自然にペアリング）
+- シンプルなアプローチが不十分であることを証明済み
 
-### Skip CQRS When:
+### CQRSをスキップすべき時:
 
-- Simple CRUD application (most applications)
-- Read/write patterns are similar
-- Small team, simple domain
-- You haven't tried a simple reporting database first
-- Adding it "just in case"
+- シンプルなCRUDアプリケーション（ほとんどのアプリ）
+- 読み取り/書き込みパターンが類似
+- 小チーム、シンプルなドメイン
+- シンプルなレポーティングDBをまだ試していない
+- 「念のため」で追加
 
-**CQRS applies to specific bounded contexts, never entire systems.**
+**CQRSは特定の境界づけられたコンテキストに適用し、システム全体には絶対に適用しない。**
 
-### Simplified CQRS (Start Here)
+### 簡略化CQRS（ここから始める）
 
-Start simple—same database, different query paths:
+シンプルに始める — 同じDB、異なるクエリパス:
 
 ```typescript
 class OrderService {
@@ -566,60 +291,51 @@ class OrderService {
 }
 ```
 
-Evolve to separate databases only when needed.
+必要な時にのみ別DBに進化させる。
 
 ---
 
-## Event Sourcing: Critical Considerations
+## イベントソーシング: 重要な考慮事項
 
-> **Warning:** "Extremely difficult to add Event Sourcing to systems not originally designed for it." — Martin Fowler
+> **警告:** 「元々イベントソーシング用に設計されていないシステムに後から追加するのは極めて困難。」— Martin Fowler
 
-### When Event Sourcing Makes Sense
+### イベントソーシングが適する場合
 
-- Complete audit trail is a business requirement
-- Need to reconstruct state at any point in time
-- Domain is inherently event-driven (financial transactions, workflows)
-- Debugging requires understanding "how did we get here?"
+- 完全な監査証跡がビジネス要件
+- 任意の時点で状態を再構築する必要がある
+- ドメインが本質的にイベント駆動（金融取引、ワークフロー）
+- デバッグに「どうやってここに至ったか」の理解が必要
 
-### When to Avoid Event Sourcing
+### イベントソーシングを避けるべき場合
 
-- Simple CRUD with no audit requirements
-- Team unfamiliar with event-driven patterns
-- Adding it retroactively to existing system
-- No clear business need for temporal queries
-
-### Event Sourcing Requirements
-
-1. **Events must store deltas** — Not final state, but what changed (enables reversal)
-2. **Snapshots for performance** — Rebuild from snapshots, not from event 0
-3. **External system handling:**
-   - Disable notifications during replays
-   - Cache external query results with timestamps
-4. **Schema evolution strategy** — Events are forever; plan for versioning
+- 監査要件のないシンプルなCRUD
+- イベント駆動パターンに不慣れなチーム
+- 既存システムへの後付け
+- 時間的クエリの明確なビジネスニーズがない
 
 ---
 
-## Saga Pattern (Cross-Aggregate Workflows)
+## Sagaパターン（アグリゲート横断ワークフロー）
 
-For workflows spanning multiple aggregates, use sagas instead of trying to coordinate via raw domain events.
+複数のアグリゲートにまたがるワークフローには、生のドメインイベントで調整するのではなくSagaを使用。
 
 ```
 Saga: PlaceOrderSaga
-├── Step 1: Reserve inventory (Inventory aggregate)
-├── Step 2: Process payment (Payment aggregate)
-├── Step 3: Confirm order (Order aggregate)
-└── Compensating actions if any step fails
+├── ステップ1: 在庫予約（Inventoryアグリゲート）
+├── ステップ2: 決済処理（Paymentアグリゲート）
+├── ステップ3: 注文確認（Orderアグリゲート）
+└── いずれかのステップが失敗した場合の補償アクション
 ```
 
-**Saga types:**
-- **Choreography:** Each service listens/publishes events (simpler, harder to trace)
-- **Orchestration:** Central coordinator manages steps (explicit, easier to debug)
+**Sagaの種類:**
+- **コレオグラフィ:** 各サービスがイベントをリッスン/発行（シンプル、追跡が困難）
+- **オーケストレーション:** 中央コーディネーターがステップを管理（明示的、デバッグが容易）
 
 ---
 
-## Idempotent Consumer Pattern
+## 冪等コンシューマーパターン
 
-**Required for reliable event processing.** Messages may be delivered more than once.
+**信頼性の高いイベント処理に必須。** メッセージは複数回配信される可能性がある。
 
 ```
 class OrderConfirmedHandler:
@@ -627,13 +343,13 @@ class OrderConfirmedHandler:
 
     handle(event: OrderConfirmed):
         if event.eventId in processedIds:
-            return
+            return  // 既に処理済み
 
         doWork(event)
         processedIds.add(event.eventId)
 ```
 
-**Implementation options:**
-- Store processed message IDs in database
-- Use message broker's deduplication features
-- Design handlers to be naturally idempotent
+**実装オプション:**
+- 処理済みメッセージIDをDBに保存
+- メッセージブローカーの重複排除機能を使用
+- ハンドラーを自然に冪等になるよう設計

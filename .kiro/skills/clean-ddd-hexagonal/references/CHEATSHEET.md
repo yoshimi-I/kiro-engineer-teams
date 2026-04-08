@@ -1,122 +1,119 @@
-# Quick Reference Cheatsheet
+# クイックリファレンスチートシート
 
-> See [SKILL.md](../SKILL.md#sources) for full source list.
+> 出典一覧は [SKILL.md](../SKILL.md#参照ドキュメント) を参照。
 
-## Layer Summary
+## レイヤーサマリー
 
 ```mermaid
 flowchart TB
-    subgraph Infra["INFRASTRUCTURE (Adapters)"]
-        I1["REST/gRPC controllers"]
-        I2["CLI handlers"]
-        I3["Framework code"]
-        I4["Database repositories"]
-        I5["Message publishers"]
-        I6["External service clients"]
+    subgraph Infra["INFRASTRUCTURE（アダプター）"]
+        I1["REST/gRPCコントローラー"]
+        I2["CLIハンドラー"]
+        I3["フレームワークコード"]
+        I4["DBリポジトリ"]
+        I5["メッセージパブリッシャー"]
+        I6["外部サービスクライアント"]
     end
 
-    subgraph App["APPLICATION (Use Cases)"]
-        A1["Command/Query handlers"]
-        A2["DTOs"]
-        A3["Transaction management"]
-        A4["Port interfaces"]
-        A5["Application services"]
-        A6["Event dispatching"]
+    subgraph App["APPLICATION（ユースケース）"]
+        A1["コマンド/クエリハンドラー"]
+        A2["DTO"]
+        A3["トランザクション管理"]
+        A4["ポートインターフェース"]
+        A5["アプリケーションサービス"]
+        A6["イベントディスパッチ"]
     end
 
-    subgraph Domain["DOMAIN (Business Logic)"]
-        D1["Entities"]
-        D2["Aggregates"]
-        D3["Repository interfaces"]
-        D4["Business rules"]
-        D5["Value Objects"]
-        D6["Domain Events"]
-        D7["Domain Services"]
-        D8["Specifications"]
+    subgraph Domain["DOMAIN（ビジネスロジック）"]
+        D1["エンティティ"]
+        D2["アグリゲート"]
+        D3["リポジトリインターフェース"]
+        D4["ビジネスルール"]
+        D5["値オブジェクト"]
+        D6["ドメインイベント"]
+        D7["ドメインサービス"]
+        D8["仕様"]
     end
 
-    Infra -->|depends on| App
-    App -->|depends on| Domain
+    Infra -->|依存| App
+    App -->|依存| Domain
 
     style Infra fill:#6366f1,stroke:#4f46e5,color:white
     style App fill:#3b82f6,stroke:#2563eb,color:white
     style Domain fill:#10b981,stroke:#059669,color:white
 ```
 
-*Dependencies point inward*
+*依存は内側を向く*
 
 ---
 
-## Quick Decision Trees
+## クイック判断ツリー
 
-### "Where does this code go?"
-
-```
-Is it a business rule or constraint?
-├── YES → Domain layer
-└── NO ↓
-
-Is it orchestrating a use case?
-├── YES → Application layer
-└── NO ↓
-
-Is it dealing with external systems (DB, API, UI)?
-├── YES → Infrastructure layer
-└── NO → Reconsider; probably domain
-```
-
-### "Entity or Value Object?"
+### 「このコードはどこに置く？」
 
 ```
-Does it have a unique identity that persists?
-├── YES → Entity
-└── NO ↓
+ビジネスルールや制約か？
+├── はい → Domainレイヤー
+└── いいえ ↓
 
-Is it defined entirely by its attributes?
-├── YES → Value Object
-└── NO → Probably an Entity
+ユースケースをオーケストレーションしているか？
+├── はい → Applicationレイヤー
+└── いいえ ↓
+
+外部システム（DB、API、UI）を扱っているか？
+├── はい → Infrastructureレイヤー
+└── いいえ → 再考; おそらくDomain
 ```
 
-### "Aggregate boundary?"
+### 「エンティティか値オブジェクトか？」
 
 ```
-Must these objects change together atomically?
-├── YES → Same aggregate
-└── NO ↓
+永続する一意のIDを持つか？
+├── はい → エンティティ
+└── いいえ ↓
 
-Can one exist without the other?
-├── YES → Different aggregates (reference by ID)
-└── NO → Probably same aggregate
+属性のみで定義されるか？
+├── はい → 値オブジェクト
+└── いいえ → おそらくエンティティ
 ```
 
-### "Domain Service or Entity method?"
+### 「アグリゲート境界は？」
 
 ```
-Does it naturally belong to one entity?
-├── YES → Entity method
-└── NO ↓
+これらのオブジェクトはアトミックに一緒に変更される必要があるか？
+├── はい → 同じアグリゲート
+└── いいえ ↓
 
-Does it require multiple aggregates?
-├── YES → Domain Service
-└── NO ↓
+一方が他方なしに存在できるか？
+├── はい → 別アグリゲート（IDで参照）
+└── いいえ → おそらく同じアグリゲート
+```
 
-Is it stateless business logic?
-├── YES → Domain Service
-└── NO → Reconsider placement
+### 「ドメインサービスかエンティティメソッドか？」
+
+```
+1つのエンティティに自然に属するか？
+├── はい → エンティティメソッド
+└── いいえ ↓
+
+複数のアグリゲートが必要か？
+├── はい → ドメインサービス
+└── いいえ ↓
+
+ステートレスなビジネスロジックか？
+├── はい → ドメインサービス
+└── いいえ → 配置を再考
 ```
 
 ---
 
-## Common Patterns Quick Reference
+## 共通パターンクイックリファレンス
 
-### Value Object Template
+### 値オブジェクトテンプレート
 
 ```typescript
 export class Money {
-  private constructor(
-    private readonly _amount: number,
-    private readonly _currency: string,
-  ) {}
+  private constructor(private readonly _amount: number, private readonly _currency: string) {}
 
   static create(amount: number, currency: string): Money {
     if (amount < 0) throw new Error('Negative');
@@ -136,42 +133,12 @@ export class Money {
 }
 ```
 
-### Entity Template
-
-```typescript
-export class OrderItem extends Entity<OrderItemId> {
-  private _quantity: Quantity;
-
-  private constructor(id: OrderItemId, private readonly _productId: ProductId, quantity: Quantity) {
-    super(id);
-    this._quantity = quantity;
-  }
-
-  static create(productId: ProductId, quantity: Quantity): OrderItem {
-    return new OrderItem(OrderItemId.generate(), productId, quantity);
-  }
-
-  increaseQuantity(amount: number): void {
-    this._quantity = this._quantity.add(amount);
-  }
-
-  get productId(): ProductId { return this._productId; }
-  get quantity(): Quantity { return this._quantity; }
-}
-```
-
-### Aggregate Root Template
+### アグリゲートルートテンプレート
 
 ```typescript
 export class Order extends AggregateRoot<OrderId> {
   private _items: OrderItem[] = [];
   private _status: OrderStatus;
-
-  private constructor(id: OrderId, customerId: CustomerId) {
-    super(id);
-    this._customerId = customerId;
-    this._status = OrderStatus.Draft;
-  }
 
   static create(customerId: CustomerId): Order {
     const order = new Order(OrderId.generate(), customerId);
@@ -192,16 +159,12 @@ export class Order extends AggregateRoot<OrderId> {
   }
 
   private assertCanModify(): void {
-    if (this._status === OrderStatus.Cancelled) {
-      throw new InvalidOrderStateError('Order is cancelled');
-    }
+    if (this._status === OrderStatus.Cancelled) throw new InvalidOrderStateError('Order is cancelled');
   }
-
-  get total(): Money { /* ... */ }
 }
 ```
 
-### Repository Interface Template
+### リポジトリインターフェーステンプレート
 
 ```typescript
 export interface IOrderRepository {
@@ -211,7 +174,7 @@ export interface IOrderRepository {
 }
 ```
 
-### Use Case Handler Template
+### ユースケースハンドラーテンプレート
 
 ```typescript
 export class PlaceOrderHandler {
@@ -223,15 +186,12 @@ export class PlaceOrderHandler {
 
   async execute(command: PlaceOrderCommand): Promise<OrderId> {
     const order = Order.create(CustomerId.from(command.customerId));
-
     for (const item of command.items) {
       const product = await this.productRepo.findById(item.productId);
       order.addItem(product.id, Quantity.create(item.quantity), product.price);
     }
-
     await this.orderRepo.save(order);
     await this.eventPublisher.publishAll(order.domainEvents);
-
     return order.id;
   }
 }
@@ -239,34 +199,34 @@ export class PlaceOrderHandler {
 
 ---
 
-## Port Naming Conventions
+## ポート命名規則
 
-| Type | Pattern | Examples |
-|------|---------|----------|
-| Driver Port | `I{Action}UseCase` | `IPlaceOrderUseCase`, `IGetOrderUseCase` |
-| Driven Port | `I{Resource}Repository` | `IOrderRepository`, `IProductRepository` |
-| Driven Port | `I{Action}Service` | `IPaymentService`, `INotificationService` |
-| Driven Port | `I{Resource}Gateway` | `IPaymentGateway`, `IShippingGateway` |
-
----
-
-## Common Anti-Patterns
-
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| Anemic Domain | Entities are just data bags | Put behavior in entities |
-| Repository per table | One repo per DB table | One repo per aggregate |
-| Fat Use Cases | Business logic in handlers | Move to domain |
-| Leaky Abstraction | Domain depends on ORM | Keep domain pure |
-| God Aggregate | One massive aggregate | Split into smaller ones |
-| Cross-Aggregate TX | Modifying multiple in one TX | Use domain events |
-| Direct Layer Skip | Controller → Repository | Go through application layer |
-| Premature CQRS | Adding complexity early | Start simple, evolve |
-| Event Proliferation | Too many fine-grained events | May signal context boundary |
+| 種類 | パターン | 例 |
+|------|---------|-----|
+| ドライバーポート | `I{Action}UseCase` | `IPlaceOrderUseCase`, `IGetOrderUseCase` |
+| ドリブンポート | `I{Resource}Repository` | `IOrderRepository`, `IProductRepository` |
+| ドリブンポート | `I{Action}Service` | `IPaymentService`, `INotificationService` |
+| ドリブンポート | `I{Resource}Gateway` | `IPaymentGateway`, `IShippingGateway` |
 
 ---
 
-## Dependency Rules Matrix
+## 共通アンチパターン
+
+| アンチパターン | 問題 | 解決策 |
+|--------------|------|--------|
+| 貧血ドメイン | エンティティがただのデータ袋 | 振る舞いをエンティティに入れる |
+| テーブルごとのリポジトリ | DBテーブルごとに1リポジトリ | アグリゲートごとに1リポジトリ |
+| 肥大化ユースケース | ハンドラーにビジネスロジック | ドメインに移動 |
+| 漏洩する抽象化 | ドメインがORMに依存 | ドメインを純粋に保つ |
+| 巨大アグリゲート | 1つの巨大アグリゲート | 小さく分割 |
+| アグリゲート横断TX | 1TXで複数を変更 | ドメインイベントを使用 |
+| レイヤースキップ | コントローラー→リポジトリ直接 | Applicationレイヤーを経由 |
+| 早すぎるCQRS | 早期に複雑さを追加 | シンプルに始め、進化 |
+| イベント増殖 | 細粒度すぎるイベント | コンテキスト境界のシグナルかも |
+
+---
+
+## 依存ルールマトリクス
 
 |  | Domain | Application | Infrastructure |
 |--|--------|-------------|----------------|
@@ -274,133 +234,60 @@ export class PlaceOrderHandler {
 | **Application** | ✅ | ✅ | ❌ |
 | **Infrastructure** | ✅ | ✅ | ✅ |
 
-✅ = Can depend on
-❌ = Cannot depend on
+✅ = 依存可能 / ❌ = 依存不可
 
 ---
 
-## Hexagonal Quick Reference
+## 使うべき時 / スキップすべき時
 
-```mermaid
-flowchart LR
-    subgraph Driver["DRIVER (Left/Primary/Inbound)"]
-        direction TB
-        D1["REST Controller"]
-        D2["gRPC Service"]
-        D3["CLI Command"]
-        D4["Message Consumer"]
-        DP["Port (Interface)"]
-        D1 & D2 & D3 & D4 -->|calls| DP
-    end
+### Clean + DDD + Hexagonalを使うべき時:
 
-    subgraph App["Application"]
-        Core[" "]
-    end
+- ✅ 多くのルールを持つ複雑なビジネスドメイン
+- ✅ 長期運用システム（年単位の保守）
+- ✅ 大チーム（5人以上）
+- ✅ インフラ交換の必要性（DB、ブローカー等）
+- ✅ 高テストカバレッジが必要
+- ✅ 複数エントリポイント（API、CLI、イベント、スケジュールジョブ）
 
-    subgraph Driven["DRIVEN (Right/Secondary/Outbound)"]
-        direction TB
-        DRP["Port (Interface)"]
-        DR1["Database Repository"]
-        DR2["Message Publisher"]
-        DR3["External API Client"]
-        DR4["Cache Adapter"]
-        DR1 & DR2 & DR3 & DR4 -->|implements| DRP
-    end
+### スキップすべき時:
 
-    Driver -->|"How world\nuses app"| App
-    App -->|"How app\nuses world"| Driven
+- ❌ シンプルなCRUDアプリケーション（ほとんどのアプリ）
+- ❌ プロトタイプ / MVP / 使い捨てコード
+- ❌ 小チーム（1-2人）
+- ❌ 短期プロジェクト
+- ❌ 些細なビジネスロジック
 
-    style Driver fill:#3b82f6,stroke:#2563eb,color:white
-    style App fill:#10b981,stroke:#059669,color:white
-    style Driven fill:#f59e0b,stroke:#d97706,color:white
+### 複雑さのはしご（シンプルに始める）
+
 ```
+レベル1: シンプルなレイヤード（Controller → Service → Repository）
+   ↓ ビジネスルールが複雑になったら
+レベル2: ドメインモデル（振る舞いを持つエンティティ）
+   ↓ 複数エントリポイントが必要になったら
+レベル3: ヘキサゴナル（ポート＆アダプター）
+   ↓ 読み取り/書き込みパターンが大きく乖離したら
+レベル4: CQRS（読み取り/書き込みモデルの分離）
+   ↓ 完全な監査証跡/時間的クエリが必要になったら
+レベル5: イベントソーシング（イベントを保存、状態を導出）
+```
+
+**レベルを飛ばさない。** 各レベルは複雑さを追加する。現在のレベルが不十分であることを証明してから上に移動。
 
 ---
 
-## When to Use / Skip
+## リソース
 
-### Use Clean + DDD + Hexagonal When:
-
-- ✅ Complex business domain with many rules
-- ✅ Long-lived system (years of maintenance)
-- ✅ Large team (5+ developers)
-- ✅ Need to swap infrastructure (DB, broker, etc.)
-- ✅ High test coverage required
-- ✅ Multiple entry points (API, CLI, events, scheduled jobs)
-
-### Skip When:
-
-- ❌ Simple CRUD application (most applications)
-- ❌ Prototype / MVP / throwaway code
-- ❌ Small team (1-2 devs)
-- ❌ Short-lived project
-- ❌ Trivial business logic
-
-### Complexity Ladder (Start Simple)
-
-```
-Level 1: Simple layered (Controller → Service → Repository)
-   ↓ When business rules grow complex
-Level 2: Domain model (Entities with behavior)
-   ↓ When need multiple entry points
-Level 3: Hexagonal (Ports & Adapters)
-   ↓ When read/write patterns diverge significantly
-Level 4: CQRS (Separate read/write models)
-   ↓ When need complete audit trail / temporal queries
-Level 5: Event Sourcing (Store events, derive state)
-```
-
-**Don't skip levels.** Each level adds complexity. Move up only when you've proven the current level insufficient.
-
----
-
-## File Naming Conventions
-
-```
-domain/
-├── order/
-│   ├── order.ts                    # Aggregate root
-│   ├── order_item.ts               # Entity
-│   ├── value_objects.ts            # OrderId, Money, etc.
-│   ├── events.ts                   # OrderCreated, etc.
-│   ├── repository.ts               # IOrderRepository
-│   ├── services.ts                 # Domain services
-│   └── errors.ts                   # OrderError, etc.
-
-application/
-├── place_order/
-│   ├── command.ts                  # PlaceOrderCommand
-│   ├── handler.ts                  # PlaceOrderHandler
-│   └── port.ts                     # IPlaceOrderUseCase
-
-infrastructure/
-├── postgres/
-│   ├── order_repository.ts         # PostgresOrderRepository
-│   └── mappers/
-│       └── order_mapper.ts         # Domain <-> DB mapping
-```
-
----
-
-## Resources
-
-### Books
+### 書籍
 - Clean Architecture (Robert C. Martin, 2017)
 - Domain-Driven Design (Eric Evans, 2003)
 - Implementing Domain-Driven Design (Vaughn Vernon, 2013)
 - Hexagonal Architecture Explained (Alistair Cockburn, 2024)
 - Get Your Hands Dirty on Clean Architecture (Tom Hombergs, 2019)
 
-### Reference Implementations
+### リファレンス実装
 - Go: [bxcodec/go-clean-arch](https://github.com/bxcodec/go-clean-arch)
 - Rust: [flosse/clean-architecture-with-rust](https://github.com/flosse/clean-architecture-with-rust)
 - Python: [cdddg/py-clean-arch](https://github.com/cdddg/py-clean-arch)
 - TypeScript: [jbuget/nodejs-clean-architecture-app](https://github.com/jbuget/nodejs-clean-architecture-app)
 - .NET: [jasontaylordev/CleanArchitecture](https://github.com/jasontaylordev/CleanArchitecture)
 - Java: [thombergs/buckpal](https://github.com/thombergs/buckpal)
-
-### Official Documentation
-- https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
-- https://alistair.cockburn.us/hexagonal-architecture/
-- https://www.domainlanguage.com/ddd/
-- https://martinfowler.com/tags/domain%20driven%20design.html
