@@ -1,3 +1,5 @@
+mouse_mode true
+
 layout {
     tab name="Pipeline" {
         pane split_direction="horizontal" {
