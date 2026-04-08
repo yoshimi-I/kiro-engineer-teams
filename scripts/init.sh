@@ -1,24 +1,33 @@
 #!/usr/bin/env bash
-# Initialize cloned template as your own private repo
-# Usage: ./scripts/init.sh [repo-name]
 set -euo pipefail
 
-REPO="${1:-$(basename "$PWD")}"
+BOLD='\033[1m'
+DIM='\033[2m'
+GREEN='\033[32m'
+RED='\033[31m'
+RESET='\033[0m'
 
-echo "📦 リポジトリ名: $REPO"
-read -p "   この名前でOK？ (Y/n/別名を入力) → " answer
+echo ""
+echo -e "${BOLD}  🚀 kiro-engineer-teams${RESET}"
+echo ""
 
-case "$answer" in
-  ""|[Yy]) ;;  # そのまま
-  [Nn]) echo "中止しました。"; exit 0 ;;
-  *) REPO="$answer" ;;
-esac
+# Repo name
+DEFAULT_NAME="$(basename "$PWD")"
 
-# Check if repo already exists on GitHub
+if [[ -n "${1:-}" ]]; then
+  REPO="$1"
+else
+  read -p "  リポジトリ名: " -e -i "$DEFAULT_NAME" REPO
+  echo ""
+fi
+
+if [[ -z "$REPO" ]]; then
+  echo -e "${RED}  ✗ リポジトリ名が空です${RESET}"
+  exit 1
+fi
+
 if gh repo view "$REPO" &>/dev/null; then
-  echo "⚠️  Repository '$REPO' already exists on GitHub."
-  echo "   削除: gh repo delete $REPO --yes"
-  echo "   別名: just init <other-name>"
+  echo -e "${RED}  ✗ '$REPO' は既にGitHubに存在します${RESET}"
   exit 1
 fi
 
@@ -26,20 +35,17 @@ fi
 rm -f LICENSE
 rm -rf docs
 for f in README.md AGENTS.md; do
-  if grep -q "kiro-engineer-teams" "$f" 2>/dev/null; then
-    rm -f "$f"
-  fi
+  grep -q "kiro-engineer-teams" "$f" 2>/dev/null && rm -f "$f"
 done
 
-# Remove template git history
+# Initialize git & create repo
 rm -rf .git
-git init
+git init -q
 git add .
-git commit -m "init: scaffold from kiro-engineer-teams"
+git commit -q -m "init: scaffold from kiro-engineer-teams"
+gh repo create "$REPO" --private --source=. --push > /dev/null 2>&1
 
-# Create private GitHub repo and push
-gh repo create "$REPO" --private --source=. --push
-
+echo -e "${GREEN}  ✔ $REPO を作成しました${RESET}"
 echo ""
-echo "🎉 Created private repo: $REPO"
-echo "   Run: just start"
+echo -e "  ${DIM}次: just setup → just start${RESET}"
+echo ""
