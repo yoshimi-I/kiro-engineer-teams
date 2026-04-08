@@ -1,169 +1,149 @@
 ---
 name: clean-ddd-hexagonal
 description: >
-  Backend architecture guide: Clean Architecture + DDD + Hexagonal patterns. Use when designing or modifying domain models, aggregates, repositories, use cases, or reviewing layer violations. Triggers on: DDD, Clean Architecture, Hexagonal, ports and adapters, entities, value objects, domain events, repository pattern, aggregate, layer separation.---
+  バックエンドアーキテクチャガイド: Clean Architecture + DDD + Hexagonalパターン。ドメインモデル、アグリゲート、リポジトリ、ユースケースの設計・変更、レイヤー違反のレビュー時に使用。トリガー: DDD, Clean Architecture, Hexagonal, ポートとアダプター, エンティティ, 値オブジェクト, ドメインイベント, リポジトリパターン, アグリゲート, レイヤー分離。
+---
 
 # Clean Architecture + DDD + Hexagonal
 
-Backend architecture combining DDD tactical patterns, Clean Architecture dependency rules, and Hexagonal ports/adapters for maintainable, testable systems.
+DDD戦術パターン、Clean Architectureの依存ルール、Hexagonalのポート/アダプターを組み合わせた、保守性・テスト容易性の高いバックエンドアーキテクチャ。
 
-## When to Use (and When NOT to)
+## 使うべき時（使わないべき時）
 
-| Use When | Skip When |
-|----------|-----------|
-| Complex business domain with many rules | Simple CRUD, few business rules |
-| Long-lived system (years of maintenance) | Prototype, MVP, throwaway code |
-| Team of 5+ developers | Solo developer or small team (1-2) |
-| Multiple entry points (API, CLI, events) | Single entry point, simple API |
-| Need to swap infrastructure (DB, broker) | Fixed infrastructure, unlikely to change |
-| High test coverage required | Quick scripts, internal tools |
+| 使うべき時 | スキップすべき時 |
+|-----------|----------------|
+| 多くのルールを持つ複雑なビジネスドメイン | シンプルなCRUD、ビジネスルールが少ない |
+| 長期運用システム（年単位の保守） | プロトタイプ、MVP、使い捨てコード |
+| 5人以上の開発チーム | ソロ開発者や小チーム（1-2人） |
+| 複数のエントリポイント（API, CLI, イベント） | 単一エントリポイント、シンプルなAPI |
+| インフラ交換の必要性（DB、ブローカー） | 固定インフラ、変更の可能性が低い |
+| 高テストカバレッジが必要 | クイックスクリプト、内部ツール |
 
-**Start simple. Evolve complexity only when needed.** Most systems don't need full CQRS or Event Sourcing.
+**シンプルに始める。必要な時にのみ複雑さを進化させる。** ほとんどのシステムは完全なCQRSやEvent Sourcingを必要としない。
 
-## CRITICAL: The Dependency Rule
+## 重要: 依存ルール
 
-Dependencies point **inward only**. Outer layers depend on inner layers, never the reverse.
+依存は**内側にのみ**向く。外側のレイヤーは内側に依存し、逆は絶対にない。
 
 ```
 Infrastructure → Application → Domain
-   (adapters)     (use cases)    (core)
+   (アダプター)    (ユースケース)   (コア)
 ```
 
-**Violations to catch:**
-- Domain importing database/HTTP libraries
-- Controllers calling repositories directly (bypassing use cases)
-- Entities depending on application services
+**検出すべき違反:**
+- ドメインがDB/HTTPライブラリをインポート
+- コントローラーがリポジトリを直接呼び出し（ユースケースをバイパス）
+- エンティティがアプリケーションサービスに依存
 
-**Design validation:** "Create your application to work without either a UI or a database" — Alistair Cockburn. If you can run your domain logic from tests with no infrastructure, your boundaries are correct.
+**設計の検証:** 「UIもデータベースもなしでアプリケーションが動作するように作れ」— Alistair Cockburn。テストからインフラなしでドメインロジックを実行できれば、境界は正しい。
 
-## Quick Decision Trees
+## クイック判断ツリー
 
-### "Where does this code go?"
-
-```
-Where does it go?
-├─ Pure business logic, no I/O           → domain/
-├─ Orchestrates domain + has side effects → application/
-├─ Talks to external systems              → infrastructure/
-├─ Defines HOW to interact (interface)    → port (domain or application)
-└─ Implements a port                      → adapter (infrastructure)
-```
-
-### "Is this an Entity or Value Object?"
+### 「このコードはどこに置く？」
 
 ```
-Entity or Value Object?
-├─ Has unique identity that persists → Entity
-├─ Defined only by its attributes    → Value Object
-├─ "Is this THE same thing?"         → Entity (identity comparison)
-└─ "Does this have the same value?"  → Value Object (structural equality)
+どこに置く？
+├─ 純粋なビジネスロジック、I/Oなし      → domain/
+├─ ドメインを調整 + 副作用あり          → application/
+├─ 外部システムと通信                   → infrastructure/
+├─ インタラクション方法を定義（インターフェース） → port（domain or application）
+└─ ポートを実装                        → adapter（infrastructure）
 ```
 
-### "Should this be its own Aggregate?"
+### 「エンティティか値オブジェクトか？」
 
 ```
-Aggregate boundaries?
-├─ Must be consistent together in a transaction → Same aggregate
-├─ Can be eventually consistent                 → Separate aggregates
-├─ Referenced by ID only                        → Separate aggregates
-└─ >10 entities in aggregate                    → Split it
+エンティティ or 値オブジェクト？
+├─ 永続する一意のIDを持つ        → エンティティ
+├─ 属性のみで定義される          → 値オブジェクト
+├─ 「これは同じモノか？」        → エンティティ（ID比較）
+└─ 「これは同じ値か？」          → 値オブジェクト（構造的等価性）
 ```
 
-**Rule:** One aggregate per transaction. Cross-aggregate consistency via domain events (eventual consistency).
+### 「独立したアグリゲートにすべきか？」
 
-## Directory Structure
+```
+アグリゲート境界？
+├─ トランザクション内で一貫性が必要  → 同じアグリゲート
+├─ 結果整合性で良い              → 別アグリゲート
+├─ IDのみで参照                 → 別アグリゲート
+└─ アグリゲート内に10以上のエンティティ → 分割する
+```
+
+**ルール:** トランザクションごとに1アグリゲート。アグリゲート間の整合性はドメインイベント（結果整合性）で。
+
+## ディレクトリ構成
 
 ```
 src/
-├── domain/                    # Core business logic (NO external dependencies)
+├── domain/                    # コアビジネスロジック（外部依存なし）
 │   ├── {aggregate}/
-│   │   ├── entity              # Aggregate root + child entities
-│   │   ├── value_objects       # Immutable value types
-│   │   ├── events              # Domain events
-│   │   ├── repository          # Repository interface (DRIVEN PORT)
-│   │   └── services            # Domain services (stateless logic)
+│   │   ├── entity              # アグリゲートルート + 子エンティティ
+│   │   ├── value_objects       # 不変の値型
+│   │   ├── events              # ドメインイベント
+│   │   ├── repository          # リポジトリインターフェース（DRIVEN PORT）
+│   │   └── services            # ドメインサービス（ステートレスロジック）
 │   └── shared/
-│       └── errors              # Domain errors
-├── application/               # Use cases / Application services
+│       └── errors              # ドメインエラー
+├── application/               # ユースケース / アプリケーションサービス
 │   ├── {use-case}/
-│   │   ├── command             # Command/Query DTOs
-│   │   ├── handler             # Use case implementation
-│   │   └── port                # Driver port interface
+│   │   ├── command             # コマンド/クエリDTO
+│   │   ├── handler             # ユースケース実装
+│   │   └── port                # ドライバーポートインターフェース
 │   └── shared/
-│       └── unit_of_work        # Transaction abstraction
-├── infrastructure/            # Adapters (external concerns)
-│   ├── persistence/           # Database adapters
-│   ├── messaging/             # Message broker adapters
-│   ├── http/                  # REST/GraphQL adapters (DRIVER)
+│       └── unit_of_work        # トランザクション抽象化
+├── infrastructure/            # アダプター（外部関心事）
+│   ├── persistence/           # データベースアダプター
+│   ├── messaging/             # メッセージブローカーアダプター
+│   ├── http/                  # REST/GraphQLアダプター（DRIVER）
 │   └── config/
-│       └── di                  # Dependency injection / composition root
-└── main                        # Bootstrap / entry point
+│       └── di                  # 依存性注入 / コンポジションルート
+└── main                        # ブートストラップ / エントリポイント
 ```
 
-## DDD Building Blocks
+## DDDビルディングブロック
 
-| Pattern | Purpose | Layer | Key Rule |
-|---------|---------|-------|----------|
-| **Entity** | Identity + behavior | Domain | Equality by ID |
-| **Value Object** | Immutable data | Domain | Equality by value, no setters |
-| **Aggregate** | Consistency boundary | Domain | Only root is referenced externally |
-| **Domain Event** | Record of change | Domain | Past tense naming (`OrderPlaced`) |
-| **Repository** | Persistence abstraction | Domain (port) | Per aggregate, not per table |
-| **Domain Service** | Stateless logic | Domain | When logic doesn't fit an entity |
-| **Application Service** | Orchestration | Application | Coordinates domain + infra |
+| パターン | 目的 | レイヤー | 主要ルール |
+|---------|------|---------|-----------|
+| **エンティティ** | ID + 振る舞い | Domain | IDによる等価性 |
+| **値オブジェクト** | 不変データ | Domain | 値による等価性、セッターなし |
+| **アグリゲート** | 整合性境界 | Domain | ルートのみ外部から参照 |
+| **ドメインイベント** | 変更の記録 | Domain | 過去形の命名（`OrderPlaced`） |
+| **リポジトリ** | 永続化抽象 | Domain（port） | テーブルごとではなくアグリゲートごと |
+| **ドメインサービス** | ステートレスロジック | Domain | エンティティに収まらないロジック |
+| **アプリケーションサービス** | オーケストレーション | Application | ドメイン + インフラを調整 |
 
-## Anti-Patterns (CRITICAL)
+## アンチパターン（重要）
 
-| Anti-Pattern | Problem | Fix |
-|--------------|---------|-----|
-| **Anemic Domain Model** | Entities are data bags, logic in services | Move behavior INTO entities |
-| **Repository per Entity** | Breaks aggregate boundaries | One repository per AGGREGATE |
-| **Leaking Infrastructure** | Domain imports DB/HTTP libs | Domain has ZERO external deps |
-| **God Aggregate** | Too many entities, slow transactions | Split into smaller aggregates |
-| **Skipping Ports** | Controllers → Repositories directly | Always go through application layer |
-| **CRUD Thinking** | Modeling data, not behavior | Model business operations |
-| **Premature CQRS** | Adding complexity before needed | Start with simple read/write, evolve |
-| **Cross-Aggregate TX** | Multiple aggregates in one transaction | Use domain events for consistency |
+| アンチパターン | 問題 | 修正 |
+|--------------|------|------|
+| **貧血ドメインモデル** | エンティティがデータ袋、ロジックがサービスに | 振る舞いをエンティティ内に移動 |
+| **エンティティごとのリポジトリ** | アグリゲート境界を破壊 | アグリゲートごとに1リポジトリ |
+| **インフラの漏洩** | ドメインがDB/HTTPライブラリをインポート | ドメインは外部依存ゼロ |
+| **巨大アグリゲート** | エンティティが多すぎ、トランザクションが遅い | 小さなアグリゲートに分割 |
+| **ポートのスキップ** | コントローラー → リポジトリ直接 | 常にアプリケーション層を経由 |
+| **CRUD思考** | データをモデリング、振る舞いではない | ビジネス操作をモデリング |
+| **早すぎるCQRS** | 必要前に複雑さを追加 | シンプルな読み書きから始め、進化 |
+| **アグリゲート横断TX** | 1トランザクションに複数アグリゲート | 整合性にドメインイベントを使用 |
 
-## Implementation Order
+## 実装順序
 
-1. **Discover the Domain** — Event Storming, conversations with domain experts
-2. **Model the Domain** — Entities, value objects, aggregates (no infra)
-3. **Define Ports** — Repository interfaces, external service interfaces
-4. **Implement Use Cases** — Application services coordinating domain
-5. **Add Adapters last** — HTTP, database, messaging implementations
+1. **ドメインを発見** — イベントストーミング、ドメインエキスパートとの対話
+2. **ドメインをモデリング** — エンティティ、値オブジェクト、アグリゲート（インフラなし）
+3. **ポートを定義** — リポジトリインターフェース、外部サービスインターフェース
+4. **ユースケースを実装** — ドメインを調整するアプリケーションサービス
+5. **アダプターは最後に追加** — HTTP、データベース、メッセージング実装
 
-**DDD is collaborative.** Modeling sessions with domain experts are as important as the code patterns.
+**DDDは協調的。** ドメインエキスパートとのモデリングセッションはコードパターンと同じくらい重要。
 
-## Reference Documentation
+## 参照ドキュメント
 
-| File | Purpose |
-|------|---------|
-| [references/LAYERS.md](references/LAYERS.md) | Complete layer specifications |
-| [references/DDD-STRATEGIC.md](references/DDD-STRATEGIC.md) | Bounded contexts, context mapping |
-| [references/DDD-TACTICAL.md](references/DDD-TACTICAL.md) | Entities, value objects, aggregates (pseudocode) |
-| [references/HEXAGONAL.md](references/HEXAGONAL.md) | Ports, adapters, naming |
-| [references/CQRS-EVENTS.md](references/CQRS-EVENTS.md) | Command/query separation, events |
-| [references/TESTING.md](references/TESTING.md) | Unit, integration, architecture tests |
-| [references/CHEATSHEET.md](references/CHEATSHEET.md) | Quick decision guide |
-
-## Sources
-
-### Primary Sources
-- [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin (2012)
-- [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) — Alistair Cockburn (2005)
-- [Domain-Driven Design: The Blue Book](https://www.domainlanguage.com/ddd/blue-book/) — Eric Evans (2003)
-- [Implementing Domain-Driven Design](https://openlibrary.org/works/OL17392277W) — Vaughn Vernon (2013)
-
-### Pattern References
-- [CQRS](https://martinfowler.com/bliki/CQRS.html) — Martin Fowler
-- [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) — Martin Fowler
-- [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html) — Martin Fowler (PoEAA)
-- [Unit of Work](https://martinfowler.com/eaaCatalog/unitOfWork.html) — Martin Fowler (PoEAA)
-- [Bounded Context](https://martinfowler.com/bliki/BoundedContext.html) — Martin Fowler
-- [Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html) — microservices.io
-- [Effective Aggregate Design](https://www.dddcommunity.org/library/vernon_2011/) — Vaughn Vernon
-
-### Implementation Guides
-- [Microsoft: DDD + CQRS Microservices](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/)
-- [Domain Events](https://udidahan.com/2009/06/14/domain-events-salvation/) — Udi Dahan
+| ファイル | 目的 |
+|---------|------|
+| [references/LAYERS.md](references/LAYERS.md) | 完全なレイヤー仕様 |
+| [references/DDD-STRATEGIC.md](references/DDD-STRATEGIC.md) | 境界づけられたコンテキスト、コンテキストマッピング |
+| [references/DDD-TACTICAL.md](references/DDD-TACTICAL.md) | エンティティ、値オブジェクト、アグリゲート（擬似コード） |
+| [references/HEXAGONAL.md](references/HEXAGONAL.md) | ポート、アダプター、命名 |
+| [references/CQRS-EVENTS.md](references/CQRS-EVENTS.md) | コマンド/クエリ分離、イベント |
+| [references/TESTING.md](references/TESTING.md) | ユニット、統合、アーキテクチャテスト |
+| [references/CHEATSHEET.md](references/CHEATSHEET.md) | クイック判断ガイド |

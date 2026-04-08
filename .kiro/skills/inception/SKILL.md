@@ -1,28 +1,28 @@
 ---
 name: inception
 description: >
-  AI-DLC INCEPTION phase: structured project planning workflow.
-  Workspace detection, requirements analysis, user stories, architecture design, and issue generation.
-  Use when starting a new project, planning features, or analyzing existing codebases.
-  Triggers on: new project, planning, requirements, architecture, design, brainstorm, inception.
+  AI-DLC INCEPTIONフェーズ: 構造化されたプロジェクト計画ワークフロー。
+  ワークスペース検出、要件分析、ユーザーストーリー、アーキテクチャ設計、issue生成。
+  新規プロジェクト開始、機能計画、既存コードベース分析時に使用。
+  トリガー: 新規プロジェクト, 計画, 要件, アーキテクチャ, 設計, ブレスト, inception。
 ---
 
-# INCEPTION Phase — Adaptive Project Planning
+# INCEPTIONフェーズ — 適応型プロジェクト計画
 
-Structured planning workflow adapted from AI-DLC. Guides the user through
-requirements → design → issue generation, adapting depth to project complexity.
+AI-DLCから適応した構造化計画ワークフロー。
+要件 → 設計 → issue生成をプロジェクトの複雑さに応じて適応的にガイドする。
 
-## Workflow
+## ワークフロー
 
 ```
-1. Workspace Detection (always)
-2. Requirements Analysis (always, adaptive depth)
-3. User Stories (conditional)
-4. Architecture Design (conditional)
-5. Issue Generation (always) → feeds into 8-agent pipeline
+1. ワークスペース検出（常に実行）
+2. 要件分析（常に実行、適応的深度）
+3. ユーザーストーリー（条件付き）
+4. アーキテクチャ設計（条件付き）
+5. Issue生成（常に実行）→ 7エージェントパイプラインに供給
 ```
 
-## Detailed steps are in `references/` — read them on demand:
+## 詳細ステップは `references/` にあり、必要に応じて読む:
 
 - `references/workspace-detection.md`
 - `references/requirements-analysis.md`

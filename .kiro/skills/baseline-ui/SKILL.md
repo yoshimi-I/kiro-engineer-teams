@@ -1,85 +1,86 @@
 ---
 name: baseline-ui
 description: >
-  Opinionated UI constraints for Tailwind CSS + React projects. Enforces animation durations, typography scale, component accessibility, layout anti-patterns, and design consistency. Use when building or reviewing UI components. Triggers on: Tailwind, CSS, UI component, animation, typography, layout, design review.---
+  Tailwind CSS + Reactプロジェクト向けのUI制約。アニメーション時間、タイポグラフィスケール、コンポーネントのアクセシビリティ、レイアウトのアンチパターン、デザインの一貫性を強制する。UIコンポーネントの構築・レビュー時に使用。トリガー: Tailwind, CSS, UIコンポーネント, アニメーション, タイポグラフィ, レイアウト, デザインレビュー。
+---
 
-# Baseline UI
+# ベースラインUI
 
-Enforces an opinionated UI baseline to prevent AI-generated interface slop.
+AI生成インターフェースの品質低下を防ぐための制約。
 
-## How to use
+## 使い方
 
 - `/baseline-ui`
-  Apply these constraints to any UI work in this conversation.
+  この会話のUI作業に以下の制約を適用する。
 
 - `/baseline-ui <file>`
-  Review the file against all constraints below and output:
-  - violations (quote the exact line/snippet)
-  - why it matters (1 short sentence)
-  - a concrete fix (code-level suggestion)
+  ファイルを以下の制約に照らしてレビューし、出力:
+  - 違反箇所（該当行/スニペットを引用）
+  - 重要な理由（1文）
+  - 具体的な修正案（コードレベル）
 
-## Stack
+## スタック
 
-- MUST use Tailwind CSS defaults unless custom values already exist or are explicitly requested
-- MUST use `motion/react` (formerly `framer-motion`) when JavaScript animation is required
-- SHOULD use `tw-animate-css` for entrance and micro-animations in Tailwind CSS
-- MUST use `cn` utility (`clsx` + `tailwind-merge`) for class logic
+- Tailwind CSSのデフォルト値を使うこと（カスタム値が既存 or 明示的に要求された場合を除く）
+- JSアニメーションが必要な場合は `motion/react`（旧 `framer-motion`）を使用
+- Tailwind CSSのエントランス・マイクロアニメーションには `tw-animate-css` を推奨
+- クラスロジックには `cn` ユーティリティ（`clsx` + `tailwind-merge`）を使用
 
-## Components
+## コンポーネント
 
-- MUST use accessible component primitives for anything with keyboard or focus behavior (`Base UI`, `React Aria`, `Radix`)
-- MUST use the project’s existing component primitives first
-- NEVER mix primitive systems within the same interaction surface
-- SHOULD prefer [`Base UI`](https://base-ui.com/react/components) for new primitives if compatible with the stack
-- MUST add an `aria-label` to icon-only buttons
-- NEVER rebuild keyboard or focus behavior by hand unless explicitly requested
+- キーボード・フォーカス動作があるものにはアクセシブルなプリミティブを使用（`Base UI`, `React Aria`, `Radix`）
+- プロジェクト既存のコンポーネントプリミティブを優先
+- 同一インタラクション面でプリミティブシステムを混在させない
+- 新規プリミティブにはスタック互換なら [`Base UI`](https://base-ui.com/react/components) を推奨
+- アイコンのみのボタンには `aria-label` を付与
+- 明示的に要求されない限り、キーボード・フォーカス動作を手動で再実装しない
 
-## Interaction
+## インタラクション
 
-- MUST use an `AlertDialog` for destructive or irreversible actions
-- SHOULD use structural skeletons for loading states
-- NEVER use `h-screen`, use `h-dvh`
-- MUST respect `safe-area-inset` for fixed elements
-- MUST show errors next to where the action happens
-- NEVER block paste in `input` or `textarea` elements
+- 破壊的・不可逆なアクションには `AlertDialog` を使用
+- ローディング状態にはスケルトンを推奨
+- `h-screen` は使わない、`h-dvh` を使う
+- 固定要素には `safe-area-inset` を尊重
+- エラーはアクションが発生した場所の近くに表示
+- `input` や `textarea` でペーストをブロックしない
 
-## Animation
+## アニメーション
 
-- NEVER add animation unless it is explicitly requested
-- MUST animate only compositor props (`transform`, `opacity`)
-- NEVER animate layout properties (`width`, `height`, `top`, `left`, `margin`, `padding`)
-- SHOULD avoid animating paint properties (`background`, `color`) except for small, local UI (text, icons)
-- SHOULD use `ease-out` on entrance
-- NEVER exceed `200ms` for interaction feedback
-- MUST pause looping animations when off-screen
-- SHOULD respect `prefers-reduced-motion`
-- NEVER introduce custom easing curves unless explicitly requested
-- SHOULD avoid animating large images or full-screen surfaces
+- 明示的に要求されない限りアニメーションを追加しない
+- コンポジタプロパティのみアニメーション（`transform`, `opacity`）
+- レイアウトプロパティのアニメーション禁止（`width`, `height`, `top`, `left`, `margin`, `padding`）
+- ペイントプロパティ（`background`, `color`）のアニメーションは小さなローカルUI（テキスト、アイコン）のみ許可
+- エントランスには `ease-out` を推奨
+- インタラクションフィードバックは `200ms` を超えない
+- ループアニメーションは画面外で一時停止
+- `prefers-reduced-motion` を尊重
+- 明示的に要求されない限りカスタムイージングカーブを導入しない
+- 大きな画像やフルスクリーン面のアニメーションを避ける
 
-## Typography
+## タイポグラフィ
 
-- MUST use `text-balance` for headings and `text-pretty` for body/paragraphs
-- MUST use `tabular-nums` for data
-- SHOULD use `truncate` or `line-clamp` for dense UI
-- NEVER modify `letter-spacing` (`tracking-*`) unless explicitly requested
+- 見出しには `text-balance`、本文/段落には `text-pretty` を使用
+- データには `tabular-nums` を使用
+- 密なUIには `truncate` や `line-clamp` を推奨
+- 明示的に要求されない限り `letter-spacing`（`tracking-*`）を変更しない
 
-## Layout
+## レイアウト
 
-- MUST use a fixed `z-index` scale (no arbitrary `z-*`)
-- SHOULD use `size-*` for square elements instead of `w-*` + `h-*`
+- 固定の `z-index` スケールを使用（任意の `z-*` 禁止）
+- 正方形要素には `w-*` + `h-*` の代わりに `size-*` を推奨
 
-## Performance
+## パフォーマンス
 
-- NEVER animate large `blur()` or `backdrop-filter` surfaces
-- NEVER apply `will-change` outside an active animation
-- NEVER use `useEffect` for anything that can be expressed as render logic
+- 大きな `blur()` や `backdrop-filter` 面のアニメーション禁止
+- アクティブなアニメーション外で `will-change` を適用しない
+- レンダーロジックで表現できるものに `useEffect` を使わない
 
-## Design
+## デザイン
 
-- NEVER use gradients unless explicitly requested
-- NEVER use purple or multicolor gradients
-- NEVER use glow effects as primary affordances
-- SHOULD use Tailwind CSS default shadow scale unless explicitly requested
-- MUST give empty states one clear next action
-- SHOULD limit accent color usage to one per view
-- SHOULD use existing theme or Tailwind CSS color tokens before introducing new ones
+- 明示的に要求されない限りグラデーション禁止
+- 紫やマルチカラーグラデーション禁止
+- グロー効果を主要なアフォーダンスとして使わない
+- 明示的に要求されない限りTailwind CSSデフォルトのシャドウスケールを使用
+- 空の状態には1つの明確な次のアクションを提示
+- アクセントカラーの使用は1ビューにつき1色まで
+- 新しい色を導入する前に既存テーマやTailwind CSSカラートークンを使用

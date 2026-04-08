@@ -1,71 +1,71 @@
 ---
 name: development-rules
-description: Core rules applied to all tasks
+description: 全タスクに適用されるコアルール
 ---
 
-## Language
+## 言語
 
-Always respond to the user in Japanese. Code, commit messages, PR titles/body, and issue comments remain in English.
+ユーザーへの応答は常に日本語で行うこと。コード、コミットメッセージ、PRタイトル/本文、issueコメントは英語のまま。
 
-## Initial Setup
+## 初期セットアップ
 
-If the "Project-specific settings" section below is empty (comments only):
-1. Read `.kiro/skills/inception/SKILL.md` and run the INCEPTION workflow
-2. Guide user through: workspace detection → requirements → stories → architecture
-3. Write finalized tech stack to "Project-specific settings" section
-4. Generate GitHub issues via `gh issue create`
-5. Instruct user to run `./scripts/start-pipeline.sh`
+以下の「プロジェクト固有設定」セクションが空（コメントのみ）の場合:
+1. `.kiro/skills/inception/SKILL.md` を読み、INCEPTIONワークフローを実行
+2. ユーザーをガイド: ワークスペース検出 → 要件分析 → ストーリー → アーキテクチャ
+3. 確定した技術スタックを「プロジェクト固有設定」セクションに記入
+4. `gh issue create` でGitHub issueを生成
+5. ユーザーに `./scripts/start-pipeline.sh` の実行を指示
 
-If settings are already filled in, skip this section.
+設定が既に記入済みの場合はスキップ。
 
-## Project-specific settings
+## プロジェクト固有設定
 
 ```
-# Fill in after INCEPTION:
-# - Frontend: 
-# - Backend: 
-# - Infra: 
-# - Test commands: 
+# INCEPTION完了後に記入:
+# - フロントエンド: 
+# - バックエンド: 
+# - インフラ: 
+# - テストコマンド: 
 # - Git: Conventional Commits
 ```
 
-## Prerequisites
+## 前提条件
 
-- `git init` + `git remote add origin <url>` configured
-- `gh auth login` authenticated
-- Without these, `gh issue list` etc. will not work
+- `git init` + `git remote add origin <url>` 設定済み
+- `gh auth login` 認証済み
+- これらがないと `gh issue list` 等が動作しない
 
-## Code Quality
+## コード品質
 
-- Minimal code to solve the problem correctly — YAGNI
-- Readability over cleverness
-- Single responsibility per function/module
-- Understand requirements fully before writing code
-- Follow existing project conventions
+- 問題を正しく解決する最小限のコード — YAGNI
+- 賢さより読みやすさ
+- 関数/モジュールごとに単一責任
+- コードを書く前に要件を完全に理解する
+- 既存のプロジェクト規約に従う
 
-## Implementation
+## 実装
 
-- TDD: Red → Green → Refactor. No code without tests first.
-- 3-layer testing required: unit (per function) + integration (per API) + E2E (per user flow)
-- Error handling: no silent catches, actionable user messages, resource cleanup
-- API: frontend ↔ backend types always in sync, validation on both ends
-- Performance: no N+1, no API calls in loops, prevent unnecessary re-renders
-- For detailed guidelines, read `.kiro/skills/quality-guidelines/SKILL.md`
+- TDD: Red → Green → Refactor。テストなしのコード禁止
+- 3層テスト必須: ユニット（関数単位）+ 統合（API単位）+ E2E（ユーザーフロー単位）
+- エラー処理: サイレントcatch禁止、ユーザーに分かるメッセージ、リソースクリーンアップ
+- API: フロントエンド↔バックエンドの型は常に同期、両端でバリデーション
+- パフォーマンス: N+1禁止、ループ内API呼び出し禁止、不要な再レンダリング防止
+- 詳細ガイドラインは `.kiro/skills/quality-guidelines/SKILL.md` を参照
 
 ## Git
 
-- **All work in git worktree** — never checkout/switch in main repo
-- Branch: `<type>/issue-<number>-<short-description>`
-- Commit: Conventional Commits, English, atomic
-- PR: English title + body, `Closes #N`, squash merge only
-- CI must pass before merge. No force merge.
+- **全作業はgit worktreeで** — メインリポジトリでcheckout/switchしない
+- ブランチ: `<type>/issue-<number>-<short-description>`
+- コミット: Conventional Commits、英語、アトミック
+- PR: 英語タイトル + 本文、`Closes #N`、squash mergeのみ
+- CI通過前のマージ禁止。force merge禁止。
 
 ### pre-commit（必須）
 
 コミット前に必ず lint と test を実行すること。CI失敗を未然に防ぐ。
 
 ```bash
-# コミット前に必ず実行（Project-specific settings のコマンドを使う）
+# コミット前に必ず実行（プロジェクト固有設定のコマンドを使う）
 # 例: npm run lint && npm run test
 # 例: cargo clippy && cargo test
 # 例: ruff check . && pytest
@@ -106,16 +106,15 @@ gh issue list --state open --json number,title,body --jq '.[].body' | grep -i "<
 ## 依存関係
 - depends-on: #<番号>（先にmergeが必要）
 ```
-```
 
-## Security
+## セキュリティ
 
-- No hardcoded secrets. Input validation. Parameterized queries. Least privilege.
+- シークレットのハードコード禁止。入力バリデーション。パラメータ化クエリ。最小権限の原則。
 
-## Parallel Agents
+## 並列エージェント
 
-- `issue/task.md` is the shared state file — read before starting any work
-- Record "in-progress" before starting, "in-review" after PR creation
-- Never modify files another agent is working on
-- All issue/PR comments in English
-- Decisions recorded in `aidlc-docs/audit.md` with ISO 8601 timestamps
+- `issue/task.md` が共有状態ファイル — 作業開始前に必ず読む
+- 着手時に「着手中」、PR作成後に「レビュー中」を記録
+- 他のエージェントが作業中のファイルは変更しない
+- issue/PRコメントは全て英語
+- 意思決定は `aidlc-docs/audit.md` にISO 8601タイムスタンプで記録

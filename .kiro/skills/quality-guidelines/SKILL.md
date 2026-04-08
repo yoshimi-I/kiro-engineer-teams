@@ -1,98 +1,98 @@
 ---
 name: quality-guidelines
 description: >
-  Detailed implementation guidelines: TDD workflow, 3-layer testing strategy,
-  error handling patterns, API design rules, documentation standards, and performance checklist.
-  Use when implementing features, writing tests, designing APIs, or reviewing code quality.
-  Triggers on: testing, TDD, error handling, API design, documentation, performance, code quality.
+  詳細な実装ガイドライン: TDDワークフロー、3層テスト戦略、
+  エラー処理パターン、API設計ルール、ドキュメント基準、パフォーマンスチェックリスト。
+  機能実装、テスト作成、API設計、コード品質レビュー時に使用。
+  トリガー: テスト, TDD, エラー処理, API設計, ドキュメント, パフォーマンス, コード品質。
 ---
 
-# Quality Guidelines
+# 品質ガイドライン
 
-## TDD (Test-Driven Development)
+## TDD（テスト駆動開発）
 
-1. **Red**: Write a failing test first
-2. **Green**: Write minimal code to pass
-3. **Refactor**: Clean up (tests still pass)
+1. **Red**: 失敗するテストを先に書く
+2. **Green**: テストを通す最小限のコードを書く
+3. **Refactor**: クリーンアップ（テストは引き続きパス）
 
-Rules:
-- No implementation code without tests first
-- Bug fixes start with a reproduction test
-- Test behavior, not implementation internals
+ルール:
+- テストなしの実装コード禁止
+- バグ修正は再現テストから始める
+- 実装の内部ではなく振る舞いをテスト
 
-## Testing Strategy (3-layer)
+## テスト戦略（3層）
 
-### Unit Tests
-- Required for all business logic and utility functions
-- Isolate external dependencies with mocks/stubs
-- Per function: minimum 1 happy path + 1 error + 1 edge case
-- Frontend: component behavior (render, events, state)
-- Backend: domain logic, services, validation
+### ユニットテスト
+- 全ビジネスロジックとユーティリティ関数に必須
+- 外部依存はモック/スタブで分離
+- 関数ごとに最低: ハッピーパス1 + エラー1 + エッジケース1
+- フロントエンド: コンポーネントの振る舞い（レンダー、イベント、状態）
+- バックエンド: ドメインロジック、サービス、バリデーション
 
-### Integration Tests
-- Required for every API endpoint
-- Backend: full request → response flow (including DB)
-- Frontend: API call → UI update flow
-- WebSocket: connect → send/receive → disconnect
-- DB: migration → CRUD → rollback
+### 統合テスト
+- 全APIエンドポイントに必須
+- バックエンド: リクエスト → レスポンスの完全フロー（DB含む）
+- フロントエンド: API呼び出し → UI更新フロー
+- WebSocket: 接続 → 送受信 → 切断
+- DB: マイグレーション → CRUD → ロールバック
 
-### E2E Tests (Playwright)
-- Required for every major user flow
-- Page navigation, form submission, auth flow
-- Responsive: desktop + mobile (375px)
-- Error states: 404, network error, validation error
-- Screenshots + console error collection in every test
+### E2Eテスト（Playwright）
+- 全主要ユーザーフローに必須
+- ページナビゲーション、フォーム送信、認証フロー
+- レスポンシブ: デスクトップ + モバイル（375px）
+- エラー状態: 404、ネットワークエラー、バリデーションエラー
+- 全テストでスクリーンショット + コンソールエラー収集
 
-### PR Merge Gate
-PRs must satisfy ALL:
-- [ ] New code has corresponding unit tests
-- [ ] API changes have updated integration tests
-- [ ] UI changes have updated E2E tests
-- [ ] All tests pass in CI
+### PRマージゲート
+PRは以下を全て満たすこと:
+- [ ] 新コードに対応するユニットテストがある
+- [ ] API変更に更新された統合テストがある
+- [ ] UI変更に更新されたE2Eテストがある
+- [ ] CIで全テストがパス
 
-## Error Handling
+## エラー処理
 
-- Never silently catch exceptions — log or notify user
-- User-facing errors must be specific and actionable (no "An error occurred")
-- API errors: unified format (status code + error code + message)
-- Resource cleanup: DB connections, file handles, WebSocket
-- Network errors: consider retry + fallback
-- Frontend: Error Boundary to prevent crashes
-- Backend: global exception handler for unhandled errors
+- 例外をサイレントにキャッチしない — ログまたはユーザーに通知
+- ユーザー向けエラーは具体的でアクション可能（「エラーが発生しました」禁止）
+- APIエラー: 統一フォーマット（ステータスコード + エラーコード + メッセージ）
+- リソースクリーンアップ: DB接続、ファイルハンドル、WebSocket
+- ネットワークエラー: リトライ + フォールバックを検討
+- フロントエンド: クラッシュ防止のためError Boundary
+- バックエンド: 未処理エラー用のグローバル例外ハンドラー
 
-## API Design
+## API設計
 
-- Frontend ↔ Backend type definitions must stay in sync
-- API changes must update both sides simultaneously
-- WebSocket message types must match on both ends
-- RESTful: proper HTTP methods + status codes
-- Request/response validation on both ends
-- Breaking changes require versioning
+- フロントエンド↔バックエンドの型定義は常に同期
+- API変更は両側を同時に更新
+- WebSocketメッセージ型は両端で一致
+- RESTful: 適切なHTTPメソッド + ステータスコード
+- リクエスト/レスポンスの両端でバリデーション
+- 破壊的変更にはバージョニングが必要
 
-## Documentation
+## ドキュメント
 
-- Public APIs must be documented
-- Comments explain "why", code explains "what"
-- README, API specs, architecture docs stay in sync with implementation
-- Complex business logic gets inline comments
-- All config values and env vars listed in `.env.example`
+- パブリックAPIはドキュメント化必須
+- コメントは「なぜ」を説明、コードは「何を」を説明
+- README、API仕様、アーキテクチャドキュメントは実装と同期
+- 複雑なビジネスロジックにはインラインコメント
+- 全設定値と環境変数を `.env.example` に記載
 
-## Performance
+## パフォーマンス
 
-- No N+1 queries — fetch needed data in one query
-- No API calls or DB queries inside loops
-- Frontend: prevent unnecessary re-renders (memo, useMemo, useCallback)
-- Images/assets: appropriate size and format
-- Bundle size awareness — no unnecessary dependencies
+- N+1クエリ禁止 — 必要なデータを1クエリで取得
+- ループ内のAPI呼び出しやDBクエリ禁止
+- フロントエンド: 不要な再レンダリング防止（memo, useMemo, useCallback）
+- 画像/アセット: 適切なサイズとフォーマット
+- バンドルサイズ意識 — 不要な依存関係禁止
 
-## Audit Trail
+## 監査ログ
 
-All design decisions recorded in `aidlc-docs/audit.md`:
-- Append-only, never overwrite
-- ISO 8601 timestamps
-- Record user approvals, rejections, issue creation events
+全設計決定を `aidlc-docs/audit.md` に記録:
+- 追記のみ、上書き禁止
+- ISO 8601タイムスタンプ
+- ユーザーの承認、却下、issue作成イベントを記録
 
-## Document Structure
+## ドキュメント構成
 
 ```
 aidlc-docs/

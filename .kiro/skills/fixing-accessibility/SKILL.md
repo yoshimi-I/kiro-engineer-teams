@@ -1,136 +1,135 @@
 ---
 name: fixing-accessibility
 description: >
-  Accessibility audit checklist for HTML/React components. Covers ARIA labels, keyboard navigation, focus management, color contrast, form errors, and WCAG compliance. Use when adding interactive controls, forms, dialogs. Triggers on: accessibility, a11y, ARIA, keyboard navigation, focus trap, screen reader, WCAG, contrast.---
+  HTML/Reactコンポーネントのアクセシビリティ監査チェックリスト。ARIAラベル、キーボードナビゲーション、フォーカス管理、色コントラスト、フォームエラー、WCAG準拠をカバー。インタラクティブコントロール、フォーム、ダイアログの追加時に使用。トリガー: accessibility, a11y, ARIA, キーボードナビゲーション, フォーカストラップ, スクリーンリーダー, WCAG, コントラスト。
+---
 
-# fixing-accessibility
+# アクセシビリティ修正
 
-Fix accessibility issues.
-
-## how to use
+## 使い方
 
 - `/fixing-accessibility`
-  Apply these constraints to any UI work in this conversation.
+  この会話のUI作業に以下の制約を適用する。
 
 - `/fixing-accessibility <file>`
-  Review the file against all rules below and report:
-  - violations (quote the exact line or snippet)
-  - why it matters (one short sentence)
-  - a concrete fix (code-level suggestion)
+  ファイルを以下のルールに照らしてレビューし、報告:
+  - 違反箇所（該当行/スニペットを引用）
+  - 重要な理由（1文）
+  - 具体的な修正案（コードレベル）
 
-Do not rewrite large parts of the UI. Prefer minimal, targeted fixes.
+大規模なUI書き換えはしない。最小限のターゲット修正を優先。
 
-## when to apply
+## 適用タイミング
 
-Reference these guidelines when:
-- adding or changing buttons, links, inputs, menus, dialogs, tabs, dropdowns
-- building forms, validation, error states, helper text
-- implementing keyboard shortcuts or custom interactions
-- working on focus states, focus trapping, or modal behavior
-- rendering icon-only controls
-- adding hover-only interactions or hidden content
+以下の作業時に参照:
+- ボタン、リンク、入力、メニュー、ダイアログ、タブ、ドロップダウンの追加・変更
+- フォーム、バリデーション、エラー状態、ヘルパーテキストの構築
+- キーボードショートカットやカスタムインタラクションの実装
+- フォーカス状態、フォーカストラップ、モーダル動作の作業
+- アイコンのみのコントロールのレンダリング
+- ホバーのみのインタラクションや非表示コンテンツの追加
 
-## rule categories by priority
+## 優先度別ルールカテゴリ
 
-| priority | category | impact |
-|----------|----------|--------|
-| 1 | accessible names | critical |
-| 2 | keyboard access | critical |
-| 3 | focus and dialogs | critical |
-| 4 | semantics | high |
-| 5 | forms and errors | high |
-| 6 | announcements | medium-high |
-| 7 | contrast and states | medium |
-| 8 | media and motion | low-medium |
-| 9 | tool boundaries | critical |
+| 優先度 | カテゴリ | 影響度 |
+|--------|---------|--------|
+| 1 | アクセシブル名 | 致命的 |
+| 2 | キーボードアクセス | 致命的 |
+| 3 | フォーカスとダイアログ | 致命的 |
+| 4 | セマンティクス | 高 |
+| 5 | フォームとエラー | 高 |
+| 6 | アナウンスメント | 中〜高 |
+| 7 | コントラストと状態 | 中 |
+| 8 | メディアとモーション | 低〜中 |
+| 9 | ツール境界 | 致命的 |
 
-## quick reference
+## クイックリファレンス
 
-### 1. accessible names (critical)
+### 1. アクセシブル名（致命的）
 
-- every interactive control must have an accessible name
-- icon-only buttons must have aria-label or aria-labelledby
-- every input, select, and textarea must be labeled
-- links must have meaningful text (no “click here”)
-- decorative icons must be aria-hidden
+- 全インタラクティブコントロールにアクセシブル名が必要
+- アイコンのみのボタンには aria-label または aria-labelledby が必要
+- 全 input, select, textarea にラベルが必要
+- リンクには意味のあるテキストが必要（「ここをクリック」禁止）
+- 装飾アイコンは aria-hidden にする
 
-### 2. keyboard access (critical)
+### 2. キーボードアクセス（致命的）
 
-- do not use div or span as buttons without full keyboard support
-- all interactive elements must be reachable by Tab
-- focus must be visible for keyboard users
-- do not use tabindex greater than 0
-- Escape must close dialogs or overlays when applicable
+- 完全なキーボードサポートなしに div や span をボタンとして使わない
+- 全インタラクティブ要素が Tab で到達可能であること
+- キーボードユーザーにフォーカスが見えること
+- tabindex に 0 より大きい値を使わない
+- 該当する場合、Escape でダイアログやオーバーレイを閉じること
 
-### 3. focus and dialogs (critical)
+### 3. フォーカスとダイアログ（致命的）
 
-- modals must trap focus while open
-- restore focus to the trigger on close
-- set initial focus inside dialogs
-- opening a dialog should not scroll the page unexpectedly
+- モーダルは開いている間フォーカスをトラップすること
+- 閉じた時にトリガーにフォーカスを戻すこと
+- ダイアログ内に初期フォーカスを設定すること
+- ダイアログを開いた時にページが予期せずスクロールしないこと
 
-### 4. semantics (high)
+### 4. セマンティクス（高）
 
-- prefer native elements (button, a, input) over role-based hacks
-- if a role is used, required aria attributes must be present
-- lists must use ul or ol with li
-- do not skip heading levels
-- tables must use th for headers when applicable
+- ロールベースのハックよりネイティブ要素（button, a, input）を優先
+- ロールを使う場合、必須の aria 属性が存在すること
+- リストは ul または ol と li を使用
+- 見出しレベルをスキップしない
+- 該当する場合、テーブルはヘッダーに th を使用
 
-### 5. forms and errors (high)
+### 5. フォームとエラー（高）
 
-- errors must be linked to fields using aria-describedby
-- required fields must be announced
-- invalid fields must set aria-invalid
-- helper text must be associated with inputs
-- disabled submit actions must explain why
+- エラーは aria-describedby でフィールドにリンクすること
+- 必須フィールドはアナウンスされること
+- 無効なフィールドは aria-invalid を設定すること
+- ヘルパーテキストは入力に関連付けること
+- 無効化された送信アクションは理由を説明すること
 
-### 6. announcements (medium-high)
+### 6. アナウンスメント（中〜高）
 
-- critical form errors should use aria-live
-- loading states should use aria-busy or status text
-- toasts must not be the only way to convey critical information
-- expandable controls must use aria-expanded and aria-controls
+- 重要なフォームエラーには aria-live を使用
+- ローディング状態には aria-busy またはステータステキストを使用
+- トーストは重要な情報を伝える唯一の手段にしない
+- 展開可能なコントロールには aria-expanded と aria-controls を使用
 
-### 7. contrast and states (medium)
+### 7. コントラストと状態（中）
 
-- ensure sufficient contrast for text and icons
-- hover-only interactions must have keyboard equivalents
-- disabled states must not rely on color alone
-- do not remove focus outlines without a visible replacement
+- テキストとアイコンに十分なコントラストを確保
+- ホバーのみのインタラクションにはキーボード同等機能が必要
+- 無効状態は色だけに依存しない
+- 可視的な代替なしにフォーカスアウトラインを削除しない
 
-### 8. media and motion (low-medium)
+### 8. メディアとモーション（低〜中）
 
-- images must have correct alt text (meaningful or empty)
-- videos with speech should provide captions when relevant
-- respect prefers-reduced-motion for non-essential motion
-- avoid autoplaying media with sound
+- 画像には正しい alt テキスト（意味のあるもの or 空）が必要
+- 音声付き動画には該当する場合キャプションを提供
+- 必須でないモーションには prefers-reduced-motion を尊重
+- 音声付きメディアの自動再生を避ける
 
-### 9. tool boundaries (critical)
+### 9. ツール境界（致命的）
 
-- prefer minimal changes, do not refactor unrelated code
-- do not add aria when native semantics already solve the problem
-- do not migrate UI libraries unless requested
+- 最小限の変更を優先、無関係なコードをリファクタリングしない
+- ネイティブセマンティクスで解決できる場合に aria を追加しない
+- 要求されない限りUIライブラリを移行しない
 
-## common fixes
+## 一般的な修正例
 
 ```html
-<!-- icon-only button: add aria-label -->
-<!-- before --> <button><svg>...</svg></button>
-<!-- after -->  <button aria-label="Close"><svg aria-hidden="true">...</svg></button>
+<!-- アイコンのみのボタン: aria-label を追加 -->
+<!-- 修正前 --> <button><svg>...</svg></button>
+<!-- 修正後 --> <button aria-label="閉じる"><svg aria-hidden="true">...</svg></button>
 
-<!-- div as button: use native element -->
-<!-- before --> <div onclick="save()">Save</div>
-<!-- after -->  <button onclick="save()">Save</button>
+<!-- div をボタンとして使用: ネイティブ要素を使う -->
+<!-- 修正前 --> <div onclick="save()">保存</div>
+<!-- 修正後 --> <button onclick="save()">保存</button>
 
-<!-- form error: link with aria-describedby -->
-<!-- before --> <input id="email" /> <span>Invalid email</span>
-<!-- after -->  <input id="email" aria-describedby="email-err" aria-invalid="true" /> <span id="email-err">Invalid email</span>
+<!-- フォームエラー: aria-describedby でリンク -->
+<!-- 修正前 --> <input id="email" /> <span>無効なメールアドレス</span>
+<!-- 修正後 --> <input id="email" aria-describedby="email-err" aria-invalid="true" /> <span id="email-err">無効なメールアドレス</span>
 ```
 
-## review guidance
+## レビューガイダンス
 
-- fix critical issues first (names, keyboard, focus, tool boundaries)
-- prefer native HTML before adding aria
-- quote the exact snippet, state the failure, propose a small fix
-- for complex widgets (menu, dialog, combobox), prefer established accessible primitives over custom behavior
+- 致命的な問題を最初に修正（名前、キーボード、フォーカス、ツール境界）
+- aria を追加する前にネイティブ HTML を優先
+- 正確なスニペットを引用し、失敗を述べ、小さな修正を提案
+- 複雑なウィジェット（メニュー、ダイアログ、コンボボックス）にはカスタム動作より確立されたアクセシブルプリミティブを優先

@@ -1,107 +1,108 @@
 ---
 name: fixing-metadata
 description: >
-  HTML metadata audit checklist: page titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, favicons, JSON-LD, robots directives. Use when adding SEO metadata, fixing social share previews, or shipping new pages. Triggers on: SEO, meta tags, Open Graph, og:image, canonical, favicon, JSON-LD, social card.
+  HTMLメタデータ監査チェックリスト: ページタイトル、メタディスクリプション、canonical URL、Open Graphタグ、Twitterカード、ファビコン、JSON-LD、robots指示。SEOメタデータの追加、ソーシャルシェアプレビューの修正、新規ページ公開時に使用。トリガー: SEO, メタタグ, Open Graph, og:image, canonical, favicon, JSON-LD, ソーシャルカード。
 ---
 
-## Workflow
+## ワークフロー
 
-1. Identify pages with missing or incorrect metadata (titles, descriptions, canonical, OG tags)
-2. Audit against the priority rules below — fix critical issues (duplicates, indexing) first
-3. Ensure title, description, canonical, and og:url all agree with each other
-4. Verify social cards render correctly on a real URL, not localhost
-5. Keep diffs minimal and scoped to metadata only — do not refactor unrelated code
-## when to apply
+1. メタデータが欠落・不正なページを特定（タイトル、ディスクリプション、canonical、OGタグ）
+2. 以下の優先度ルールに照らして監査 — 致命的な問題（重複、インデックス）を最初に修正
+3. タイトル、ディスクリプション、canonical、og:url が互いに一致していることを確認
+4. ソーシャルカードが実際のURLで正しくレンダリングされることを検証（localhostではなく）
+5. 差分は最小限、メタデータのみに限定 — 無関係なコードをリファクタリングしない
 
-Reference these guidelines when:
-- adding or changing page titles, descriptions, canonical, robots
-- implementing Open Graph or Twitter card metadata
-- setting favicons, app icons, manifest, theme-color
-- building shared SEO components or layout metadata defaults
-- adding structured data (JSON-LD)
-- changing locale, alternate languages, or canonical routing
-- shipping new pages, marketing pages, or shareable links
+## 適用タイミング
 
-## rule categories by priority
+以下の作業時に参照:
+- ページタイトル、ディスクリプション、canonical、robots の追加・変更
+- Open Graph または Twitter カードメタデータの実装
+- ファビコン、アプリアイコン、マニフェスト、theme-color の設定
+- 共有SEOコンポーネントやレイアウトメタデータデフォルトの構築
+- 構造化データ（JSON-LD）の追加
+- ロケール、代替言語、canonical ルーティングの変更
+- 新規ページ、マーケティングページ、共有可能リンクの公開
 
-| priority | category | impact |
-|----------|----------|--------|
-| 1 | correctness and duplication | critical |
-| 2 | title and description | high |
-| 3 | canonical and indexing | high |
-| 4 | social cards | high |
-| 5 | icons and manifest | medium |
-| 6 | structured data | medium |
-| 7 | locale and alternates | low-medium |
-| 8 | tool boundaries | critical |
+## 優先度別ルールカテゴリ
 
-## quick reference
+| 優先度 | カテゴリ | 影響度 |
+|--------|---------|--------|
+| 1 | 正確性と重複 | 致命的 |
+| 2 | タイトルとディスクリプション | 高 |
+| 3 | canonical とインデックス | 高 |
+| 4 | ソーシャルカード | 高 |
+| 5 | アイコンとマニフェスト | 中 |
+| 6 | 構造化データ | 中 |
+| 7 | ロケールと代替 | 低〜中 |
+| 8 | ツール境界 | 致命的 |
 
-### 1. correctness and duplication (critical)
+## クイックリファレンス
 
-- define metadata in one place per page, avoid competing systems
-- do not emit duplicate title, description, canonical, or robots tags
-- metadata must be deterministic, no random or unstable values
-- escape and sanitize any user-generated or dynamic strings
-- every page must have safe defaults for title and description
+### 1. 正確性と重複（致命的）
 
-### 2. title and description (high)
+- ページごとに1箇所でメタデータを定義、競合するシステムを避ける
+- title, description, canonical, robots タグの重複出力禁止
+- メタデータは決定論的であること、ランダムや不安定な値禁止
+- ユーザー生成・動的文字列はエスケープ・サニタイズ
+- 全ページにタイトルとディスクリプションの安全なデフォルトが必要
 
-- every page must have a title
-- use a consistent title format across the site
-- keep titles short and readable, avoid stuffing
-- shareable or searchable pages should have a meta description
-- descriptions must be plain text, no markdown or quote spam
+### 2. タイトルとディスクリプション（高）
 
-### 3. canonical and indexing (high)
+- 全ページにタイトルが必要
+- サイト全体で一貫したタイトル形式を使用
+- タイトルは短く読みやすく、詰め込み禁止
+- 検索・共有可能なページにはメタディスクリプションを設定
+- ディスクリプションはプレーンテキスト、マークダウンや引用スパム禁止
 
-- canonical must point to the preferred URL for the page
-- use noindex only for private, duplicate, or non-public pages
-- robots meta must match actual access intent
-- previews or staging pages should be noindex by default when possible
-- paginated pages must have correct canonical behavior
+### 3. canonical とインデックス（高）
 
-### 4. social cards (high)
+- canonical はページの優先URLを指すこと
+- noindex はプライベート、重複、非公開ページのみに使用
+- robots メタは実際のアクセス意図と一致すること
+- プレビュー・ステージングページは可能な限りデフォルトで noindex
+- ページネーションページは正しい canonical 動作が必要
 
-- shareable pages must set Open Graph title, description, and image
-- Open Graph and Twitter images must use absolute URLs
-- prefer correct image dimensions and stable aspect ratios
-- og:url must match the canonical URL
-- use a sensible og:type, usually website or article
-- set twitter:card appropriately, summary_large_image by default
+### 4. ソーシャルカード（高）
 
-### 5. icons and manifest (medium)
+- 共有可能なページには Open Graph のタイトル、ディスクリプション、画像を設定
+- Open Graph と Twitter の画像は絶対URLを使用
+- 正しい画像サイズと安定したアスペクト比を推奨
+- og:url は canonical URL と一致すること
+- 適切な og:type を使用（通常 website または article）
+- twitter:card を適切に設定（デフォルトは summary_large_image）
 
-- include at least one favicon that works across browsers
-- include apple-touch-icon when relevant
-- manifest must be valid and referenced when used
-- set theme-color intentionally to avoid mismatched UI chrome
-- icon paths should be stable and cacheable
+### 5. アイコンとマニフェスト（中）
 
-### 6. structured data (medium)
+- ブラウザ横断で動作するファビコンを最低1つ含める
+- 該当する場合 apple-touch-icon を含める
+- マニフェストは有効で、使用時に参照されていること
+- theme-color は意図的に設定（UIクロームの不一致を避ける）
+- アイコンパスは安定してキャッシュ可能であること
 
-- do not add JSON-LD unless it clearly maps to real page content
-- JSON-LD must be valid and reflect what is actually rendered
-- do not invent ratings, reviews, prices, or organization details
-- prefer one structured data block per page unless required
+### 6. 構造化データ（中）
 
-### 7. locale and alternates (low-medium)
+- 実際のページコンテンツに明確にマッピングされない限り JSON-LD を追加しない
+- JSON-LD は有効で、実際にレンダリングされている内容を反映すること
+- 評価、レビュー、価格、組織詳細を捏造しない
+- 必要でない限りページごとに1つの構造化データブロックを推奨
 
-- set the html lang attribute correctly
-- set og:locale when localization exists
-- add hreflang alternates only when pages truly exist
-- localized pages must canonicalize correctly per locale
+### 7. ロケールと代替（低〜中）
 
-### 8. tool boundaries (critical)
+- html lang 属性を正しく設定
+- ローカライゼーションが存在する場合 og:locale を設定
+- ページが実際に存在する場合のみ hreflang 代替を追加
+- ローカライズされたページはロケールごとに正しく canonical 化
 
-- prefer minimal changes, do not refactor unrelated code
-- do not migrate frameworks or SEO libraries unless requested
-- follow the project's existing metadata pattern (Next.js metadata API, react-helmet, manual head, etc.)
+### 8. ツール境界（致命的）
 
-## review guidance
+- 最小限の変更を優先、無関係なコードをリファクタリングしない
+- 要求されない限りフレームワークやSEOライブラリを移行しない
+- プロジェクト既存のメタデータパターンに従う（Next.js metadata API, react-helmet, 手動 head 等）
 
-- fix critical issues first (duplicates, canonical, indexing)
-- ensure title, description, canonical, and og:url agree
-- verify social cards on a real URL, not localhost
-- prefer stable, boring metadata over clever or dynamic
-- keep diffs minimal and scoped to metadata only
+## レビューガイダンス
+
+- 致命的な問題を最初に修正（重複、canonical、インデックス）
+- タイトル、ディスクリプション、canonical、og:url が一致していることを確認
+- ソーシャルカードは実際のURLで検証（localhostではなく）
+- 安定した退屈なメタデータを、巧妙・動的なものより優先
+- 差分は最小限、メタデータのみに限定
