@@ -30,7 +30,7 @@ cd my-app
 
 # 3. gitを初期化してGitHubリポジトリを作成
 git init
-gh repo create my-app --public --source=. --push
+gh repo create my-app --private --source=. --push
 
 # 4. 起動（INCEPTION → 8エージェントパイプライン）
 ./scripts/start-pipeline.sh

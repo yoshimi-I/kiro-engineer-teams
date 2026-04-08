@@ -30,7 +30,7 @@ cd my-app
 
 # 3. Initialize git and create GitHub repo
 git init
-gh repo create my-app --public --source=. --push
+gh repo create my-app --private --source=. --push
 
 # 4. Start (INCEPTION → 8-agent pipeline)
 ./scripts/start-pipeline.sh
