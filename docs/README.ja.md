@@ -118,15 +118,15 @@ Agent 8: /auto-dependabot（依存更新、別レーン）
 
 ```
 .kiro/
-├── 📜 steering/development-rules.md  # ルール（毎ターン自動適用）
-├── 📚 skills/                        # リファレンス（必要時に参照）
+├── steering/development-rules.md  # ルール（毎ターン自動適用）
+├── skills/                        # リファレンス（必要時に参照）
 │   ├── clean-ddd-hexagonal/          #   DDD + Clean Architecture
 │   ├── frontend-design/              #   UI設計ガイド
 │   ├── baseline-ui/                  #   Tailwind制約
 │   ├── fixing-accessibility/         #   アクセシビリティ
 │   ├── fixing-metadata/              #   SEO/OGP
 │   └── fixing-motion-performance/    #   アニメーション性能
-├── ⚡ prompts/                       # ワークフロー（/name で呼び出し）
+├── prompts/                       # ワークフロー（/name で呼び出し）
 │   ├── implement.md                  #   issue → 実装 → PRループ
 │   ├── review.md                     #   7視点厳格レビュー
 │   ├── fix-review-issues.md          #   レビュー指摘修正
@@ -136,7 +136,7 @@ Agent 8: /auto-dependabot（依存更新、別レーン）
 │   ├── auto-dependabot.md            #   依存更新PR処理
 │   ├── 8-agent-pipeline.md           #   パイプライン構成ガイド
 │   └── ...                           #   brainstorming, pr 等
-└── 🤖 agents/default.json            # エージェント設定
+└── agents/default.json            # エージェント設定
 scripts/
 ├── start-pipeline.sh                 # 起動スクリプト
 ├── agent.sh                          # エージェントラッパー

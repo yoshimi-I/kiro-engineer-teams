@@ -118,15 +118,15 @@ Agent 8: /auto-dependabot (dependency updates, separate lane)
 
 ```
 .kiro/
-├── 📜 steering/development-rules.md  # Rules (loaded every turn)
-├── 📚 skills/                        # Reference (on-demand)
+├── steering/development-rules.md  # Rules (loaded every turn)
+├── skills/                        # Reference (on-demand)
 │   ├── clean-ddd-hexagonal/          #   DDD + Clean Architecture
 │   ├── frontend-design/              #   UI design guide
 │   ├── baseline-ui/                  #   Tailwind constraints
 │   ├── fixing-accessibility/         #   Accessibility checklist
 │   ├── fixing-metadata/              #   SEO/OGP checklist
 │   └── fixing-motion-performance/    #   Animation performance
-├── ⚡ prompts/                       # Workflows (invoke with /name)
+├── prompts/                       # Workflows (invoke with /name)
 │   ├── implement.md                  #   issue → impl → PR loop
 │   ├── review.md                     #   7-point strict review
 │   ├── fix-review-issues.md          #   Fix review comments
@@ -136,7 +136,7 @@ Agent 8: /auto-dependabot (dependency updates, separate lane)
 │   ├── auto-dependabot.md            #   Dependency PR handling
 │   ├── 8-agent-pipeline.md           #   Pipeline guide
 │   └── ...                           #   brainstorming, pr, etc.
-└── 🤖 agents/default.json            # Agent config
+└── agents/default.json            # Agent config
 scripts/
 ├── start-pipeline.sh                 # Launcher
 ├── agent.sh                          # Agent loop wrapper
