@@ -1,5 +1,5 @@
 
-# INCEPTION — Structured Project Planning
+# INCEPTION — 構造化プロジェクト計画
 
 Run the full INCEPTION phase: analyze workspace → gather requirements →
 write user stories → design architecture → generate GitHub issues.
