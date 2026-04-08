@@ -20,10 +20,11 @@ issue → implementation → review → merge → E2E verification — fully aut
 
 ### A. New project (start from scratch)
 
-**1. Clone template**
+**1. Create project directory and clone template**
 ```bash
-git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
-cd my-app
+mkdir <your-project>
+cd <your-project>
+git clone https://github.com/yoshimi-I/kiro-engineer-teams.git .
 ```
 
 **2. Install prerequisites**
@@ -33,7 +34,7 @@ cd my-app
 
 **3. Initialize as your own private repo**
 ```bash
-just init my-app
+just init <your-project>
 ```
 
 **4. Start (INCEPTION → 8-agent pipeline)**

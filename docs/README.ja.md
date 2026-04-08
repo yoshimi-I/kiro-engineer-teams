@@ -20,10 +20,11 @@ issue → 実装 → レビュー → マージ → E2E検証を全自動化。
 
 ### A. 新規プロジェクト（ゼロから始める）
 
-**1. テンプレートをクローン**
+**1. プロジェクトディレクトリを作成してテンプレートをクローン**
 ```bash
-git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
-cd my-app
+mkdir <your-project>
+cd <your-project>
+git clone https://github.com/yoshimi-I/kiro-engineer-teams.git .
 ```
 
 **2. 前提ツールをインストール**
@@ -33,7 +34,7 @@ cd my-app
 
 **3. 自分のプライベートリポジトリとして初期化**
 ```bash
-just init my-app
+just init <your-project>
 ```
 
 **4. 起動（INCEPTION → 8エージェントパイプライン）**
