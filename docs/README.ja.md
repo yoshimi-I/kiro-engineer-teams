@@ -42,25 +42,6 @@ just init
 just start
 ```
 
-### B. 既存プロジェクトに追加
-
-**1. .kiro/, scripts/, AGENTS.md をコピー**
-```bash
-npx degit yoshimi-I/kiro-engineer-teams .kiro-tmp
-cp -r .kiro-tmp/.kiro .kiro-tmp/scripts .kiro-tmp/AGENTS.md .
-rm -rf .kiro-tmp
-```
-
-**2. 前提ツールをインストール（インストール済みはスキップ）**
-```bash
-./scripts/setup.sh
-```
-
-**3. 起動**
-```bash
-./scripts/start-pipeline.sh
-```
-
 > 💡 GitHubの **「Use this template」** ボタンから直接リポジトリを作成することもできます。
 
 ---

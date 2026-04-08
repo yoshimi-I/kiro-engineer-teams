@@ -42,25 +42,6 @@ just init
 just start
 ```
 
-### B. Add to existing project
-
-**1. Copy .kiro/, scripts/, AGENTS.md**
-```bash
-npx degit yoshimi-I/kiro-engineer-teams .kiro-tmp
-cp -r .kiro-tmp/.kiro .kiro-tmp/scripts .kiro-tmp/AGENTS.md .
-rm -rf .kiro-tmp
-```
-
-**2. Install prerequisites (skips already installed)**
-```bash
-./scripts/setup.sh
-```
-
-**3. Start**
-```bash
-./scripts/start-pipeline.sh
-```
-
 > 💡 You can also use GitHub's **"Use this template"** button to create a new repo directly.
 
 ---
