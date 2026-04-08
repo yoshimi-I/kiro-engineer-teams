@@ -6,8 +6,8 @@ if ! command -v zellij &>/dev/null; then
   exit 1
 fi
 
-LAYOUT=$(mktemp /tmp/test-layout-XXXX.kdl)
-cat > "$LAYOUT" << 'EOF'
+LAYOUT=$(mktemp /tmp/test-layout-XXXXXXXX)
+mv "$LAYOUT" "${LAYOUT}.kdl"; LAYOUT="${LAYOUT}.kdl"; cat > "$LAYOUT" << 'EOF'
 layout {
     pane split_direction="horizontal" {
         pane split_direction="vertical" {
