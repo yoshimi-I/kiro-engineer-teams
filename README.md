@@ -20,9 +20,9 @@ issue → implementation → review → merge → E2E verification — fully aut
 
 ### A. New project (start from scratch)
 
-**1. Create project from template (no git history)**
+**1. Clone template**
 ```bash
-npx degit yoshimi-I/kiro-engineer-teams my-app
+git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
 cd my-app
 ```
 
@@ -31,15 +31,14 @@ cd my-app
 ./scripts/setup.sh
 ```
 
-**3. Initialize git and create GitHub repo**
+**3. Initialize as your own private repo**
 ```bash
-git init
-gh repo create my-app --private --source=. --push
+just init my-app
 ```
 
 **4. Start (INCEPTION → 8-agent pipeline)**
 ```bash
-./scripts/start-pipeline.sh
+just start
 ```
 
 ### B. Add to existing project

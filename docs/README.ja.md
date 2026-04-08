@@ -20,9 +20,9 @@ issue → 実装 → レビュー → マージ → E2E検証を全自動化。
 
 ### A. 新規プロジェクト（ゼロから始める）
 
-**1. テンプレートからプロジェクト作成（git履歴なし）**
+**1. テンプレートをクローン**
 ```bash
-npx degit yoshimi-I/kiro-engineer-teams my-app
+git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
 cd my-app
 ```
 
@@ -31,15 +31,14 @@ cd my-app
 ./scripts/setup.sh
 ```
 
-**3. gitを初期化してGitHubリポジトリを作成**
+**3. 自分のプライベートリポジトリとして初期化**
 ```bash
-git init
-gh repo create my-app --private --source=. --push
+just init my-app
 ```
 
 **4. 起動（INCEPTION → 8エージェントパイプライン）**
 ```bash
-./scripts/start-pipeline.sh
+just start
 ```
 
 ### B. 既存プロジェクトに追加
