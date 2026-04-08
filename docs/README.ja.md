@@ -114,40 +114,58 @@ Agent 8: /auto-dependabot（依存更新、別レーン）
 
 ---
 
+## 🛡️ 組み込みルール
+
+steering ファイル（`.kiro/steering/development-rules.md`）が全エージェントの全ターンに適用するルール：
+
+| カテゴリ | 主なルール |
+|---------|-----------|
+| **TDD** | Red → Green → Refactor。テストなしでコードを書かない。 |
+| **テスト** | 3層: Unit（関数ごと）+ Integration（APIごと）+ E2E（ユーザーフローごと） |
+| **PRゲート** | Unit + Integration + E2E 全通過必須。テスト不足 = マージ不可。 |
+| **エラー処理** | 統一APIエラーフォーマット。行動可能なメッセージ。リソースクリーンアップ。 |
+| **API設計** | フロント↔バック型定義を常に同期。両端でバリデーション。 |
+| **Git** | worktree隔離。Conventional Commits（英語）。squash mergeのみ。 |
+| **セキュリティ** | シークレット禁止。入力検証。パラメータ化クエリ。最小権限。 |
+| **パフォーマンス** | N+1禁止。ループ内API禁止。不要な再レンダリング防止。 |
+| **並列エージェント** | `issue/task.md` 共有状態。作業前に競合検出。 |
+
+---
+
 ## 📁 ディレクトリ構成
 
 ```
 .kiro/
 ├── steering/development-rules.md  # ルール（毎ターン自動適用）
 ├── skills/                        # リファレンス（必要時に参照）
-│   ├── clean-ddd-hexagonal/          #   DDD + Clean Architecture
-│   ├── frontend-design/              #   UI設計ガイド
-│   ├── baseline-ui/                  #   Tailwind制約
-│   ├── fixing-accessibility/         #   アクセシビリティ
-│   ├── fixing-metadata/              #   SEO/OGP
-│   └── fixing-motion-performance/    #   アニメーション性能
+│   ├── clean-ddd-hexagonal/       #   DDD + Clean Architecture
+│   ├── frontend-design/           #   UI設計ガイド
+│   ├── baseline-ui/               #   Tailwind制約
+│   ├── fixing-accessibility/      #   アクセシビリティ
+│   ├── fixing-metadata/           #   SEO/OGP
+│   └── fixing-motion-performance/ #   アニメーション性能
 ├── prompts/                       # ワークフロー（/name で呼び出し）
-│   ├── implement.md                  #   issue → 実装 → PRループ
-│   ├── review.md                     #   7視点厳格レビュー
-│   ├── fix-review-issues.md          #   レビュー指摘修正
-│   ├── fix-ci.md                     #   CI失敗修正
-│   ├── watch-main.md                 #   main監視 → E2E
-│   ├── e2e-bug-hunt.md               #   Playwright巡回
-│   ├── auto-dependabot.md            #   依存更新PR処理
-│   ├── 8-agent-pipeline.md           #   パイプライン構成ガイド
-│   └── ...                           #   brainstorming, pr 等
+│   ├── implement.md               #   issue → 実装 → PRループ
+│   ├── review.md                  #   7視点厳格レビュー
+│   ├── fix-review-issues.md       #   レビュー指摘修正
+│   ├── fix-ci.md                  #   CI失敗修正
+│   ├── watch-main.md              #   main監視 → E2E
+│   ├── e2e-bug-hunt.md            #   Playwright巡回
+│   ├── auto-dependabot.md         #   依存更新PR処理
+│   ├── 8-agent-pipeline.md        #   パイプライン構成ガイド
+│   └── ...                        #   brainstorming, pr 等
 └── agents/default.json            # エージェント設定
 scripts/
-├── start-pipeline.sh                 # 起動スクリプト
-├── agent.sh                          # エージェントラッパー
-└── pipeline.kdl                      # zellijレイアウト
+├── start-pipeline.sh              # 起動スクリプト
+├── agent.sh                       # エージェントラッパー
+└── pipeline.kdl                   # zellijレイアウト
 ```
 
 ---
 
 ## 🔄 Steering / Skills / Prompts の違い
 
-| | 📜 Steering | 📚 Skills | ⚡ Prompts |
+| | Steering | Skills | Prompts |
 |---|:---:|:---:|:---:|
 | **ロード** | 毎ターン全文 | メタデータのみ → 必要時にフル | `/name` で全文送信 |
 | **確実性** | 100% | エージェント判断 | 100% |
@@ -167,6 +185,10 @@ rm .kiro/prompts/auto-dependabot.md
 # 追加
 mkdir .kiro/skills/my-guide       # + SKILL.md（frontmatter必須）
 touch .kiro/prompts/my-workflow.md
+
+# 言語切り替え
+# /to-japanese — プロンプト・steeringを日本語に
+# /to-english  — プロンプト・steeringを英語に
 ```
 
 **GitLabの場合:**
