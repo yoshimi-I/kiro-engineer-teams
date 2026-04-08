@@ -114,40 +114,58 @@ Agent 8: /auto-dependabot (dependency updates, separate lane)
 
 ---
 
+## 🛡️ Built-in Rules
+
+The steering file (`.kiro/steering/development-rules.md`) enforces these rules on every agent, every turn:
+
+| Category | Key Rules |
+|----------|-----------|
+| **TDD** | Red → Green → Refactor. No code without tests first. |
+| **Testing** | 3-layer: Unit (per function) + Integration (per API) + E2E (per user flow) |
+| **PR Gate** | Unit + Integration + E2E must pass. Missing tests = no merge. |
+| **Error Handling** | Unified API error format. Actionable messages. Resource cleanup. Error Boundary. |
+| **API Design** | Frontend ↔ Backend types always in sync. Validation on both ends. |
+| **Git** | Worktree isolation. Conventional Commits in English. Squash merge only. |
+| **Security** | No hardcoded secrets. Input validation. Parameterized queries. Least privilege. |
+| **Performance** | No N+1. No API calls in loops. Prevent unnecessary re-renders. |
+| **Parallel Agents** | `issue/task.md` shared state. Conflict detection before work. |
+
+---
+
 ## 📁 Directory Structure
 
 ```
 .kiro/
 ├── steering/development-rules.md  # Rules (loaded every turn)
 ├── skills/                        # Reference (on-demand)
-│   ├── clean-ddd-hexagonal/          #   DDD + Clean Architecture
-│   ├── frontend-design/              #   UI design guide
-│   ├── baseline-ui/                  #   Tailwind constraints
-│   ├── fixing-accessibility/         #   Accessibility checklist
-│   ├── fixing-metadata/              #   SEO/OGP checklist
-│   └── fixing-motion-performance/    #   Animation performance
+│   ├── clean-ddd-hexagonal/       #   DDD + Clean Architecture
+│   ├── frontend-design/           #   UI design guide
+│   ├── baseline-ui/               #   Tailwind constraints
+│   ├── fixing-accessibility/      #   Accessibility checklist
+│   ├── fixing-metadata/           #   SEO/OGP checklist
+│   └── fixing-motion-performance/ #   Animation performance
 ├── prompts/                       # Workflows (invoke with /name)
-│   ├── implement.md                  #   issue → impl → PR loop
-│   ├── review.md                     #   7-point strict review
-│   ├── fix-review-issues.md          #   Fix review comments
-│   ├── fix-ci.md                     #   Fix CI failures
-│   ├── watch-main.md                 #   Monitor main → E2E
-│   ├── e2e-bug-hunt.md               #   Playwright patrol
-│   ├── auto-dependabot.md            #   Dependency PR handling
-│   ├── 8-agent-pipeline.md           #   Pipeline guide
-│   └── ...                           #   brainstorming, pr, etc.
+│   ├── implement.md               #   issue → impl → PR loop
+│   ├── review.md                  #   7-point strict review
+│   ├── fix-review-issues.md       #   Fix review comments
+│   ├── fix-ci.md                  #   Fix CI failures
+│   ├── watch-main.md              #   Monitor main → E2E
+│   ├── e2e-bug-hunt.md            #   Playwright patrol
+│   ├── auto-dependabot.md         #   Dependency PR handling
+│   ├── 8-agent-pipeline.md        #   Pipeline guide
+│   └── ...                        #   brainstorming, pr, etc.
 └── agents/default.json            # Agent config
 scripts/
-├── start-pipeline.sh                 # Launcher
-├── agent.sh                          # Agent loop wrapper
-└── pipeline.kdl                      # zellij layout
+├── start-pipeline.sh              # Launcher
+├── agent.sh                       # Agent loop wrapper
+└── pipeline.kdl                   # zellij layout
 ```
 
 ---
 
 ## 🔄 Steering / Skills / Prompts
 
-| | 📜 Steering | 📚 Skills | ⚡ Prompts |
+| | Steering | Skills | Prompts |
 |---|:---:|:---:|:---:|
 | **Loading** | Full text every turn | Metadata only → full on demand | Full text on `/name` |
 | **Certainty** | 100% | Agent decides | 100% |
@@ -167,6 +185,10 @@ rm .kiro/prompts/auto-dependabot.md
 # Add your own
 mkdir .kiro/skills/my-guide       # + SKILL.md with frontmatter
 touch .kiro/prompts/my-workflow.md
+
+# Switch language
+# /to-japanese — translate prompts/steering to Japanese
+# /to-english  — translate prompts/steering to English
 ```
 
 **For GitLab:**
