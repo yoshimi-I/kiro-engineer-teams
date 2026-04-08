@@ -18,21 +18,42 @@ issue → implementation → review → merge → E2E verification — fully aut
 
 ## Quick Start
 
+### A. New project (start from scratch)
+
 ```bash
-# 1. Clone the template
-git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
+# 1. Create project from template (no git history)
+npx degit yoshimi-I/kiro-engineer-teams my-app
 cd my-app
 
-# 2. Install prerequisites (one command)
+# 2. Install prerequisites
 ./scripts/setup.sh
 
-# 3. Point to your own repo
-git remote set-url origin <your-repo-url>
-git push -u origin main
+# 3. Initialize git and create GitHub repo
+git init
+gh repo create my-app --public --source=. --push
 
-# 4. Start the full pipeline (INCEPTION → 8-agent automation)
+# 4. Start (INCEPTION → 8-agent pipeline)
 ./scripts/start-pipeline.sh
 ```
+
+### B. Add to existing project
+
+```bash
+cd /path/to/your-project
+
+# 1. Copy .kiro/, scripts/, AGENTS.md
+npx degit yoshimi-I/kiro-engineer-teams .kiro-tmp
+cp -r .kiro-tmp/.kiro .kiro-tmp/scripts .kiro-tmp/AGENTS.md .
+rm -rf .kiro-tmp
+
+# 2. Install prerequisites (skips already installed)
+./scripts/setup.sh
+
+# 3. Start
+./scripts/start-pipeline.sh
+```
+
+> 💡 You can also use GitHub's **"Use this template"** button to create a new repo directly.
 
 ---
 
