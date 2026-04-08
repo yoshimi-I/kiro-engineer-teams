@@ -1,0 +1,53 @@
+// 8-Agent Pipeline Layout for Zellij
+// Usage: zellij --layout scripts/pipeline.kdl
+
+layout {
+    tab name="🏭 Pipeline" {
+        pane split_direction="vertical" {
+            // Left column: Implementation agents
+            pane split_direction="horizontal" {
+                pane name="🔨 Impl-1" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh implement"
+                }
+                pane name="🔨 Impl-2" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh implement"
+                }
+                pane name="🔍 Review" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh review"
+                }
+                pane name="🔧 Fix-Review" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh fix-review-issues"
+                }
+            }
+            // Right column: CI, monitoring, testing
+            pane split_direction="horizontal" {
+                pane name="🚦 Fix-CI" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh fix-ci"
+                }
+                pane name="👀 Watch-Main" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh watch-main"
+                }
+                pane name="🧪 E2E-Hunt" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh e2e-bug-hunt"
+                }
+                pane name="📦 Dependabot" {
+                    command "bash"
+                    args "-c" "./scripts/agent.sh auto-dependabot"
+                }
+            }
+        }
+    }
+    tab name="📋 Status" {
+        pane name="task.md" {
+            command "bash"
+            args "-c" "watch -n 5 cat issue/task.md 2>/dev/null || echo 'No task.md yet'"
+        }
+    }
+}

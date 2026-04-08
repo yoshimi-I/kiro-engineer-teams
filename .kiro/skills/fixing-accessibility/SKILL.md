@@ -1,7 +1,7 @@
 ---
 name: fixing-accessibility
-description: Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.
----
+description: >
+  Accessibility audit checklist for HTML/React components. Covers ARIA labels, keyboard navigation, focus management, color contrast, form errors, and WCAG compliance. Use when adding interactive controls, forms, dialogs. Triggers on: accessibility, a11y, ARIA, keyboard navigation, focus trap, screen reader, WCAG, contrast.---
 
 # fixing-accessibility
 

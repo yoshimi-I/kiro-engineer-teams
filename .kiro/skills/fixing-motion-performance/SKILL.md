@@ -1,7 +1,7 @@
 ---
 name: fixing-motion-performance
-description: Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.
----
+description: >
+  Animation performance audit checklist: layout thrashing, compositor properties, scroll-linked motion, blur effects, will-change usage. Use when animations stutter or reviewing CSS/JS animation performance. Triggers on: animation jank, transition performance, scroll animation, blur, will-change, FLIP, requestAnimationFrame.---
 
 # fixing-motion-performance
 

@@ -1,7 +1,7 @@
 ---
 name: clean-ddd-hexagonal
-description: Proactively apply when designing APIs, microservices, or scalable backend structure. Triggers on DDD, Clean Architecture, Hexagonal, ports and adapters, entities, value objects, domain events, CQRS, event sourcing, repository pattern, use cases, onion architecture, outbox pattern, aggregate root, anti-corruption layer. Use when working with domain models, aggregates, repositories, or bounded contexts. Clean Architecture + DDD + Hexagonal patterns for backend services, language-agnostic (Go, Rust, Python, TypeScript, Java, C#).
----
+description: >
+  Backend architecture guide: Clean Architecture + DDD + Hexagonal patterns. Use when designing or modifying domain models, aggregates, repositories, use cases, or reviewing layer violations. Triggers on: DDD, Clean Architecture, Hexagonal, ports and adapters, entities, value objects, domain events, repository pattern, aggregate, layer separation.---
 
 # Clean Architecture + DDD + Hexagonal
 
