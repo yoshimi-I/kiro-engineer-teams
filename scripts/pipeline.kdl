@@ -1,53 +1,39 @@
-// 8-Agent Pipeline Layout for Zellij
-// Usage: zellij --layout scripts/pipeline.kdl
-
 layout {
-    tab name="🏭 Pipeline" {
+    tab name="Pipeline" {
         pane split_direction="vertical" {
-            // Left column: Implementation agents
             pane split_direction="horizontal" {
-                pane name="🔨 Impl-1" {
-                    command "bash"
+                pane command="bash" name="Impl-1" {
                     args "-c" "./scripts/agent.sh implement"
                 }
-                pane name="🔨 Impl-2" {
-                    command "bash"
+                pane command="bash" name="Impl-2" {
                     args "-c" "./scripts/agent.sh implement"
                 }
-                pane name="🔍 Review" {
-                    command "bash"
+                pane command="bash" name="Review" {
                     args "-c" "./scripts/agent.sh review"
                 }
-                pane name="🔧 Fix-Review" {
-                    command "bash"
+                pane command="bash" name="Fix-Review" {
                     args "-c" "./scripts/agent.sh fix-review-issues"
                 }
             }
-            // Right column: CI, monitoring, testing
             pane split_direction="horizontal" {
-                pane name="🚦 Fix-CI" {
-                    command "bash"
+                pane command="bash" name="Fix-CI" {
                     args "-c" "./scripts/agent.sh fix-ci"
                 }
-                pane name="👀 Watch-Main" {
-                    command "bash"
+                pane command="bash" name="Watch-Main" {
                     args "-c" "./scripts/agent.sh watch-main"
                 }
-                pane name="🧪 E2E-Hunt" {
-                    command "bash"
+                pane command="bash" name="E2E-Hunt" {
                     args "-c" "./scripts/agent.sh e2e-bug-hunt"
                 }
-                pane name="📦 Dependabot" {
-                    command "bash"
+                pane command="bash" name="Dependabot" {
                     args "-c" "./scripts/agent.sh auto-dependabot"
                 }
             }
         }
     }
-    tab name="📋 Status" {
-        pane name="task.md" {
-            command "bash"
-            args "-c" "watch -n 5 cat issue/task.md 2>/dev/null || echo 'No task.md yet'"
+    tab name="Status" {
+        pane command="bash" name="task.md" {
+            args "-c" "watch -n 5 'cat issue/task.md 2>/dev/null || echo No task.md yet'"
         }
     }
 }
