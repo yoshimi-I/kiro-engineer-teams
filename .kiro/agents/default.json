@@ -1,0 +1,11 @@
+{
+  "name": "default",
+  "description": "8-agent pipeline default agent",
+  "tools": ["*"],
+  "resources": [
+    "file://AGENTS.md",
+    "skill://.kiro/skills/*/SKILL.md",
+    "skill://~/.kiro/skills/*/SKILL.md"
+  ],
+  "useLegacyMcpJson": true
+}
