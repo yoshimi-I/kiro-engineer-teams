@@ -32,12 +32,22 @@
 | ユーザー体験 | アクセシビリティ、レスポンシブ対応、エラーハンドリング |
 | ドキュメント | README改善、API仕様書、コメント追加 |
 
-### Step 3: issue作成
+### Step 3: コンフリクトチェック
+
+既存のopen issueと変更対象が重複しないか確認:
+```bash
+gh issue list --state open --json number,title,body
+```
+- 重複なし → 独立issueとして作成
+- 重複あり → `depends-on: #<number>` を本文に記載し `blocked` ラベルを付与
+
+### Step 4: issue作成
 
 ```bash
 gh issue create \
   --title "improve: <具体的なタイトル>" \
   --label "enhancement" \
+  --label "<P0-critical|P1-high|P2-medium|P3-low>" \
   --body "<改善の背景・理由・期待効果を記述>"
 ```
 

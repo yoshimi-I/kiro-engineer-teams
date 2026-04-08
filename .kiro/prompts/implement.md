@@ -79,10 +79,14 @@ issue番号の指定がない場合:
 
 ### 優先順位
 
-1. バグ（bug ラベル）
-2. セキュリティ（security ラベル）
-3. コード品質（code-quality ラベル）
-4. 機能追加（enhancement ラベル）
+1. `P0-critical` ラベル
+2. `P1-high` ラベル
+3. `P2-medium` ラベル
+4. `P3-low` ラベル
+5. ラベルなし（最後）
+
+- `blocked` ラベルのissueは依存先がmergeされるまでスキップ
+- 同一優先度内ではissue番号が小さい（古い）ものを優先
 
 ## Process — 永久ループ
 

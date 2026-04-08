@@ -60,6 +60,38 @@ If settings are already filled in, skip this section.
 - PR: English title + body, `Closes #N`, squash merge only
 - CI must pass before merge. No force merge.
 
+## Issue Creation
+
+### Priority labels (required on every issue)
+
+| Label | Meaning | Example |
+|-------|---------|---------|
+| `P0-critical` | Blocks users or breaks production | Security vulnerability, data loss |
+| `P1-high` | Important but not blocking | Bug affecting UX, missing validation |
+| `P2-medium` | Should do soon | Refactoring, performance improvement |
+| `P3-low` | Nice to have | Documentation, minor DX improvement |
+
+Every `gh issue create` must include `--label "<priority>"`. Impl agents pick issues in P0→P1→P2→P3 order.
+
+### Conflict prevention
+
+Before creating an issue, check existing open issues for overlapping file changes:
+```bash
+gh issue list --state open --json number,title,body --jq '.[].body' | grep -i "<target-file-or-module>"
+```
+
+| Situation | Action |
+|-----------|--------|
+| No overlap with open issues | Create independently |
+| Overlaps with an open issue | Add `depends-on: #<number>` in body and label `blocked` — Impl agents must not start until dependency is merged |
+
+### Body format for dependencies
+
+```markdown
+## Dependencies
+- depends-on: #<number> (must be merged first)
+```
+
 ## Security
 
 - No hardcoded secrets. Input validation. Parameterized queries. Least privilege.
