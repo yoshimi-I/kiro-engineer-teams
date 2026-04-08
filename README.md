@@ -10,7 +10,7 @@ issue → implementation → review → merge → E2E verification — fully aut
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Kiro CLI](https://img.shields.io/badge/Kiro_CLI-compatible-purple.svg)](https://kiro.dev/docs/cli/)
 
-[English](#quick-start) · [日本語](#クイックスタート)
+**English** · [日本語](docs/README.ja.md)
 
 </div>
 
@@ -35,22 +35,9 @@ kiro-cli chat
 > Tell it what you want to build. After design is finalized, issues are created automatically.
 > Exit Kiro, then run the pipeline.
 
-## クイックスタート
-
-```bash
-git clone https://github.com/yoshimi-I/kiro-engineer-teams.git my-app
-cd my-app
-git remote set-url origin <your-repo-url>
-git push -u origin main
-kiro-cli chat   # ブレストが自動で始まる
-```
-
-> 💡 Kiro起動時にブレストが始まります。作りたいものを伝え、設計→issue作成まで完了したら
-> `/quit` で抜けてパイプラインを起動してください。
-
 ---
 
-## 🚀 Launch Pipeline / パイプライン起動
+## 🚀 Launch Pipeline
 
 ```bash
 ./scripts/start-pipeline.sh
@@ -77,11 +64,9 @@ kiro-cli chat   # ブレストが自動で始まる
 
 Each agent waits for work and starts automatically when issues/PRs appear.
 
-各エージェントはissue/PRの発生を待機し、検出次第動き始めます。
-
 ---
 
-## 🏗️ Architecture / アーキテクチャ
+## 🏗️ Architecture
 
 ```
 GitHub Issue
@@ -114,12 +99,11 @@ Agent 1,2: /implement ──→ PR
 Agent 8: /auto-dependabot (dependency updates, separate lane)
 ```
 
-> All agents share `issue/task.md` for coordination.
-> 全エージェントは `issue/task.md` を共有して競合を回避します。
+> All agents share `issue/task.md` for coordination to avoid conflicts.
 
 ---
 
-## 📋 Prerequisites / 前提条件
+## 📋 Prerequisites
 
 | Tool | Required |
 |------|----------|
@@ -130,17 +114,17 @@ Agent 8: /auto-dependabot (dependency updates, separate lane)
 
 ---
 
-## 📁 Directory Structure / ディレクトリ構成
+## 📁 Directory Structure
 
 ```
 .kiro/
-├── 📜 steering/development-rules.md  # Rules (every turn / 毎ターン適用)
-├── 📚 skills/                        # Reference (on-demand / 必要時参照)
+├── 📜 steering/development-rules.md  # Rules (loaded every turn)
+├── 📚 skills/                        # Reference (on-demand)
 │   ├── clean-ddd-hexagonal/          #   DDD + Clean Architecture
 │   ├── frontend-design/              #   UI design guide
 │   ├── baseline-ui/                  #   Tailwind constraints
-│   ├── fixing-accessibility/         #   Accessibility
-│   ├── fixing-metadata/              #   SEO/OGP
+│   ├── fixing-accessibility/         #   Accessibility checklist
+│   ├── fixing-metadata/              #   SEO/OGP checklist
 │   └── fixing-motion-performance/    #   Animation performance
 ├── ⚡ prompts/                       # Workflows (invoke with /name)
 │   ├── implement.md                  #   issue → impl → PR loop
@@ -171,21 +155,21 @@ scripts/
 
 ---
 
-## 🔧 Customization / カスタマイズ
+## 🔧 Customization
 
 ```bash
-# Remove unused skills / 不要なスキルを削除
+# Remove unused skills
 rm -rf .kiro/skills/clean-ddd-hexagonal
 
-# Remove unused prompts / 不要なプロンプトを削除
+# Remove unused prompts
 rm .kiro/prompts/auto-dependabot.md
 
-# Add your own / 追加
+# Add your own
 mkdir .kiro/skills/my-guide       # + SKILL.md with frontmatter
 touch .kiro/prompts/my-workflow.md
 ```
 
-**For GitLab / GitLabの場合:**
+**For GitLab:**
 ```bash
 just to-gitlab   # gh → glab
 just to-github   # revert
@@ -194,8 +178,6 @@ just to-github   # revert
 ---
 
 <div align="center">
-
-## License / ライセンス
 
 [MIT](LICENSE) © [yoshimi-I](https://github.com/yoshimi-I)
 
