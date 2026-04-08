@@ -14,11 +14,13 @@ cat issue/task.md
 - 着手中・レビュー中のissueと変更領域を把握する
 - 自分が取ろうとしているissueが既に着手中でないか確認
 
-### Step 0-2: 他の作業ブランチを確認
+### Step 0-2: 他の作業ブランチとworktreeを確認
 ```bash
 git branch -a | grep -v "^*" | head -30
+git worktree list
 ```
 - 同じファイル群を触るブランチがあればスキップ
+- **worktreeが存在する場合、別のKiroエージェントがそのブランチで作業中の可能性が高い。そのworktreeに対応するissueは絶対に取らない**
 
 ### Step 0-3: issueに既存PRがないか確認
 ```bash
