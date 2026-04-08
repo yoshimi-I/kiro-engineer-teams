@@ -18,8 +18,6 @@ issue → implementation → review → merge → E2E verification — fully aut
 
 ## Quick Start
 
-### A. New project (start from scratch)
-
 **1. Create project directory and clone template**
 ```bash
 mkdir <your-project>
