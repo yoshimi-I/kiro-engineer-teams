@@ -8,14 +8,18 @@ setup:
 start:
     ./scripts/start-pipeline.sh
 
-# Test zellij 8-pane layout (no kiro-cli needed)
+# Test zellij 8-pane layout
 test-layout:
     ./scripts/test-layout.sh
 
-# Switch prompts/steering to Japanese
-to-japanese:
-    kiro-cli chat --no-interactive --trust-all-tools "/to-japanese"
+# Switch to Japanese
+ja:
+    @sed -i '' 's/Always respond to the user in English\./Always respond to the user in Japanese./' .kiro/steering/development-rules.md
+    @sed -i '' 's/Always respond in English\./Always respond in Japanese./' AGENTS.md
+    @echo "✅ Switched to Japanese"
 
-# Switch prompts/steering to English
-to-english:
-    kiro-cli chat --no-interactive --trust-all-tools "/to-english"
+# Switch to English
+en:
+    @sed -i '' 's/Always respond to the user in Japanese\./Always respond to the user in English./' .kiro/steering/development-rules.md
+    @sed -i '' 's/Always respond in Japanese\./Always respond in English./' AGENTS.md
+    @echo "✅ Switched to English"
