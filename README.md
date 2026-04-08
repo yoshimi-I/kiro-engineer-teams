@@ -20,36 +20,44 @@ issue → implementation → review → merge → E2E verification — fully aut
 
 ### A. New project (start from scratch)
 
+**1. Create project from template (no git history)**
 ```bash
-# 1. Create project from template (no git history)
 npx degit yoshimi-I/kiro-engineer-teams my-app
 cd my-app
+```
 
-# 2. Install prerequisites
+**2. Install prerequisites**
+```bash
 ./scripts/setup.sh
+```
 
-# 3. Initialize git and create GitHub repo
+**3. Initialize git and create GitHub repo**
+```bash
 git init
 gh repo create my-app --private --source=. --push
+```
 
-# 4. Start (INCEPTION → 8-agent pipeline)
+**4. Start (INCEPTION → 8-agent pipeline)**
+```bash
 ./scripts/start-pipeline.sh
 ```
 
 ### B. Add to existing project
 
+**1. Copy .kiro/, scripts/, AGENTS.md**
 ```bash
-cd /path/to/your-project
-
-# 1. Copy .kiro/, scripts/, AGENTS.md
 npx degit yoshimi-I/kiro-engineer-teams .kiro-tmp
 cp -r .kiro-tmp/.kiro .kiro-tmp/scripts .kiro-tmp/AGENTS.md .
 rm -rf .kiro-tmp
+```
 
-# 2. Install prerequisites (skips already installed)
+**2. Install prerequisites (skips already installed)**
+```bash
 ./scripts/setup.sh
+```
 
-# 3. Start
+**3. Start**
+```bash
 ./scripts/start-pipeline.sh
 ```
 

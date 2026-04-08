@@ -20,36 +20,44 @@ issue → 実装 → レビュー → マージ → E2E検証を全自動化。
 
 ### A. 新規プロジェクト（ゼロから始める）
 
+**1. テンプレートからプロジェクト作成（git履歴なし）**
 ```bash
-# 1. テンプレートからプロジェクト作成（git履歴なし）
 npx degit yoshimi-I/kiro-engineer-teams my-app
 cd my-app
+```
 
-# 2. 前提ツールをインストール
+**2. 前提ツールをインストール**
+```bash
 ./scripts/setup.sh
+```
 
-# 3. gitを初期化してGitHubリポジトリを作成
+**3. gitを初期化してGitHubリポジトリを作成**
+```bash
 git init
 gh repo create my-app --private --source=. --push
+```
 
-# 4. 起動（INCEPTION → 8エージェントパイプライン）
+**4. 起動（INCEPTION → 8エージェントパイプライン）**
+```bash
 ./scripts/start-pipeline.sh
 ```
 
 ### B. 既存プロジェクトに追加
 
+**1. .kiro/, scripts/, AGENTS.md をコピー**
 ```bash
-cd /path/to/your-project
-
-# 1. .kiro/, scripts/, AGENTS.md をコピー
 npx degit yoshimi-I/kiro-engineer-teams .kiro-tmp
 cp -r .kiro-tmp/.kiro .kiro-tmp/scripts .kiro-tmp/AGENTS.md .
 rm -rf .kiro-tmp
+```
 
-# 2. 前提ツールをインストール（インストール済みはスキップ）
+**2. 前提ツールをインストール（インストール済みはスキップ）**
+```bash
 ./scripts/setup.sh
+```
 
-# 3. 起動
+**3. 起動**
+```bash
 ./scripts/start-pipeline.sh
 ```
 
