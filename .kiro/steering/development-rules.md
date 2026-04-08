@@ -60,36 +60,37 @@ If settings are already filled in, skip this section.
 - PR: English title + body, `Closes #N`, squash merge only
 - CI must pass before merge. No force merge.
 
-## Issue Creation
+## Issue作成ルール
 
-### Priority labels (required on every issue)
+### 優先度ラベル（全issue必須）
 
-| Label | Meaning | Example |
-|-------|---------|---------|
-| `P0-critical` | Blocks users or breaks production | Security vulnerability, data loss |
-| `P1-high` | Important but not blocking | Bug affecting UX, missing validation |
-| `P2-medium` | Should do soon | Refactoring, performance improvement |
-| `P3-low` | Nice to have | Documentation, minor DX improvement |
+| ラベル | 意味 | 例 |
+|-------|------|-----|
+| `P0-critical` | ユーザーをブロック or 本番障害 | セキュリティ脆弱性、データ損失 |
+| `P1-high` | 重要だがブロックはしない | UXに影響するバグ、バリデーション欠如 |
+| `P2-medium` | 早めに対応すべき | リファクタリング、パフォーマンス改善 |
+| `P3-low` | あると嬉しい | ドキュメント、軽微なDX改善 |
 
-Every `gh issue create` must include `--label "<priority>"`. Impl agents pick issues in P0→P1→P2→P3 order.
+`gh issue create` には必ず `--label "<優先度>"` を含めること。Implエージェントは P0→P1→P2→P3 の順で取得する。
 
-### Conflict prevention
+### コンフリクト防止
 
-Before creating an issue, check existing open issues for overlapping file changes:
+issue作成前に、既存のopen issueと変更対象ファイルの重複を確認:
 ```bash
-gh issue list --state open --json number,title,body --jq '.[].body' | grep -i "<target-file-or-module>"
+gh issue list --state open --json number,title,body --jq '.[].body' | grep -i "<対象ファイルまたはモジュール>"
 ```
 
-| Situation | Action |
-|-----------|--------|
-| No overlap with open issues | Create independently |
-| Overlaps with an open issue | Add `depends-on: #<number>` in body and label `blocked` — Impl agents must not start until dependency is merged |
+| 状況 | アクション |
+|------|-----------|
+| 既存issueと重複なし | 独立issueとして作成 |
+| 既存issueと重複あり | 本文に `depends-on: #<番号>` を記載し `blocked` ラベルを付与 — 依存先がmergeされるまでImplは着手禁止 |
 
-### Body format for dependencies
+### 依存関係の本文フォーマット
 
 ```markdown
-## Dependencies
-- depends-on: #<number> (must be merged first)
+## 依存関係
+- depends-on: #<番号>（先にmergeが必要）
+```
 ```
 
 ## Security
