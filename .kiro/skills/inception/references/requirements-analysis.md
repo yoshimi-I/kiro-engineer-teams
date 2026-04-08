@@ -21,9 +21,24 @@ Always runs. Depth adapts to complexity.
 ### 2. Determine depth
 Based on: number of features, integrations, user types, risk level.
 
-### 3. Ask clarification questions
-Use question file format (see `question-format.md`).
-Create `aidlc-docs/inception/requirements/requirements-questions.md`.
+### 3. Ask clarification questions in chat
+Ask the user directly in conversation. Use multiple-choice format:
+
+```
+以下について教えてください：
+
+1. 認証方式はどれを想定していますか？
+   A) メール + パスワード
+   B) ソーシャルログイン（Google, GitHub等）
+   C) SSO
+   D) その他（教えてください）
+
+2. ...
+```
+
+- Group related questions together (max 3-5 per message)
+- Wait for user response before proceeding
+- Ask follow-up questions if answers are ambiguous
 
 ### 4. Generate requirements document
 Create `aidlc-docs/inception/requirements/requirements.md`:
@@ -32,8 +47,8 @@ Create `aidlc-docs/inception/requirements/requirements.md`:
 - Constraints and assumptions
 - Out of scope
 
-### 5. Get user approval
-Present requirements summary. User must confirm before proceeding.
+### 5. Present summary and get approval
+Show a concise summary in chat. Ask user to confirm before proceeding.
 
 ### 6. Record in audit
 Append to `aidlc-docs/audit.md` with timestamp.

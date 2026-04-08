@@ -1,26 +1,29 @@
-# Question Format
+# Question Format (Chat-based)
 
 ## Rules
-- All questions go in a dedicated file, not inline chat
-- Use multiple-choice format with an "Other" option
-- File naming: `{stage}-questions.md`
-- Location: `aidlc-docs/inception/{stage}/`
+- Ask questions directly in chat conversation
+- Use multiple-choice format for clarity
+- Group related questions (max 3-5 per message)
+- Wait for user response before proceeding
+- Ask follow-up questions if answers are ambiguous
 
 ## Format
-```markdown
-## Question [number]
-[Clear, specific question]
+```
+[質問の背景を1文で説明]
 
-A) [First option]
-B) [Second option]
-C) [Third option]
-X) Other (describe below)
+1. [質問文]
+   A) [選択肢1]
+   B) [選択肢2]
+   C) [選択肢3]
+   D) その他（教えてください）
 
-[Answer]:
+2. [質問文]
+   ...
 ```
 
 ## Guidelines
-- Minimum 2 meaningful options + Other
-- Don't create filler options
-- Each question should resolve a specific ambiguity
-- Group related questions together
+- Respond in Japanese
+- Keep questions concise and specific
+- Provide recommended option when possible: "おすすめ: B"
+- Don't ask more than 5 questions at once
+- Summarize answers before moving to next stage

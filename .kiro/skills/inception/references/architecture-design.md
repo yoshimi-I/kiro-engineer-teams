@@ -15,20 +15,25 @@
 ### 1. Analyze context
 Read requirements and user stories (if generated).
 
-### 2. Design high-level architecture
-- Identify major components and responsibilities
-- Define component interfaces
-- Establish communication patterns (REST, WebSocket, events)
-- Choose technology stack (if not already decided)
+### 2. Propose architecture in chat
+Present to user:
+- Major components and responsibilities
+- Communication patterns (REST, WebSocket, events)
+- Technology stack recommendation with rationale
+- Directory structure
 
-### 3. Design directory structure
-Based on project type, define the directory layout.
+Use simple ASCII diagrams in chat:
+```
+[Frontend] → [API Server] → [Database]
+                ↓
+           [WebSocket]
+```
+
+### 3. Discuss and refine
+Ask user for feedback. Iterate until approved.
 
 ### 4. Generate documents
-Create in `aidlc-docs/inception/architecture/`:
-- `architecture.md` — component diagram, responsibilities, interfaces
-- `technology-stack.md` — chosen technologies with rationale
-- `directory-structure.md` — project layout
-
-### 5. Get user approval
-Present architecture overview. User must confirm.
+After approval, create in `aidlc-docs/inception/architecture/`:
+- `architecture.md`
+- `technology-stack.md`
+- `directory-structure.md`

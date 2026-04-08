@@ -1,10 +1,10 @@
 
 # INCEPTION — Structured Project Planning
 
-Run the full INCEPTION phase from AI-DLC: analyze workspace → gather requirements →
+Run the full INCEPTION phase: analyze workspace → gather requirements →
 write user stories → design architecture → generate GitHub issues.
 
-This is the entry point for new projects. After completion, the 8-agent pipeline takes over.
+All interaction happens in chat. Documents are generated after user approval.
 
 ## How to run
 
@@ -16,49 +16,49 @@ progress through the stages.
 1. Read `references/workspace-detection.md` from the inception skill
 2. Scan the workspace
 3. Create `aidlc-docs/aidlc-state.md`
-4. Proceed to Stage 2
+4. Report findings to user in chat, proceed to Stage 2
 
 ## Stage 2: Requirements Analysis (always)
 
-1. Read `references/requirements-analysis.md`
-2. Read `references/depth-levels.md` to determine depth
-3. Analyze user's request
-4. If clarification needed, create question file per `references/question-format.md`
-5. Generate `aidlc-docs/inception/requirements/requirements.md`
-6. **Wait for user approval before proceeding**
+1. Read `references/requirements-analysis.md` and `references/depth-levels.md`
+2. Analyze user's request
+3. Ask clarification questions directly in chat (multiple-choice format)
+4. After gathering answers, present requirements summary in chat
+5. **Wait for user approval before proceeding**
+6. Generate `aidlc-docs/inception/requirements/requirements.md`
 7. Append to `aidlc-docs/audit.md`
 
 ## Stage 3: User Stories (conditional)
 
 1. Read `references/user-stories.md`
 2. Evaluate if stories add value (see skip conditions)
-3. If running: generate personas and stories
+3. If running: present personas and stories in chat
 4. **Wait for user approval**
-5. Append to audit
+5. Generate documents after approval
 
 ## Stage 4: Architecture Design (conditional)
 
 1. Read `references/architecture-design.md`
 2. Evaluate if architecture design is needed
-3. If running: design components, tech stack, directory structure
-4. **Wait for user approval**
-5. Append to audit
+3. If running: propose architecture in chat with ASCII diagrams
+4. **Discuss and iterate with user until approved**
+5. Generate documents after approval
 
 ## Stage 5: Issue Generation (always)
 
 1. Read `references/issue-generation.md`
 2. Read all INCEPTION outputs generated so far
 3. Decompose into implementable, independent, testable issues
-4. Create issues via `gh issue create`
-5. Update `.kiro/steering/development-rules.md` with finalized tech stack
-6. Update `aidlc-docs/aidlc-state.md`
+4. Present issue list to user in chat for final confirmation
+5. Create issues via `gh issue create`
+6. Update `.kiro/steering/development-rules.md` with finalized tech stack
 7. Tell user to run `./scripts/start-pipeline.sh`
 
 ## Rules
 
-- Each stage must append decisions to `aidlc-docs/audit.md` with ISO 8601 timestamps
-- User approval is required at stages 2, 3, 4 before proceeding
-- Stage 5 (issue generation) does NOT require approval — it auto-generates
+- All interaction happens in chat — no question files
+- Respond in Japanese
+- Each stage appends decisions to `aidlc-docs/audit.md` with ISO 8601 timestamps
+- User approval required at stages 2, 3, 4 before generating documents
+- Documents are written only after chat-based approval
 - Adapt depth based on complexity (minimal / standard / comprehensive)
-- Questions use file-based format, not inline chat
-- All documents go in `aidlc-docs/inception/`
