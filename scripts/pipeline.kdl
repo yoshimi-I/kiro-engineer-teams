@@ -37,7 +37,7 @@ layout {
                     args "-c" "./scripts/agent.sh e2e-bug-hunt"
                 }
                 pane command="bash" name="Improve" {
-                    args "-c" "AGENT_INTERVAL=600 ./scripts/agent.sh improve"
+                    args "-c" "echo '── Keybinds ──'; echo 'Ctrl+h/j/k/l  Move pane'; echo 'Alt+1/2       Switch tab'; echo 'Ctrl+q        Quit zellij'; echo '──────────────'; echo ''; AGENT_INTERVAL=600 ./scripts/agent.sh improve"
                 }
             }
         }
