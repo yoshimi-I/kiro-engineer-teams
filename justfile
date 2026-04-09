@@ -26,12 +26,12 @@ test-layout:
 
 # Switch to Japanese
 ja:
-    @sed -i '' 's/Always respond to the user in English\./Always respond to the user in Japanese./' .kiro/steering/development-rules.md
-    @sed -i '' 's/Always respond in English\./Always respond in Japanese./' AGENTS.md
+    @scripts/sed-i.sh 's/Always respond to the user in English\./Always respond to the user in Japanese./' .kiro/steering/development-rules.md
+    @scripts/sed-i.sh 's/Always respond in English\./Always respond in Japanese./' AGENTS.md
     @echo "✅ Switched to Japanese"
 
 # Switch to English
 en:
-    @sed -i '' 's/Always respond to the user in Japanese\./Always respond to the user in English./' .kiro/steering/development-rules.md
-    @sed -i '' 's/Always respond in Japanese\./Always respond in English./' AGENTS.md
+    @scripts/sed-i.sh 's/Always respond to the user in Japanese\./Always respond to the user in English./' .kiro/steering/development-rules.md
+    @scripts/sed-i.sh 's/Always respond in Japanese\./Always respond in English./' AGENTS.md
     @echo "✅ Switched to English"
