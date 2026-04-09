@@ -117,8 +117,8 @@ gh issue list --state open --json number,title,body --jq '.[].body' | grep -i "<
 
 ## 並列エージェント
 
-- `issue/task.md` が共有状態ファイル — 作業開始前に必ず読む
-- 着手時に「着手中」、PR作成後に「レビュー中」を記録
+- **排他制御の主体はGitHub issueのassignee** — assigneeがいるissueは他エージェントが作業中なので絶対に取らない
+- issueを取る時は即座に `gh issue edit <number> --add-assignee @me` でロック
+- `issue/task.md` は補助記録として併用 — 作業開始前に読み、更新する
 - 他のエージェントが作業中のファイルは変更しない
 - issue/PRコメントは全て英語
-- 意思決定は `aidlc-docs/audit.md` にISO 8601タイムスタンプで記録
