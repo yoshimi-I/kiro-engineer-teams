@@ -66,6 +66,28 @@ read -p "  Press Enter to start → " _
 
 kiro-cli chat --trust-all-tools "/inception"
 
+# ── Push INCEPTION artifacts to main ──
+INCEPTION_FILES=$(git ls-files --others --modified -- aidlc-docs/ issue/ .kiro/steering/ 2>/dev/null)
+if [[ -n "$INCEPTION_FILES" ]]; then
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  INCEPTION artifacts detected:"
+  echo "$INCEPTION_FILES" | sed 's/^/    /'
+  echo ""
+  read -p "  Push to main so pipeline agents can access them? (Y/n) → " yn
+  if [[ "$yn" != "n" && "$yn" != "N" ]]; then
+    git add aidlc-docs/ issue/ .kiro/steering/
+    git commit -m "docs: add INCEPTION artifacts"
+    git push origin main
+    echo "  ✔ Pushed to main."
+  else
+    for pattern in aidlc-docs/ issue/; do
+      grep -qxF "$pattern" .gitignore 2>/dev/null || echo "$pattern" >> .gitignore
+    done
+    echo "  ✔ Added aidlc-docs/ and issue/ to .gitignore."
+  fi
+fi
+
 # ── Check issues exist ──
 ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
 if [[ "$ISSUE_COUNT" -eq 0 ]]; then
