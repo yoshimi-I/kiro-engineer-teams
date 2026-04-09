@@ -44,6 +44,24 @@ just start
 
 ---
 
+## 📥 既存プロジェクトへの導入
+
+既にプロジェクトがある場合、プロジェクトルートでこのワンライナーを実行：
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/yoshimi-I/kiro-engineer-teams/main/scripts/install.sh)
+```
+
+`.kiro/`、`scripts/`、`justfile`、`AGENTS.md`、`skills-lock.json` がコピーされます。既存ファイルは上書きされません。
+
+その後：
+```bash
+./scripts/setup.sh            # 前提ツールをインストール
+./scripts/start-pipeline.sh   # INCEPTION + パイプライン起動
+```
+
+---
+
 ## 🔄 全体フロー
 
 ```

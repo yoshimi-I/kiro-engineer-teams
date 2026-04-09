@@ -44,6 +44,24 @@ just start
 
 ---
 
+## 📥 Add to Existing Project
+
+Already have a project? Run this one-liner from your project root:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/yoshimi-I/kiro-engineer-teams/main/scripts/install.sh)
+```
+
+This copies `.kiro/`, `scripts/`, `justfile`, `AGENTS.md`, and `skills-lock.json` into your project. Existing files are never overwritten.
+
+Then:
+```bash
+./scripts/setup.sh            # install prerequisites
+./scripts/start-pipeline.sh   # start INCEPTION + pipeline
+```
+
+---
+
 ## 🔄 Full Flow
 
 ```
