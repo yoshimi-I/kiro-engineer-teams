@@ -52,6 +52,12 @@ gh pr comment <number> --body "レビュー内容"
 gh pr merge <number> --squash --delete-branch
 ```
 
+マージ失敗（コンフリクト等）の場合:
+```bash
+gh pr comment <number> --body "🔴 マージ失敗: コンフリクトが発生しました。リベースが必要です。"
+```
+→ /fix-review-issues エージェントがリベースして再push。次サイクルで再確認。
+
 ## 絶対禁止事項
 
 - CI失敗中のPRをマージする

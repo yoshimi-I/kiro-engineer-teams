@@ -13,10 +13,19 @@ gh pr list --json number,title,headRefName --limit 20
 ```bash
 gh pr view <number> --comments --json comments
 ```
-「🔴 修正必須」を含むコメントがあるPRを対象にする。
+「🔴 修正必須」または「🔴 マージ失敗」を含むコメントがあるPRを対象にする。
 対象がなければ「監視継続中。」で2分待機→再チェック。
 
 ### Step 2: 指摘内容の取得と理解
+
+#### コンフリクト（🔴 マージ失敗）の場合
+1. `git fetch origin` → `git rebase origin/main`
+2. コンフリクトを解決（`/resolve-conflicts` の手順に従う）
+3. `git push --force-with-lease origin $(git branch --show-current)`
+4. PRにコメント: 「コンフリクトを解決しました。再マージをお願いします。」
+5. 以降のStepはスキップ
+
+#### レビュー指摘（🔴 修正必須）の場合
 1. レビューコメントから指摘事項を抽出（ファイル、行、カテゴリ、修正案）
 2. 指摘されたファイルと行を実際に読む
 3. 修正案が正しいか検証
