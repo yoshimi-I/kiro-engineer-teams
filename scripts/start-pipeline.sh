@@ -62,6 +62,9 @@ echo "    5. Issue Generation (automatic)"
 echo ""
 echo "  After issues are created, type /quit to launch the pipeline."
 echo ""
+echo "  ⚠️  INCEPTION が完了したら /quit と入力してこの画面を抜けてください。"
+echo "      パイプラインが自動で起動します。"
+echo ""
 read -p "  Press Enter to start → " _
 
 kiro-cli chat --trust-all-tools "/inception"

@@ -44,7 +44,7 @@ layout {
     }
     tab name="Status" {
         pane command="bash" name="task.md" {
-            args "-c" "watch -n 5 'cat issue/task.md 2>/dev/null || echo No task.md yet'"
+            args "-c" "while true; do clear; cat issue/task.md 2>/dev/null || echo 'No task.md yet'; sleep 5; done"
         }
     }
 }
