@@ -52,7 +52,7 @@ progress through the stages.
 4. Present issue list to user in chat for final confirmation
 5. Create issues via `gh issue create`
 6. Update `.kiro/steering/development-rules.md` with finalized tech stack
-7. Tell user to run `./scripts/start-pipeline.sh`
+7. Tell user to type `/quit` to exit and launch the pipeline automatically
 
 ## Rules
 
