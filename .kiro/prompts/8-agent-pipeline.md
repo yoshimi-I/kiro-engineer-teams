@@ -99,9 +99,10 @@ Fix-CIエージェントは廃止。代わりに:
 
 ## 競合回避
 
-全エージェントは `issue/task.md` を共有状態として使う:
+排他制御の主体は **GitHub issueのassignee**（APIがアトミックなので同時書き込み競合しない）。
+`issue/task.md` はローカルの補助記録として併用。
 
-- `/implement` は着手前に task.md を読み、他エージェントと重複しないissueを選ぶ
+- `/implement` は着手前にassigneeが空か確認 → 空なら `--add-assignee @me` で即ロック → task.mdも更新
 - `/review` はレビューのみ行い、コードを変更しない（競合しない）
 - `/fix-review-issues` は task.md で他エージェントが触っていないPRのみ修正
 - `/watch-main` はissue作成のみ（競合しない）

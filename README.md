@@ -160,7 +160,7 @@ The steering file (`.kiro/steering/development-rules.md`) enforces these rules o
 | **Git** | Worktree isolation. Conventional Commits in English. Squash merge only. |
 | **Security** | No hardcoded secrets. Input validation. Parameterized queries. Least privilege. |
 | **Performance** | No N+1. No API calls in loops. Prevent unnecessary re-renders. |
-| **Parallel Agents** | `issue/task.md` shared state. Conflict detection before work. |
+| **Parallel Agents** | GitHub issue assignee for exclusive control. `issue/task.md` as auxiliary record. |
 
 ---
 
