@@ -1,17 +1,14 @@
 
 # 厳格コードレビュー
 
+ユーザーの指示を待たず、即座にオープンなPRを自動取得してレビューを開始する。PR番号の指定がなくても自分で選んで着手すること。
+
 ## PR取得（自動）
 
-PR番号が指定されていない場合、自分で取得する:
-
 ```bash
-gh pr list --json number,title,headRefName,author
-gh pr diff <number>
-gh pr view <number>
+gh pr list --json number,title,headRefName,author,reviewDecision
 ```
-
-PR番号が指定されている場合はそのPRのdiffを取得して即レビュー開始。
+未レビューのPRを1つ選び、diffを取得して即レビュー開始。
 
 ## 基本姿勢
 
