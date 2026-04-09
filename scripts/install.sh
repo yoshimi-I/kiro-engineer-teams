@@ -22,17 +22,17 @@ echo ""
 [[ ! -d ".git" ]] && fail "Not a git repository. Run from your project root."
 
 # ── Clone to temp dir ──
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT
-git clone --depth 1 --branch "$BRANCH" "https://github.com/${REPO}.git" "$TMPDIR" 2>/dev/null
+WORK_DIR=$(mktemp -d)
+trap 'rm -rf "$WORK_DIR"' EXIT
+git clone --depth 1 --branch "$BRANCH" "https://github.com/${REPO}.git" "$WORK_DIR" 2>/dev/null
 
-# ── Copy files ──
+# ── Copy helpers ──
 copy_dir() {
-  local src="$TMPDIR/$1"
+  local src="$WORK_DIR/$1"
   [[ ! -d "$src" ]] && return
   if [[ -d "$1" ]]; then
     warn "$1/ already exists — merging (won't overwrite existing files)"
-    cp -rn "$src" "$(dirname "$1")/"
+    rsync -a --ignore-existing "$src/" "$1/"
   else
     cp -r "$src" "$1"
     info "$1/"
@@ -40,7 +40,7 @@ copy_dir() {
 }
 
 copy_file() {
-  local src="$TMPDIR/$1"
+  local src="$WORK_DIR/$1"
   [[ ! -f "$src" ]] && return
   if [[ -f "$1" ]]; then
     warn "$1 already exists — skipped"
@@ -56,8 +56,73 @@ echo ""
 
 copy_dir ".kiro"
 copy_dir "scripts"
-copy_file "justfile"
-copy_file "AGENTS.md"
+
+# ── Merge justfile recipes ──
+RECIPES=("setup" "start" "pipeline" "test-layout" "ja" "en")
+RECIPE_BLOCKS=$(cat <<'JUST'
+
+# ── kiro-engineer-teams ──
+
+# Install prerequisites
+setup:
+    ./scripts/setup.sh
+
+# Start full pipeline (INCEPTION → 7-agent)
+start:
+    ./scripts/start-pipeline.sh
+
+# Launch 7-agent pipeline only (skip INCEPTION)
+pipeline:
+    zellij --layout scripts/pipeline.kdl
+
+# Test zellij 8-pane layout
+test-layout:
+    ./scripts/test-layout.sh
+
+# Switch to Japanese
+ja:
+    @scripts/sed-i.sh 's/Always respond to the user in English\./Always respond to the user in Japanese./' .kiro/steering/development-rules.md
+    @scripts/sed-i.sh 's/Always respond in English\./Always respond in Japanese./' AGENTS.md
+    @echo "✅ Switched to Japanese"
+
+# Switch to English
+en:
+    @scripts/sed-i.sh 's/Always respond to the user in Japanese\./Always respond to the user in English./' .kiro/steering/development-rules.md
+    @scripts/sed-i.sh 's/Always respond in Japanese\./Always respond in English./' AGENTS.md
+    @echo "✅ Switched to English"
+JUST
+)
+
+if [[ -f "justfile" ]]; then
+  missing=false
+  for r in "${RECIPES[@]}"; do
+    grep -q "^${r}:" "justfile" || { missing=true; break; }
+  done
+  if $missing; then
+    echo "$RECIPE_BLOCKS" >> "justfile"
+    info "justfile — appended pipeline recipes"
+  else
+    info "justfile — all recipes already present"
+  fi
+else
+  cp "$WORK_DIR/justfile" "justfile"
+  info "justfile"
+fi
+
+# ── Merge AGENTS.md ──
+AGENTS_MARKER="## After INCEPTION"
+if [[ -f "AGENTS.md" ]]; then
+  if ! grep -q "$AGENTS_MARKER" "AGENTS.md"; then
+    cat "$WORK_DIR/AGENTS.md" >> "AGENTS.md"
+    info "AGENTS.md — appended pipeline config"
+  else
+    info "AGENTS.md — already configured"
+  fi
+else
+  cp "$WORK_DIR/AGENTS.md" "AGENTS.md"
+  info "AGENTS.md"
+fi
+
 copy_file "skills-lock.json"
 
 # Make scripts executable

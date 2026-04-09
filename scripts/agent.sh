@@ -82,10 +82,10 @@ while true; do
   cycle=$((cycle + 1))
   echo "━━━ Cycle #${cycle} [$(date '+%H:%M:%S')] ━━━"
 
-  # Pass prompt via stdin to avoid ARG_MAX limits
-  if cat "$PROMPT_FILE" | kiro-cli chat \
+  if kiro-cli chat \
     --no-interactive \
-    --trust-all-tools 2>&1; then
+    --trust-all-tools \
+    "$(cat "$PROMPT_FILE")" 2>&1; then
     error_count=0
     echo "✅ Cycle #${cycle} complete"
   else
