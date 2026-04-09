@@ -96,6 +96,14 @@ Phase 1 requires your input. Phase 2 is fully automated — agents wait for work
 
 Each agent waits for work and starts automatically when issues/PRs appear.
 
+### Keybindings
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+h/j/k/l` | Move between panes (left/down/up/right) |
+| `Alt+1`, `Alt+2` | Switch tabs (Pipeline / Status) |
+| Mouse click | Focus pane (mouse mode enabled) |
+
 ---
 
 ## 🏗️ Architecture
