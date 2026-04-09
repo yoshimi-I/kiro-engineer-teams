@@ -4,6 +4,10 @@
 init:
     ./scripts/init.sh
 
+# Install into existing project (run from target project root)
+install:
+    bash <(curl -fsSL https://raw.githubusercontent.com/yoshimi-I/kiro-engineer-teams/main/scripts/install.sh)
+
 # Install prerequisites
 setup:
     ./scripts/setup.sh
