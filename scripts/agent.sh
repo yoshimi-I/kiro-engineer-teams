@@ -94,13 +94,7 @@ while true; do
     [[ $error_count -ge $MAX_ERRORS ]] && echo "❌ Too many errors. Stopping." && exit 1
   fi
 
-  # Single-run agents
-  case "$PROMPT_NAME" in
-    e2e-bug-hunt)
-      echo "🏁 E2E bug hunt complete."
-      exit 0
-      ;;
-  esac
+  # Single-run agents (none currently)
 
   echo "⏳ Next cycle in ${INTERVAL}s..."
   sleep "$INTERVAL"

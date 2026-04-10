@@ -156,6 +156,20 @@ steering ファイル（`.kiro/steering/`）を読み、プロジェクト固有
 - プロジェクトルール: {チェック結果}
 ```
 
+### LGTM → 自動マージ
+
+APPROVEした場合、即座にマージを実行する。
+
+```bash
+gh pr review <number> --approve --body "🟢 LGTM（検証実施記録付き）"
+gh pr merge <number> --squash --delete-branch
+```
+
+マージ失敗時（コンフリクト等）はPRにコメントして Fix-Review エージェントに委ねる:
+```bash
+gh pr comment <number> --body "🔴 マージ失敗: コンフリクトが発生。リベースが必要です。"
+```
+
 ## 禁止事項
 
 - diff だけ読んで LGTM → **禁止**
