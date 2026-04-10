@@ -2,7 +2,7 @@
 
 # 🏭 kiro-engineer-teams
 
-**8-agent parallel development pipeline**
+**10-agent parallel development pipeline**
 **powered by [Kiro CLI](https://kiro.dev/docs/cli/) × [zellij](https://zellij.dev/)**
 
 issue → implementation → review → merge → E2E verification — fully automated.
@@ -35,7 +35,7 @@ git clone https://github.com/yoshimi-I/kiro-engineer-teams.git .
 just init
 ```
 
-**4. Start (INCEPTION → 8-agent pipeline)**
+**4. Start (INCEPTION → 10-agent pipeline)**
 ```bash
 just start
 ```
@@ -74,10 +74,11 @@ just start   # start INCEPTION + pipeline
 │   ├── 4. Architecture Design — tech stack + structure (if needed)
 │   └── 5. Issue Generation — auto-create GitHub issues
 │
-└── Phase 2: 8-Agent Pipeline (fully autonomous)
+└── Phase 2: 10-Agent Pipeline (fully autonomous)
+    ├── Dev-Server → start and keep dev servers running
     ├── Impl-1, Impl-2 → pick issues → implement → PR
     ├── Review-1, Review-2 → strict 7-point review → merge
-    ├── Fix-Review → fix review comments → re-push
+    ├── Fix-Review-1, Fix-Review-2 → fix review comments → re-push
     ├── Watch-Main → E2E verification after merge
     ├── E2E-Hunt → Playwright patrol → bug issues
     └── Improve → auto-generate improvement issues
@@ -95,20 +96,22 @@ Phase 1 requires your input. Phase 2 is fully automated — agents wait for work
 
 <table>
 <tr>
+<td align="center">🖥️<br><b>Dev-Server</b><br><sub>start dev servers</sub></td>
 <td align="center">🔨<br><b>Impl-1</b><br><sub>issue → impl → PR</sub></td>
 <td align="center">🔨<br><b>Impl-2</b><br><sub>issue → impl → PR</sub></td>
 </tr>
 <tr>
 <td align="center">🔍<br><b>Review-1</b><br><sub>PR → review → merge</sub></td>
 <td align="center">🔍<br><b>Review-2</b><br><sub>PR → review → merge</sub></td>
+<td align="center">🔧<br><b>Fix-Review-1</b><br><sub>fix comments → push</sub></td>
 </tr>
 <tr>
-<td align="center">🔧<br><b>Fix-Review</b><br><sub>fix comments → push</sub></td>
+<td align="center">🔧<br><b>Fix-Review-2</b><br><sub>fix comments → push</sub></td>
 <td align="center">👀<br><b>Watch-Main</b><br><sub>main → E2E test</sub></td>
+<td align="center">🧪<br><b>E2E-Hunt</b><br><sub>Playwright patrol</sub></td>
 </tr>
 <tr>
-<td align="center">🧪<br><b>E2E-Hunt</b><br><sub>Playwright patrol</sub></td>
-<td align="center" colspan="1">💡<br><b>Improve</b><br><sub>auto-generate improvement issues</sub></td>
+<td align="center" colspan="3">💡<br><b>Improve</b><br><sub>auto-generate improvement issues</sub></td>
 </tr>
 </table>
 
@@ -139,19 +142,20 @@ Agent 1,2: /implement ──→ PR (pre-commit: lint/test passed)
                    🟢 LGTM   🔴 Fix needed
                       │         │
                       ▼         ▼
-                 merge    Agent 5: /fix-review-issues
+                 merge    Agent 5,6: /fix-review-issues
                       │
                       ▼
                  main merged
                       │
                       ▼
-                 Agent 6: /watch-main (E2E verification)
+                 Agent 7: /watch-main (E2E verification)
                       │
                  Bug found? → issue → Agent 1,2 picks it up
                                 ▲
-                 Agent 7: /e2e-bug-hunt (Playwright patrol)
+                 Agent 8: /e2e-bug-hunt (Playwright patrol)
 
-Agent 8: /improve (auto-generate improvement issues, every 10 min)
+Agent 9: /improve (auto-generate improvement issues, every 10 min)
+Agent 10: /dev-server (keep dev servers running)
 ```
 
 > All agents share `issue/task.md` for coordination to avoid conflicts.
@@ -206,6 +210,7 @@ The steering file (`.kiro/steering/development-rules.md`) enforces these rules o
 │   ├── implement.md               #   issue → impl → PR loop
 │   ├── review.md                  #   7-point strict review
 │   ├── fix-review-issues.md       #   Fix review comments
+│   ├── dev-server.md              #   Keep dev servers running
 │   ├── watch-main.md              #   Monitor main → E2E
 │   ├── improve.md                 #   Auto-generate improvement issues
 │   ├── 8-agent-pipeline.md        #   Pipeline guide
