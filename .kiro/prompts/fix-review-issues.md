@@ -5,23 +5,32 @@
 
 ## 1サイクルの処理
 
-### Step 1: 修正が必要なPRを検出
+### Step 1: 修正が必要なPRを検出（多層検出）
 
-まず `reviewDecision` で CHANGES_REQUESTED のPRを検出する:
+以下の3層で検出し、いずれか1つでも該当すれば修正対象とする。
+
+#### 層1: reviewDecision（最も信頼性が高い）
 ```bash
 gh pr list --json number,title,headRefName,reviewDecision --limit 20
 ```
 `reviewDecision` が `CHANGES_REQUESTED` のPRを対象にする。
 
-次に、対象PRのレビューコメントとPRコメントの両方から指摘内容を取得する:
+#### 層2: 最新レビューのstate
+`reviewDecision` が空や `REVIEW_REQUIRED` の場合でも、個別レビューに REQUEST_CHANGES がある場合がある:
+```bash
+gh pr view <number> --json reviews --jq '.reviews[-1].state'
+```
+最新レビューの state が `CHANGES_REQUESTED` なら対象。
+
+#### 層3: コメント・レビュー本文のテキストマッチ
 ```bash
 gh pr view <number> --json reviews,comments
 ```
-「🔴 修正必須」または「🔴 マージ失敗」を含むレビュー/コメントから指摘を抽出する。
+「🔴 修正必須」または「🔴 マージ失敗」を含むレビュー/コメントがあれば対象。
 
-**重要**: `reviewDecision` が `CHANGES_REQUESTED` であれば、コメント内に「🔴 修正必須」の文字列がなくても修正対象とする。レビュー本文（reviews）にも指摘が含まれている場合があるため、comments だけでなく reviews も必ず確認すること。
+**重要**: 3層のいずれかで検出されれば修正対象とする。reviews と comments の両方を必ず確認すること。
 
-対象がなければ「監視継続中。」で終了（次サイクルで再チェック）。
+対象がなければ、APPROVEDでマージ待ちのPRを処理（後述）して終了。
 
 ### Step 2: 指摘内容の取得と理解
 

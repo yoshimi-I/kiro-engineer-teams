@@ -118,6 +118,15 @@ steering ファイル（`.kiro/steering/`）を読み、プロジェクト固有
 | 指摘が1つでもある | **🔴 修正必須** |
 | 指摘ゼロ（全チェック通過の証拠あり） | **🟢 LGTM** |
 
+## レビュー結果の送信（必須ルール）
+
+レビュー結果は**必ず `gh pr review` コマンドで送信する**。`gh pr comment` でレビュー結果を書くのは禁止。
+
+- 🔴 修正必須 → `gh pr review <number> --request-changes --body "<レビュー本文>"`
+- 🟢 LGTM → `gh pr review <number> --approve --body "<レビュー本文>"`
+
+これにより GitHub の `reviewDecision` が正しく設定され、他のエージェントが状態を検出できる。
+
 ## 出力フォーマット
 
 先頭行に判定を書く。
@@ -177,6 +186,7 @@ gh pr comment <number> --body "🔴 マージ失敗: コンフリクトが発生
 - 呼び出し元を追跡せずに「影響なし」と判断 → **禁止**
 - 検証実施記録なしで APPROVE → **禁止**
 - 「良い点」から始めて甘い空気を作る → **禁止**（指摘事項から始める）
+- `gh pr comment` でレビュー結果を書く → **禁止**（必ず `gh pr review` を使う）
 
 ## Dependabot PR処理
 
