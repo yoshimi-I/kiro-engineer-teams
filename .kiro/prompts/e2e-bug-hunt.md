@@ -19,6 +19,7 @@
 2. 既存E2Eテストを読む（e2e/）→ テストパターン・ヘルパーを把握
 3. Playwright設定を読む（playwright.config.ts）→ baseURL, webServer, timeout確認
 4. 既存issueを取得 → 重複防止
+5. サーバーを起動: `just dev`（直接 `uvicorn` や `npm run dev` を実行してはならない）
 
 ## 巡回シナリオ（サイクルごとにローテーション）
 
