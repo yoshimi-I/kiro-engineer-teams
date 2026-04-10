@@ -46,53 +46,77 @@ if [[ ! -f "issue/task.md" ]]; then
 TMPL
 fi
 
-# ── Phase 1: INCEPTION ──
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Phase 1: INCEPTION (AI-DLC)"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "  Kiro CLI will start with the INCEPTION workflow."
-echo "  This guides you through:"
-echo ""
-echo "    1. Workspace Detection"
-echo "    2. Requirements Analysis"
-echo "    3. User Stories (if needed)"
-echo "    4. Architecture Design (if needed)"
-echo "    5. Issue Generation (automatic)"
-echo ""
-echo "  After issues are created, type /quit to launch the pipeline."
-echo ""
-echo "  ⚠️  INCEPTION が完了したら /quit と入力してこの画面を抜けてください。"
-echo "      パイプラインが自動で起動します。"
-echo ""
-read -p "  Press Enter to start → " _
-
-kiro-cli chat --trust-all-tools "/inception"
-
-# ── Push INCEPTION artifacts to main ──
-INCEPTION_FILES=$(git ls-files --others --modified -- aidlc-docs/ issue/ .kiro/steering/ 2>/dev/null)
-if [[ -n "$INCEPTION_FILES" ]]; then
-  echo ""
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo "  INCEPTION artifacts detected:"
-  echo "$INCEPTION_FILES" | sed 's/^/    /'
-  echo ""
-  read -p "  Push to main so pipeline agents can access them? (Y/n) → " yn
-  if [[ "$yn" != "n" && "$yn" != "N" ]]; then
-    git add aidlc-docs/ issue/ .kiro/steering/
-    git commit -m "docs: add INCEPTION artifacts"
-    git push origin main
-    echo "  ✔ Pushed to main."
-  else
-    for pattern in aidlc-docs/ issue/; do
-      grep -qxF "$pattern" .gitignore 2>/dev/null || echo "$pattern" >> .gitignore
-    done
-    echo "  ✔ Added aidlc-docs/ and issue/ to .gitignore."
+# ── Phase 1: INCEPTION (skip if already completed) ──
+INCEPTION_DONE=false
+if [[ -d "aidlc-docs/inception" ]] && ls aidlc-docs/inception/*/*.md &>/dev/null 2>&1; then
+  ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
+  if [[ "$ISSUE_COUNT" -gt 0 ]]; then
+    INCEPTION_DONE=true
   fi
 fi
 
+if [[ "$INCEPTION_DONE" == "true" ]]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  ✅ INCEPTION already completed"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "  📄 Artifacts: aidlc-docs/inception/"
+  echo "  📋 Open issues: ${ISSUE_COUNT}"
+  echo ""
+  echo "  Skipping INCEPTION → launching pipeline directly."
+  echo ""
+else
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  Phase 1: INCEPTION (AI-DLC)"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "  Kiro CLI will start with the INCEPTION workflow."
+  echo "  This guides you through:"
+  echo ""
+  echo "    1. Workspace Detection"
+  echo "    2. Requirements Analysis"
+  echo "    3. User Stories (if needed)"
+  echo "    4. Architecture Design (if needed)"
+  echo "    5. Issue Generation (automatic)"
+  echo ""
+  echo "  After issues are created, type /quit to launch the pipeline."
+  echo ""
+  echo "  ⚠️  INCEPTION が完了したら /quit と入力してこの画面を抜けてください。"
+  echo "      パイプラインが自動で起動します。"
+  echo ""
+  read -p "  Press Enter to start → " _
+
+  kiro-cli chat --trust-all-tools "/inception"
+
+  # ── Push INCEPTION artifacts to main ──
+  INCEPTION_FILES=$(git ls-files --others --modified -- aidlc-docs/ issue/ .kiro/steering/ 2>/dev/null)
+  if [[ -n "$INCEPTION_FILES" ]]; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "  INCEPTION artifacts detected:"
+    echo "$INCEPTION_FILES" | sed 's/^/    /'
+    echo ""
+    read -p "  Push to main so pipeline agents can access them? (Y/n) → " yn
+    if [[ "$yn" != "n" && "$yn" != "N" ]]; then
+      git add aidlc-docs/ issue/ .kiro/steering/
+      git commit -m "docs: add INCEPTION artifacts"
+      git push origin main
+      echo "  ✔ Pushed to main."
+    else
+      for pattern in aidlc-docs/ issue/; do
+        grep -qxF "$pattern" .gitignore 2>/dev/null || echo "$pattern" >> .gitignore
+      done
+      echo "  ✔ Added aidlc-docs/ and issue/ to .gitignore."
+    fi
+  fi
+
+  ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
+fi
+
 # ── Check issues exist ──
-ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
+if [[ -z "${ISSUE_COUNT:-}" ]]; then
+  ISSUE_COUNT=$(gh issue list --state open --json number --jq 'length' 2>/dev/null || echo "0")
+fi
 if [[ "$ISSUE_COUNT" -eq 0 ]]; then
   echo ""
   echo "⚠️  No open issues found."
