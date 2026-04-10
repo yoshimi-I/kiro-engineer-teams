@@ -12,8 +12,13 @@ install:
 setup:
     ./scripts/setup.sh
 
-# Start full pipeline (INCEPTION → 7-agent)
+# Start full pipeline (INCEPTION → 8-agent, skips INCEPTION if already completed)
 start:
+    ./scripts/start-pipeline.sh
+
+# Restart from INCEPTION (clear previous artifacts and start fresh)
+restart:
+    rm -rf aidlc-docs/inception
     ./scripts/start-pipeline.sh
 
 # Launch 7-agent pipeline only (skip INCEPTION)
