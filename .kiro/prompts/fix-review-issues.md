@@ -51,6 +51,22 @@ git push origin $(git branch --show-current)
 gh pr comment <number> --body "レビュー指摘を修正しました。再レビューをお願いします。"
 ```
 
+### Step 7: 再レビュー結果を確認し、APPROVEならマージ
+修正push後、再レビューの結果を確認する。
+```bash
+gh pr view <number> --json reviewDecision --jq '.reviewDecision'
+```
+- `APPROVED` → 即座にマージ:
+  ```bash
+  gh pr merge <number> --squash --delete-branch
+  ```
+  マージ失敗時はPRにコメント:
+  ```bash
+  gh pr comment <number> --body "🔴 マージ失敗: コンフリクトが発生。リベースが必要です。"
+  ```
+- `CHANGES_REQUESTED` → Step 2 に戻って再修正
+- まだレビューされていない → 次のPRへ進む（次サイクルで再確認）
+
 ## ループ停止条件
 
 | 条件 | 動作 |
