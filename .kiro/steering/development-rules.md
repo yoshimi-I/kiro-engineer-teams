@@ -47,6 +47,14 @@ description: 全タスクに適用されるコアルール
 - コードを書く前に要件を完全に理解する
 - 既存のプロジェクト規約に従う
 
+## アーキテクチャ
+
+- **バックエンド**: Clean Architecture + DDD + Hexagonal — 詳細は `.kiro/skills/clean-ddd-hexagonal/SKILL.md`
+- **フロントエンド**: Bulletproof React featureベースコロケーション — 詳細は `.kiro/skills/bulletproof-react/SKILL.md`
+- featureごとにコード（コンポーネント、hooks、API、型、テスト）をコロケーション
+- feature間の直接importは禁止（index.ts経由 or shared/に抽出）
+- 新しいコードを追加する前に、該当スキルのディレクトリ構成とimportルールを確認すること
+
 ## 実装
 
 - TDD: Red → Green → Refactor。テストなしのコード禁止
