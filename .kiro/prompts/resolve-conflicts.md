@@ -49,3 +49,5 @@ git checkout main
 - `--force` ではなく `--force-with-lease` を使う
 - コンフリクトマーカーを残したままコミットしない
 - 理解せずに片方を丸ごと採用しない
+- **vim/nano等のエディタを起動しない** — `git rebase --continue` でエディタが開く場合は `GIT_EDITOR=true git rebase --continue` または `git -c core.editor=true rebase --continue` を使う
+- コンフリクト解決はファイルの読み書きツールで行い、エディタコマンドは使わない
