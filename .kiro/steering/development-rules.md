@@ -71,6 +71,7 @@ description: 全タスクに適用されるコアルール
 - コミット: Conventional Commits、英語、アトミック
 - PR: 英語タイトル + 本文、`Closes #N`、squash mergeのみ
 - CI通過前のマージ禁止。force merge禁止。
+- **vim/nano等のエディタを起動するコマンドは禁止** — `git rebase`, `git commit` 等でエディタが開くとエージェントがハングする。必ず `--no-edit`, `-m` オプション等でエディタ起動を回避すること。`GIT_EDITOR=true` を設定するか、コマンドにメッセージを直接渡す。
 
 ### pre-commit（必須）
 
