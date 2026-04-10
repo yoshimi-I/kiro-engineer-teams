@@ -21,6 +21,10 @@ cycle=0
 # Wait condition per agent type
 wait_for_work() {
   case "$PROMPT_NAME" in
+    dev-server)
+      # No wait — start immediately
+      return 0
+      ;;
     implement|watch-issues)
       echo "⏳ Waiting for open issues..."
       while true; do
