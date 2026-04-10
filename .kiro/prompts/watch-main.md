@@ -35,14 +35,16 @@
 
 ## サーバー起動方法（必須）
 
-サーバーを起動する際は、必ず以下のスクリプトを使用する。直接 `uvicorn` や `npm run dev` を実行してはならない（ターミナルがブロックされるため）。
+サーバーを起動する際は、必ず以下のいずれかを使用する。直接 `uvicorn` や `npm run dev` を実行してはならない（ターミナルがブロックされるため）。
 
 ```bash
-./scripts/start-server.sh
+just dev                    # 推奨
+./scripts/start-server.sh  # just dev のラッパー
 ```
 
-このスクリプトは:
-- 既存のサーバープロセスを停止
-- バックエンド・フロントエンドを `nohup` でバックグラウンド起動
-- サーバーが ready になるまで待機してから終了
-- ログは `/tmp/dev-backend.log`, `/tmp/dev-frontend.log` に出力
+停止する場合:
+```bash
+just dev-stop
+```
+
+`just dev` のレシピはINCEPTIONフェーズで生成される。justfileに `dev` レシピがない場合はエラーになる。
