@@ -142,7 +142,7 @@ Agent 1,2: /implement ──→ PR (pre-commit: lint/test passed)
                    🟢 LGTM   🔴 Fix needed
                       │         │
                       ▼         ▼
-                 merge    Agent 5,6: /fix-review-issues
+                 merge    Agent 5,6: /fix-review
                       │
                       ▼
                  main merged
@@ -209,7 +209,7 @@ The steering file (`.kiro/steering/development-rules.md`) enforces these rules o
 ├── prompts/                       # Workflows (invoke with /name)
 │   ├── implement.md               #   issue → impl → PR loop
 │   ├── review.md                  #   7-point strict review
-│   ├── fix-review-issues.md       #   Fix review comments
+│   ├── fix-review.md       #   Fix review comments
 │   ├── dev-server.md              #   Keep dev servers running
 │   ├── watch-main.md              #   Monitor main → E2E
 │   ├── improve.md                 #   Auto-generate improvement issues

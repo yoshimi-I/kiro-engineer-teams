@@ -10,7 +10,7 @@
 [Agent 2] /implement ──────── 同上（並列で別issue）
 [Agent 3] /review ─────────── open PR→厳格レビュー→マージ
 [Agent 4] /review ─────────── 同上（並列で別PR）
-[Agent 5] /fix-review-issues── 🔴指摘→修正→再push
+[Agent 5] /fix-review── 🔴指摘→修正→再push
 [Agent 6] /watch-main ─────── mainマージ検出→E2E検証→バグissue
 [Agent 7] /e2e-bug-hunt ───── Playwright巡回→バグissue
 [Agent 8] /improve ─────────── コード分析→改善issue自動生成
@@ -34,7 +34,7 @@ Agent 1,2: /implement ──→ PR作成（pre-commitでlint/test通過済み）
                      🟢 LGTM   🔴 修正必須
                         │         │
                         ▼         ▼
-                   merge    Agent 5: /fix-review-issues
+                   merge    Agent 5: /fix-review
                         │         │
                         │    修正→push→Agent 3,4が再レビュー
                         │
@@ -64,7 +64,7 @@ kiro-cli chat → /implement
 kiro-cli chat → /review
 
 # Terminal 5: レビュー指摘修正エージェント
-kiro-cli chat → /fix-review-issues
+kiro-cli chat → /fix-review
 
 # Terminal 6: mainブランチ監視エージェント
 kiro-cli chat → /watch-main
@@ -84,7 +84,7 @@ kiro-cli chat → /improve
 | 2 | `/implement` | 同上（並列で別issue） | 即座に次へ |
 | 3 | `/review` | open PRを取得→厳格レビュー→マージ + Dependabot PR処理 | 即座に次へ |
 | 4 | `/review` | 同上（並列で別PR） | 即座に次へ |
-| 5 | `/fix-review-issues` | 🔴指摘のあるPRを修正→再push | 2分 |
+| 5 | `/fix-review` | 🔴指摘のあるPRを修正→再push | 2分 |
 | 6 | `/watch-main` | mainマージ検出→テスト+E2E検証→バグissue | 2分 |
 | 7 | `/e2e-bug-hunt` | Playwright全ページ巡回→バグissue | サイクル完了後 |
 | 8 | `/improve` | コード分析→改善issue自動生成 | 10分 |
@@ -104,7 +104,7 @@ Fix-CIエージェントは廃止。代わりに:
 
 - `/implement` は着手前にassigneeが空か確認 → 空なら `--add-assignee @me` で即ロック → task.mdも更新
 - `/review` はレビューのみ行い、コードを変更しない（競合しない）
-- `/fix-review-issues` は task.md で他エージェントが触っていないPRのみ修正
+- `/fix-review` は task.md で他エージェントが触っていないPRのみ修正
 - `/watch-main` はissue作成のみ（競合しない）
 - `/e2e-bug-hunt` はissue作成のみ（競合しない）
 - `/improve` はissue作成のみ（競合しない）
@@ -113,7 +113,7 @@ Fix-CIエージェントは廃止。代わりに:
 
 | エージェント | エスカレーション条件 | 方法 |
 |------------|-------------------|------|
-| `/fix-review-issues` | 3回修正しても🔴 | PRにコメント |
+| `/fix-review` | 3回修正しても🔴 | PRにコメント |
 | `/e2e-bug-hunt` | アプリ起動不能 | 報告して停止 |
 | `/improve` | 改善ポイントが見つからない | スキップして次サイクルへ |
 | `/watch-main` | アプリ起動不能 | 報告して停止 |

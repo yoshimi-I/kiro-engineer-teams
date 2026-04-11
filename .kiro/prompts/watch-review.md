@@ -43,7 +43,7 @@ gh pr comment <number> --body "レビュー内容"
 
 | 条件 | アクション |
 |------|-----------|
-| 🔴 修正必須 | コメント投稿のみ（/fix-review-issues エージェントが修正する） |
+| 🔴 修正必須 | コメント投稿のみ（/fix-review エージェントが修正する） |
 | 🟢 LGTM（検証証拠あり） | コメント投稿 → squash merge |
 | 3回修正しても 🔴 が残る | 人間エスカレーション |
 
@@ -56,7 +56,7 @@ gh pr merge <number> --squash --delete-branch
 ```bash
 gh pr comment <number> --body "🔴 マージ失敗: コンフリクトが発生しました。リベースが必要です。"
 ```
-→ /fix-review-issues エージェントがリベースして再push。次サイクルで再確認。
+→ /fix-review エージェントがリベースして再push。次サイクルで再確認。
 
 ## 絶対禁止事項
 

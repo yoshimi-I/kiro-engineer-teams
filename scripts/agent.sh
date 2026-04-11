@@ -41,7 +41,7 @@ wait_for_work() {
         sleep 30
       done
       ;;
-    fix-review-issues)
+    fix-review)
       echo "⏳ Waiting for PRs with review comments..."
       while true; do
         count=$(gh pr list --json number --jq 'length' 2>/dev/null || echo "0")
