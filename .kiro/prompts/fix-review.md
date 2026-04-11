@@ -32,13 +32,37 @@ gh pr view <number> --json reviews,comments
 
 対象がなければ、APPROVEDでマージ待ちのPRを処理（後述）して終了。
 
+### Step 1.5: PRのロック（排他制御）
+
+対象PRを見つけたら、着手前にassigneeでロックする:
+```bash
+# 既にassigneeがいたらスキップ（他のFix-Reviewが作業中）
+ASSIGNEE=$(gh pr view <number> --json assignees --jq '.assignees[].login' 2>/dev/null)
+if [[ -n "$ASSIGNEE" ]]; then
+  echo "PR #<number> は $ASSIGNEE が作業中。スキップ。"
+  # 次の対象PRを探す
+fi
+
+# assigneeがいなければ自分をアサインしてロック
+gh pr edit <number> --add-assignee @me
+```
+
+修正完了後（merge or 次サイクルへ移行時）にassigneeを外す:
+```bash
+gh pr edit <number> --remove-assignee @me
+```
+
 ### Step 2: 指摘内容の取得と理解
 
 #### コンフリクト（🔴 マージ失敗）の場合
 1. `git fetch origin` → `git rebase origin/main`
 2. コンフリクトを解決（`/resolve-conflicts` の手順に従う）
 3. `git push --force-with-lease origin $(git branch --show-current)`
-4. PRにコメント: 「コンフリクトを解決しました。再マージをお願いします。」
+4. 即座にマージを試みる:
+   ```bash
+   gh pr merge <number> --squash --delete-branch
+   ```
+   マージ失敗時はPRにコメント: 「🔴 マージ失敗: リベース後もマージできません。」
 5. 以降のStepはスキップ
 
 #### レビュー指摘（🔴 修正必須）の場合

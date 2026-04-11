@@ -1,64 +1,64 @@
 
 # INCEPTION — 構造化プロジェクト計画
 
-Run the full INCEPTION phase: analyze workspace → gather requirements →
-write user stories → design architecture → generate GitHub issues.
+INCEPTIONフェーズを実行する: ワークスペース分析 → 要件収集 →
+ユーザーストーリー作成 → アーキテクチャ設計 → GitHub issue生成。
 
-All interaction happens in chat. Documents are generated after user approval.
+全てのやり取りはチャットで行う。ドキュメントはユーザーの承認後に生成する。
 
-## How to run
+## 実行方法
 
-Read `.kiro/skills/inception/SKILL.md` first, then load each reference file as you
-progress through the stages.
+まず `.kiro/skills/inception/SKILL.md` を読み、各ステージの進行に合わせて
+参照ファイルを読み込む。
 
-## Stage 1: Workspace Detection (always)
+## ステージ1: ワークスペース検出（常に実行）
 
-1. Read `references/workspace-detection.md` from the inception skill
-2. Scan the workspace
-3. Create `aidlc-docs/aidlc-state.md`
-4. Report findings to user in chat, proceed to Stage 2
+1. inceptionスキルの `references/workspace-detection.md` を読む
+2. ワークスペースをスキャン
+3. `aidlc-docs/aidlc-state.md` を作成
+4. チャットで検出結果を報告し、ステージ2へ進む
 
-## Stage 2: Requirements Analysis (always)
+## ステージ2: 要件分析（常に実行）
 
-1. Read `references/requirements-analysis.md` and `references/depth-levels.md`
-2. Analyze user's request
-3. Ask clarification questions directly in chat (multiple-choice format)
-4. After gathering answers, present requirements summary in chat
-5. **Wait for user approval before proceeding**
-6. Generate `aidlc-docs/inception/requirements/requirements.md`
-7. Append to `aidlc-docs/audit.md`
+1. `references/requirements-analysis.md` と `references/depth-levels.md` を読む
+2. ユーザーのリクエストを分析
+3. チャットで明確化のための質問を行う（選択肢形式）
+4. 回答を集めた後、チャットで要件サマリーを提示
+5. **ユーザーの承認を待ってから次へ進む**
+6. `aidlc-docs/inception/requirements/requirements.md` を生成
+7. `aidlc-docs/audit.md` に追記
 
-## Stage 3: User Stories (conditional)
+## ステージ3: ユーザーストーリー（条件付き）
 
-1. Read `references/user-stories.md`
-2. Evaluate if stories add value (see skip conditions)
-3. If running: present personas and stories in chat
-4. **Wait for user approval**
-5. Generate documents after approval
+1. `references/user-stories.md` を読む
+2. ストーリーが価値を持つか評価（スキップ条件を参照）
+3. 実行する場合: チャットでペルソナとストーリーを提示
+4. **ユーザーの承認を待つ**
+5. 承認後にドキュメントを生成
 
-## Stage 4: Architecture Design (conditional)
+## ステージ4: アーキテクチャ設計（条件付き）
 
-1. Read `references/architecture-design.md`
-2. Evaluate if architecture design is needed
-3. If running: propose architecture in chat with ASCII diagrams
-4. **Discuss and iterate with user until approved**
-5. Generate documents after approval
+1. `references/architecture-design.md` を読む
+2. アーキテクチャ設計が必要か評価
+3. 実行する場合: チャットでASCII図を使ってアーキテクチャを提案
+4. **ユーザーが承認するまで議論・改善を繰り返す**
+5. 承認後にドキュメントを生成
 
-## Stage 5: Issue Generation (always)
+## ステージ5: Issue生成（常に実行）
 
-1. Read `references/issue-generation.md`
-2. Read all INCEPTION outputs generated so far
-3. Decompose into implementable, independent, testable issues
-4. Present issue list to user in chat for final confirmation
-5. Create issues via `gh issue create`
-6. Update `.kiro/steering/development-rules.md` with finalized tech stack
-7. Tell user to type `/quit` to exit and launch the pipeline automatically
+1. `references/issue-generation.md` を読む
+2. これまでのINCEPTION成果物を全て読む
+3. 実装可能・独立・テスト可能なissueに分解
+4. チャットでissueリストをユーザーに提示し最終確認
+5. `gh issue create` でissueを作成
+6. `.kiro/steering/development-rules.md` に確定した技術スタックを記入
+7. ユーザーに `/quit` と入力してパイプラインを自動起動するよう伝える
 
-## Rules
+## ルール
 
-- All interaction happens in chat — no question files
-- Respond in Japanese
-- Each stage appends decisions to `aidlc-docs/audit.md` with ISO 8601 timestamps
-- User approval required at stages 2, 3, 4 before generating documents
-- Documents are written only after chat-based approval
-- Adapt depth based on complexity (minimal / standard / comprehensive)
+- 全てのやり取りはチャットで行う — 質問ファイルは使わない
+- 日本語で応答する
+- 各ステージの決定を `aidlc-docs/audit.md` にISO 8601タイムスタンプ付きで追記
+- ステージ2, 3, 4ではドキュメント生成前にユーザーの承認が必要
+- ドキュメントはチャットでの承認後にのみ作成
+- 複雑さに応じて深度を調整（minimal / standard / comprehensive）
