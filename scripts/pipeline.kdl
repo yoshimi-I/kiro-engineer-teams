@@ -23,24 +23,24 @@ layout {
                     args "-c" "./scripts/agent.sh dev-server"
                 }
                 pane command="bash" name="Impl-1" {
-                    args "-c" "./scripts/agent.sh implement"
+                    args "-c" "AGENT_INTERVAL=10 ./scripts/agent.sh implement"
                 }
                 pane command="bash" name="Impl-2" {
-                    args "-c" "./scripts/agent.sh implement"
+                    args "-c" "AGENT_INTERVAL=10 ./scripts/agent.sh implement"
                 }
                 pane command="bash" name="Review-1" {
-                    args "-c" "./scripts/agent.sh review"
+                    args "-c" "AGENT_INTERVAL=10 ./scripts/agent.sh review"
                 }
                 pane command="bash" name="Review-2" {
-                    args "-c" "./scripts/agent.sh review"
+                    args "-c" "AGENT_INTERVAL=10 ./scripts/agent.sh review"
                 }
             }
             pane split_direction="vertical" {
                 pane command="bash" name="Fix-Review-1" {
-                    args "-c" "./scripts/agent.sh fix-review-issues"
+                    args "-c" "AGENT_INTERVAL=10 ./scripts/agent.sh fix-review-issues"
                 }
                 pane command="bash" name="Fix-Review-2" {
-                    args "-c" "./scripts/agent.sh fix-review-issues"
+                    args "-c" "AGENT_INTERVAL=10 ./scripts/agent.sh fix-review-issues"
                 }
                 pane command="bash" name="Watch-Main" {
                     args "-c" "./scripts/agent.sh watch-main"
