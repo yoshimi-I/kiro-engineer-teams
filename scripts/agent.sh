@@ -5,6 +5,9 @@
 
 set -euo pipefail
 
+export GIT_EDITOR=true
+export EDITOR=true
+
 PROMPT_NAME="${1:?Usage: agent.sh <prompt-name>}"
 PROMPT_FILE=".kiro/prompts/${PROMPT_NAME}.md"
 INTERVAL="${AGENT_INTERVAL:-120}"
