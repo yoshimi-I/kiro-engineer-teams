@@ -5,10 +5,39 @@
 
 ## PR取得（自動）
 
+### Step 1: APPROVEDなのに未マージのPRを先にマージ
+
+レビューより先に、既にAPPROVEDだがマージされていないPRを処理する:
 ```bash
-gh pr list --json number,title,headRefName,author,reviewDecision
+gh pr list --json number,title,headRefName,reviewDecision --jq '[.[] | select(.reviewDecision == "APPROVED")]'
 ```
-未レビューのPRを1つ選び、diffを取得して即レビュー開始。
+該当PRがあれば即マージ:
+```bash
+gh pr merge <number> --squash --delete-branch
+```
+マージ失敗時はコメントしてスキップ:
+```bash
+gh pr comment <number> --body "🔴 マージ失敗: コンフリクトが発生。リベースが必要です。"
+```
+
+### Step 2: レビュー対象PRの選択（重複防止）
+
+```bash
+gh pr list --json number,title,headRefName,author,reviewDecision,reviews
+```
+
+以下の条件で**全て除外**してからPRを1つ選ぶ:
+- `reviewDecision` が `APPROVED` → 既にレビュー済み（マージ待ち）
+- `reviewDecision` が `CHANGES_REQUESTED` → 既にレビュー済み（修正待ち）
+- `reviews` に自分（GitHub Actions bot含む）のレビューが既にある → **他のReviewエージェントがレビュー済み。重複レビュー禁止。**
+
+対象が0件なら、このサイクルは終了。
+
+**重複レビューの判定方法:**
+```bash
+gh pr view <number> --json reviews --jq '[.reviews[] | select(.state == "APPROVED" or .state == "CHANGES_REQUESTED")] | length'
+```
+1件以上あれば、そのPRは既にレビューされている。スキップすること。
 
 ## 再レビュー時の必須ルール
 
