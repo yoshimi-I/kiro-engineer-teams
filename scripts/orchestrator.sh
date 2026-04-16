@@ -7,7 +7,7 @@ export GIT_EDITOR=true
 export EDITOR=true
 
 POLL_INTERVAL="${ORCH_INTERVAL:-30}"
-PANE_COUNT=10
+PANE_COUNT=12
 PROJECT_CWD="$(pwd)"
 STATUS_DIR=".agent-status"
 mkdir -p "$STATUS_DIR"
