@@ -14,9 +14,14 @@ INTERVAL="${AGENT_INTERVAL:-120}"
 ONCE="${AGENT_ONCE:-false}"
 MAX_ERRORS=5
 STATUS_DIR=".agent-status"
+LOG_DIR=".agent-logs"
 STATUS_FILE="${STATUS_DIR}/${AGENT_ID:-$PROMPT_NAME}.json"
+LOG_FILE="${LOG_DIR}/${AGENT_ID:-$PROMPT_NAME}.log"
 
-mkdir -p "$STATUS_DIR"
+mkdir -p "$STATUS_DIR" "$LOG_DIR"
+
+# Tee all output to log file
+exec > >(tee -a "$LOG_FILE") 2>&1
 
 update_status() {
   local state="$1" detail="${2:-}"
