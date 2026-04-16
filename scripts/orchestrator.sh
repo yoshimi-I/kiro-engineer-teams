@@ -10,34 +10,56 @@ POLL_INTERVAL="${ORCH_INTERVAL:-30}"
 PANE_COUNT=12
 PROJECT_CWD="$(pwd)"
 STATUS_DIR=".agent-status"
-mkdir -p "$STATUS_DIR"
+CACHE_DIR=".agent-status/.cache"
+CACHE_TTL=25  # seconds — slightly less than poll interval
+mkdir -p "$STATUS_DIR" "$CACHE_DIR"
+
+# ── Cached GitHub API ──
+
+gh_cached() {
+  local key="$1"; shift
+  local cache_file="${CACHE_DIR}/${key}"
+  # Return cache if fresh
+  if [[ -f "$cache_file" ]]; then
+    local age=$(( $(date +%s) - $(stat -f%m "$cache_file" 2>/dev/null || stat -c%Y "$cache_file" 2>/dev/null || echo 0) ))
+    if [[ $age -lt $CACHE_TTL ]]; then
+      cat "$cache_file"
+      return
+    fi
+  fi
+  # Fetch and cache
+  local result
+  result=$("$@" 2>/dev/null || echo "")
+  echo "$result" > "$cache_file"
+  echo "$result"
+}
 
 # ── Helpers ──
 
 count_issues() {
-  gh issue list --state open --json number,assignees \
-    --jq "[.[] | select(.assignees | length == 0)] | length" 2>/dev/null || echo "0"
+  gh_cached issues gh issue list --state open --json number,assignees \
+    --jq "[.[] | select(.assignees | length == 0)] | length"
 }
 
 count_prs_needing_review() {
-  gh pr list --json number,reviewDecision,reviews \
-    --jq '[.[] | select(.reviewDecision == "" or .reviewDecision == "REVIEW_REQUIRED")] | length' 2>/dev/null || echo "0"
+  gh_cached prs_review gh pr list --json number,reviewDecision,reviews \
+    --jq '[.[] | select(.reviewDecision == "" or .reviewDecision == "REVIEW_REQUIRED")] | length'
 }
 
 count_prs_changes_requested() {
-  gh pr list --json number,reviewDecision \
-    --jq '[.[] | select(.reviewDecision == "CHANGES_REQUESTED")] | length' 2>/dev/null || echo "0"
+  gh_cached prs_changes gh pr list --json number,reviewDecision \
+    --jq '[.[] | select(.reviewDecision == "CHANGES_REQUESTED")] | length'
 }
 
 count_prs_approved() {
-  gh pr list --json number,reviewDecision \
-    --jq '[.[] | select(.reviewDecision == "APPROVED")] | length' 2>/dev/null || echo "0"
+  gh_cached prs_approved gh pr list --json number,reviewDecision \
+    --jq '[.[] | select(.reviewDecision == "APPROVED")] | length'
 }
 
 has_merged_prs() {
   local c
-  c=$(gh pr list --state merged --limit 1 --json number --jq 'length' 2>/dev/null || echo "0")
-  [[ "$c" -gt 0 ]]
+  c=$(gh_cached prs_merged gh pr list --state merged --limit 1 --json number --jq 'length')
+  [[ "${c:-0}" -gt 0 ]]
 }
 
 # ── Role allocation ──
@@ -49,8 +71,8 @@ allocate_roles() {
   # Slot 0: always dev-server
   roles+=(dev-server)
 
-  # Remaining 9 slots to fill
-  local remaining=9
+  # Remaining 11 slots to fill (12 - dev-server)
+  local remaining=11
   local impl=0 review=0 fix=0 watch=0 e2e=0 improve=0
 
   # 1) Fix-review: 1 per 2 CHANGES_REQUESTED PRs (min 0, max 2)

@@ -73,6 +73,16 @@ description: 全タスクに適用されるコアルール
 - CI通過前のマージ禁止。force merge禁止。
 - **vim/nano等のエディタを起動するコマンドは禁止** — `git rebase`, `git commit` 等でエディタが開くとエージェントがハングする。必ず `--no-edit`, `-m` オプション等でエディタ起動を回避すること。`GIT_EDITOR=true` を設定するか、コマンドにメッセージを直接渡す。
 
+### 禁止されたgit操作（絶対厳守）
+
+| 禁止コマンド | 理由 | 代替 |
+|-------------|------|------|
+| `git push origin main` | mainへの直接pushは禁止 | PRを作成してマージ |
+| `git push --force` | 他エージェントの作業を破壊する | `--force-with-lease` を使う |
+| `git push -f` | 上記の短縮形 | `--force-with-lease` を使う |
+| `git checkout main && git merge` | mainへの直接マージ禁止 | `gh pr merge --squash` |
+| `git branch -D` | 他エージェントのブランチを削除する恐れ | PRマージ時の `--delete-branch` のみ |
+
 ### pre-commit（必須）
 
 コミット前に必ず lint と test を実行すること。CI失敗を未然に防ぐ。
@@ -89,6 +99,28 @@ description: 全タスクに適用されるコアルール
 - CI失敗した場合は、そのPRの作成者（Implエージェント）が自分で修正する
 
 ## Issue作成ルール
+
+### 作成上限（暴走防止）
+
+| エージェント | 1サイクルあたりの上限 | 理由 |
+|------------|---------------------|------|
+| improve | 3件 | 改善issueの大量生成を防止 |
+| e2e-bug-hunt | 5件 | バグissueの大量生成を防止 |
+| watch-main | 3件 | マージ後検証のバグissue |
+| implement | 0件 | issueを作らない（消化するのみ） |
+| review | 0件 | issueを作らない |
+| fix-review | 1件 | 再issue化のみ |
+
+上限に達したらそのサイクルは終了し、次サイクルまで待つこと。
+
+### issue/PRの勝手なclose禁止
+
+| 禁止操作 | 例外 |
+|---------|------|
+| `gh issue close` | fix-reviewが再issue化する際の元issueのみ |
+| `gh pr close` | fix-reviewが修正不能と判断したPRのみ（必ず再issue化とセット） |
+
+理由なく issue/PR を close してはならない。close する場合は必ずコメントで理由を記載すること。
 
 ### 優先度ラベル（全issue必須）
 
@@ -150,3 +182,18 @@ gh issue list --state open --json number,title,body --jq '.[].body' | grep -i "<
 - `issue/task.md` は補助記録として併用 — 作業開始前に読み、更新する
 - 他のエージェントが作業中のファイルは変更しない
 - issue/PRコメントは全て英語
+
+### stale worktree/ブランチの掃除
+
+実装エージェントはサイクル開始時に以下を実行し、自分が残したゴミを掃除すること:
+
+```bash
+# マージ済みブランチに対応するworktreeを削除
+git worktree list --porcelain | grep -B2 'prunable' | grep 'worktree' | awk '{print $2}' | xargs -I{} git worktree remove {}
+# prunable worktreeを一括削除
+git worktree prune
+```
+
+- PRがマージ済み or closeされたブランチのworktreeは削除する
+- 他エージェントのworktreeは触らない（assigneeで判断）
+- `git worktree remove` は自分が作成したworktreeのみ
