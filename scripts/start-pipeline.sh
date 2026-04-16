@@ -143,4 +143,9 @@ echo ""
 echo "  Each agent waits for work and starts automatically."
 echo ""
 
-zellij --layout scripts/pipeline.kdl
+# Generate layout with project cwd
+LAYOUT_TMP=$(mktemp /tmp/pipeline-XXXXXX.kdl)
+sed "s|__PROJECT_CWD__|$(pwd)|g" scripts/pipeline.kdl > "$LAYOUT_TMP"
+trap 'rm -f "$LAYOUT_TMP"' EXIT
+
+zellij --layout "$LAYOUT_TMP"

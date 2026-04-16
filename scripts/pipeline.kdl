@@ -16,6 +16,7 @@ keybinds {
 }
 
 layout {
+    cwd "__PROJECT_CWD__"
     tab name="Pipeline" {
         pane split_direction="horizontal" {
             pane split_direction="vertical" {
