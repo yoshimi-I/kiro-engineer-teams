@@ -55,7 +55,7 @@ gh pr edit <number> --remove-assignee @me
 ### Step 2: 指摘内容の取得と理解
 
 #### コンフリクト（🔴 マージ失敗）の場合
-1. `git fetch origin` → `git rebase origin/main`
+1. `git fetch origin` → `GIT_EDITOR=true git rebase origin/main`
 2. コンフリクトを解決（`/resolve-conflicts` の手順に従う）
 3. `git push --force-with-lease origin $(git branch --show-current)`
 4. 即座にマージを試みる:
