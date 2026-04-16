@@ -12,6 +12,17 @@ PROMPT_NAME="${1:?Usage: agent.sh <prompt-name>}"
 PROMPT_FILE=".kiro/prompts/${PROMPT_NAME}.md"
 INTERVAL="${AGENT_INTERVAL:-120}"
 MAX_ERRORS=5
+STATUS_DIR=".agent-status"
+STATUS_FILE="${STATUS_DIR}/${AGENT_ID:-$PROMPT_NAME}.json"
+
+mkdir -p "$STATUS_DIR"
+
+update_status() {
+  local state="$1" detail="${2:-}"
+  cat > "$STATUS_FILE" <<JSON
+{"agent":"${AGENT_ID:-$PROMPT_NAME}","prompt":"$PROMPT_NAME","state":"$state","detail":"$detail","cycle":$cycle,"errors":$error_count,"ts":"$(date '+%H:%M:%S')"}
+JSON
+}
 
 if [[ ! -f "$PROMPT_FILE" ]]; then
   echo "❌ Prompt not found: $PROMPT_FILE"
@@ -80,7 +91,9 @@ echo "   Interval: ${INTERVAL}s"
 echo ""
 
 # Phase 1: Wait for work
+update_status "⏳ waiting" ""
 wait_for_work
+update_status "🟢 ready" ""
 echo "✅ Work detected. Starting agent loop."
 echo ""
 
@@ -88,21 +101,23 @@ echo ""
 while true; do
   cycle=$((cycle + 1))
   echo "━━━ Cycle #${cycle} [$(date '+%H:%M:%S')] ━━━"
+  update_status "🔄 running" "cycle #${cycle}"
 
   if kiro-cli chat \
     --no-interactive \
     --trust-all-tools \
     "$(cat "$PROMPT_FILE")" 2>&1; then
     error_count=0
+    update_status "✅ done" "cycle #${cycle}"
     echo "✅ Cycle #${cycle} complete"
   else
     error_count=$((error_count + 1))
+    update_status "⚠️ error" "cycle #${cycle} (${error_count}/${MAX_ERRORS})"
     echo "⚠️  Cycle #${cycle} failed (${error_count}/${MAX_ERRORS})"
-    [[ $error_count -ge $MAX_ERRORS ]] && echo "❌ Too many errors. Stopping." && exit 1
+    [[ $error_count -ge $MAX_ERRORS ]] && update_status "💀 dead" "too many errors" && echo "❌ Too many errors. Stopping." && exit 1
   fi
 
-  # Single-run agents (none currently)
-
+  update_status "😴 sleeping" "next in ${INTERVAL}s"
   echo "⏳ Next cycle in ${INTERVAL}s..."
   sleep "$INTERVAL"
 done
