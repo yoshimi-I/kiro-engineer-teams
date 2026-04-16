@@ -5,21 +5,29 @@ set -euo pipefail
 STATUS_DIR=".agent-status"
 REFRESH=3
 
-# Agent display config: id → emoji + role
-declare -A ICONS=(
-  [Dev-Server]="🖥️  Dev-Server"
-  [Impl-1]="🔨 Impl-1"
-  [Impl-2]="🔨 Impl-2"
-  [Review-1]="🔍 Review-1"
-  [Review-2]="🔍 Review-2"
-  [Fix-Review-1]="🔧 Fix-Review-1"
-  [Fix-Review-2]="🔧 Fix-Review-2"
-  [Watch-Main]="👀 Watch-Main"
-  [E2E-Hunt]="🧪 E2E-Hunt"
-  [Improve]="💡 Improve"
-)
+# Agent icons by prompt type
+icon_for() {
+  case "$1" in
+    dev-server)   echo "🖥️ " ;;
+    implement)    echo "🔨" ;;
+    review)       echo "🔍" ;;
+    fix-review)   echo "🔧" ;;
+    watch-main)   echo "👀" ;;
+    e2e-bug-hunt) echo "🧪" ;;
+    improve)      echo "💡" ;;
+    idle)         echo "💤" ;;
+    *)            echo "⚙️ " ;;
+  esac
+}
 
-ORDER=(Dev-Server Impl-1 Impl-2 Review-1 Review-2 Fix-Review-1 Fix-Review-2 Watch-Main E2E-Hunt Improve)
+# Dynamically discover agents from status files
+discover_agents() {
+  local files=("$STATUS_DIR"/*.json)
+  [[ -e "${files[0]}" ]] || return
+  for f in "${files[@]}"; do
+    basename "$f" .json
+  done | sort
+}
 
 # Colors
 R='\033[0m'
@@ -66,6 +74,7 @@ progress_bar() {
 
 while true; do
   clear
+  mapfile -t AGENTS < <(discover_agents)
 
   # Header
   echo -e "${BOLD}${CYAN}"
@@ -76,8 +85,8 @@ while true; do
 
   # Stats summary
   local_time=$(date '+%H:%M:%S')
-  total=0; running=0; errors=0; sleeping=0
-  for id in "${ORDER[@]}"; do
+  total=0; running=0; errors=0; sleeping=0; idle=0
+  for id in "${AGENTS[@]}"; do
     f="${STATUS_DIR}/${id}.json"
     [[ -f "$f" ]] || continue
     total=$((total + 1))
@@ -86,9 +95,10 @@ while true; do
       *running*) running=$((running + 1)) ;;
       *error*|*dead*) errors=$((errors + 1)) ;;
       *sleeping*) sleeping=$((sleeping + 1)) ;;
+      *idle*) idle=$((idle + 1)) ;;
     esac
   done
-  echo -e "  ${DIM}${local_time}${R}  ${WHITE}Agents: ${total}${R}  ${CYAN}▶ ${running}${R}  ${RED}✕ ${errors}${R}  ${MAGENTA}◆ ${sleeping}${R}"
+  echo -e "  ${DIM}${local_time}${R}  ${WHITE}Agents: ${total}${R}  ${CYAN}▶ ${running}${R}  ${RED}✕ ${errors}${R}  ${MAGENTA}◆ ${sleeping}${R}  ${DIM}💤 ${idle}${R}"
   echo ""
 
   # Agent rows
@@ -96,26 +106,15 @@ while true; do
   printf "  ${DIM}│${R} ${BOLD}%-16s${R} ${DIM}│${R} ${BOLD}%-12s${R} ${DIM}│${R} ${BOLD}%-20s${R} ${DIM}│${R} ${BOLD}%-6s${R} ${DIM}│${R}\n" "Agent" "State" "Progress" "Cycle"
   echo -e "  ${DIM}├──────────────────┼──────────────┼──────────────────────┼────────┤${R}"
 
-  for id in "${ORDER[@]}"; do
+  for id in "${AGENTS[@]}"; do
     f="${STATUS_DIR}/${id}.json"
-    icon="${ICONS[$id]:-$id}"
-
-    if [[ ! -f "$f" ]]; then
-      printf "  ${DIM}│${R} %-17s ${DIM}│${R} ${DIM}%-16s${R} ${DIM}│${R} ${DIM}%-20s${R} ${DIM}│${R} ${DIM}%-6s${R} ${DIM}│${R}\n" \
-        "$icon" "  ○ offline" "····················" "  -"
-      continue
-    fi
-
+    prompt=$(jq -r '.prompt // ""' "$f" 2>/dev/null || echo "")
+    icon="$(icon_for "$prompt") $id"
     state=$(jq -r '.state // "?"' "$f" 2>/dev/null || echo "?")
-    detail=$(jq -r '.detail // ""' "$f" 2>/dev/null || echo "")
     cycle=$(jq -r '.cycle // 0' "$f" 2>/dev/null || echo "0")
-    ts=$(jq -r '.ts // ""' "$f" 2>/dev/null || echo "")
 
     sc=$(state_color "$state")
     bar=$(progress_bar "$state")
-
-    # Truncate detail
-    [[ ${#detail} -gt 12 ]] && detail="${detail:0:11}…"
 
     printf "  ${DIM}│${R} %-17s ${DIM}│${R} ${sc}%-14s${R} ${DIM}│${R} ${sc}%-20s${R} ${DIM}│${R} %6s ${DIM}│${R}\n" \
       "$icon" "  $state" "$bar" "#${cycle}"
@@ -127,15 +126,16 @@ while true; do
   # Detail section
   echo -e "  ${BOLD}📋 Details${R}"
   echo -e "  ${DIM}─────────────────────────────────────────────────────────────────${R}"
-  for id in "${ORDER[@]}"; do
+  for id in "${AGENTS[@]}"; do
     f="${STATUS_DIR}/${id}.json"
     [[ -f "$f" ]] || continue
     state=$(jq -r '.state // ""' "$f" 2>/dev/null || true)
     detail=$(jq -r '.detail // ""' "$f" 2>/dev/null || true)
     ts=$(jq -r '.ts // ""' "$f" 2>/dev/null || true)
+    prompt=$(jq -r '.prompt // ""' "$f" 2>/dev/null || true)
     [[ -z "$detail" && "$state" != *running* ]] && continue
     sc=$(state_color "$state")
-    echo -e "  ${sc}${ICONS[$id]:-$id}${R} ${DIM}${ts}${R} ${detail}"
+    echo -e "  ${sc}$(icon_for "$prompt") ${id}${R} ${DIM}${ts}${R} ${detail}"
   done
 
   echo ""
