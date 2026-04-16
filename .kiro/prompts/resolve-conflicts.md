@@ -13,7 +13,7 @@ git checkout <ブランチ名>
 
 ### 2. リベース開始
 ```bash
-git rebase origin/main
+GIT_EDITOR=true git rebase origin/main
 ```
 
 ### 3. コンフリクト解決
@@ -25,7 +25,7 @@ git rebase origin/main
 
 ```bash
 git add <解決したファイル>
-git rebase --continue
+GIT_EDITOR=true git rebase --continue
 ```
 
 ### 4. 解決不能な場合
