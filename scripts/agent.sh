@@ -7,6 +7,13 @@ set -euo pipefail
 
 export GIT_EDITOR=true
 export EDITOR=true
+export VISUAL=true
+export GIT_SEQUENCE_EDITOR=true
+
+# Force no-editor at git config level (survives subprocesses that reset env)
+git config --global core.editor true
+git config --global sequence.editor true
+git config --global rebase.autosquash true
 
 PROMPT_NAME="${1:?Usage: agent.sh <prompt-name>}"
 PROMPT_FILE=".kiro/prompts/${PROMPT_NAME}.md"
