@@ -20,37 +20,8 @@ layout {
     tab name="Pipeline" {
         pane split_direction="horizontal" {
             pane split_direction="vertical" {
-                pane command="bash" name="Dev-Server" {
-                    args "-c" "AGENT_ID=Dev-Server ./scripts/agent.sh dev-server"
-                }
-                pane command="bash" name="Impl-1" {
-                    args "-c" "AGENT_ID=Impl-1 AGENT_INTERVAL=10 ./scripts/agent.sh implement"
-                }
-                pane command="bash" name="Impl-2" {
-                    args "-c" "AGENT_ID=Impl-2 AGENT_INTERVAL=10 ./scripts/agent.sh implement"
-                }
-                pane command="bash" name="Review-1" {
-                    args "-c" "AGENT_ID=Review-1 AGENT_INTERVAL=10 ./scripts/agent.sh review"
-                }
-                pane command="bash" name="Review-2" {
-                    args "-c" "AGENT_ID=Review-2 AGENT_INTERVAL=10 ./scripts/agent.sh review"
-                }
-            }
-            pane split_direction="vertical" {
-                pane command="bash" name="Fix-Review-1" {
-                    args "-c" "AGENT_ID=Fix-Review-1 AGENT_INTERVAL=10 ./scripts/agent.sh fix-review"
-                }
-                pane command="bash" name="Fix-Review-2" {
-                    args "-c" "AGENT_ID=Fix-Review-2 AGENT_INTERVAL=10 ./scripts/agent.sh fix-review"
-                }
-                pane command="bash" name="Watch-Main" {
-                    args "-c" "AGENT_ID=Watch-Main ./scripts/agent.sh watch-main"
-                }
-                pane command="bash" name="E2E-Hunt" {
-                    args "-c" "AGENT_ID=E2E-Hunt ./scripts/agent.sh e2e-bug-hunt"
-                }
-                pane command="bash" name="Improve" {
-                    args "-c" "AGENT_ID=Improve AGENT_INTERVAL=600 ./scripts/agent.sh improve"
+                pane command="bash" name="Orchestrator" {
+                    args "-c" "./scripts/orchestrator.sh"
                 }
             }
         }
