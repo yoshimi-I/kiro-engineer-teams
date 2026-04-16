@@ -11,6 +11,7 @@ export EDITOR=true
 PROMPT_NAME="${1:?Usage: agent.sh <prompt-name>}"
 PROMPT_FILE=".kiro/prompts/${PROMPT_NAME}.md"
 INTERVAL="${AGENT_INTERVAL:-120}"
+ONCE="${AGENT_ONCE:-false}"
 MAX_ERRORS=5
 STATUS_DIR=".agent-status"
 STATUS_FILE="${STATUS_DIR}/${AGENT_ID:-$PROMPT_NAME}.json"
@@ -115,6 +116,13 @@ while true; do
     update_status "⚠️ error" "cycle #${cycle} (${error_count}/${MAX_ERRORS})"
     echo "⚠️  Cycle #${cycle} failed (${error_count}/${MAX_ERRORS})"
     [[ $error_count -ge $MAX_ERRORS ]] && update_status "💀 dead" "too many errors" && echo "❌ Too many errors. Stopping." && exit 1
+  fi
+
+  # Once mode: exit after single cycle (for orchestrator)
+  if [[ "$ONCE" == "true" ]]; then
+    update_status "⏹️ finished" "cycle #${cycle}"
+    echo "🏁 Once mode — exiting."
+    exit 0
   fi
 
   update_status "😴 sleeping" "next in ${INTERVAL}s"
